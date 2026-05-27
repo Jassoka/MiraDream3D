@@ -1,2 +1,0 @@
-set(__QT_DEPLOY_TARGET_ProjetEte2026_FILE /home/jassoka/ProjetEte2026/build/Desktop_Qt_6_11_1-Debug/ProjetEte2026)
-set(__QT_DEPLOY_TARGET_ProjetEte2026_TYPE EXECUTABLE)
