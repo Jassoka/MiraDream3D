@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(ProjetEte2026 VERSION 0.1 LANGUAGES CXX)
+# Emplacements du répertoire include
+set(DIR_INC ${CMAKE_SOURCE_DIR}/include)
+
+project(MiraDream3D VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -12,44 +15,57 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets OpenGLWidgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets OpenGLWidgets)
+
+add_subdirectory(src/model)
+add_subdirectory(src/view)
+add_subdirectory(src/controller)
+
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
+        src/main.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(ProjetEte2026
+    qt_add_executable(MiraDream3D
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
 # Define target properties for Android with Qt 6 as:
-#    set_property(TARGET ProjetEte2026 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+#    set_property(TARGET MiraDream3D APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
 # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
     if(ANDROID)
-        add_library(ProjetEte2026 SHARED
+        add_library(MiraDream3D SHARED
             ${PROJECT_SOURCES}
         )
 # Define properties for Android with Qt 5 after find_package() calls as:
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
-        add_executable(ProjetEte2026
+        add_executable(MiraDream3D
             ${PROJECT_SOURCES}
         )
     endif()
 endif()
 
-target_link_libraries(ProjetEte2026 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+# Modules MVC
+target_link_libraries(MiraDream3D PRIVATE
+        Model
+        View
+        Controller
+        Qt6::Widgets
+)
+
+target_link_libraries(MiraDream3D PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
 if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.ProjetEte2026)
+  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.MiraDream3D)
 endif()
-set_target_properties(ProjetEte2026 PROPERTIES
+set_target_properties(MiraDream3D PROPERTIES
     ${BUNDLE_ID_OPTION}
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -58,12 +74,12 @@ set_target_properties(ProjetEte2026 PROPERTIES
 )
 
 include(GNUInstallDirs)
-install(TARGETS ProjetEte2026
+install(TARGETS MiraDream3D
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(ProjetEte2026)
+    qt_finalize_executable(MiraDream3D)
 endif()
