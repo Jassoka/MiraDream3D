@@ -18,6 +18,10 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets OpenGLWidgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets OpenGLWidgets)
 
+
+# Chemin vers les modules
+add_subdirectory(libs/glm)
+
 add_subdirectory(src/model)
 add_subdirectory(src/view)
 add_subdirectory(src/controller)
@@ -49,12 +53,13 @@ else()
     endif()
 endif()
 
-# Modules MVC
+# Liste des modules
 target_link_libraries(MiraDream3D PRIVATE
         Model
         View
         Controller
         Qt6::Widgets
+        glm::glm
 )
 
 target_link_libraries(MiraDream3D PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
