@@ -4,7 +4,7 @@ add_library(View STATIC
 )
 
 target_include_directories(View PUBLIC
-        ${DIR_INC}/view
+        ${DIR_INC}
 )
 
 target_link_libraries(View PRIVATE

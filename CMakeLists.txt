@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 
-# Emplacements du répertoire include
+project(MiraDream3D VERSION 0.1 LANGUAGES CXX)
+
+# Emplacements des répertoires utiles
 set(DIR_INC ${CMAKE_SOURCE_DIR}/include)
 
-project(MiraDream3D VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -20,8 +21,6 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets OpenGLWidgets)
 
 
 # Chemin vers les modules
-add_subdirectory(libs/glm)
-
 add_subdirectory(src/model)
 add_subdirectory(src/view)
 add_subdirectory(src/controller)
@@ -59,7 +58,6 @@ target_link_libraries(MiraDream3D PRIVATE
         View
         Controller
         Qt6::Widgets
-        glm::glm
 )
 
 target_link_libraries(MiraDream3D PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
