@@ -8,6 +8,9 @@
 
 #include "Mesh.h"
 
+/**
+ * @brief Represents a node in the object hierarchy tree
+ */
 class Node
 {
 private:

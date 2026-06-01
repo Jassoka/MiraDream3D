@@ -1,13 +1,12 @@
 add_library(Model STATIC
         ${DIR_INC}/model/geometry.hpp
         ${DIR_INC}/model/Camera.h
-        ${DIR_INC}/model/graphicPipeline.h
-        ${DIR_INC}/model/Projection.h
         ${DIR_INC}/model/Scene.h
         Camera.cpp
         ../../include/model/Node.h
         ../../include/model/Mesh.h
         ../../include/model/texture_types.hpp
+        ../../include/model/Renderer.h
 )
 
 target_include_directories(Model PUBLIC

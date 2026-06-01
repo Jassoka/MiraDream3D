@@ -9,7 +9,14 @@
 
 class Camera {
 public:
-    Camera(glm::vec3 up, glm::vec3 right, glm::vec3 lookAt, glm::vec3 position, double FOV, double nearPlane, double farPlane, double aspectRatio);
+    Camera(glm::vec3 up,
+        glm::vec3 right,
+        glm::vec3 lookAt,
+        glm::vec3 position,
+        double FOV,
+        double nearPlane,
+        double farPlane,
+        double aspectRatio);
 
     const glm::mat4& computePerspectiveMatrix();
     const glm::mat4& computeViewMatrix();

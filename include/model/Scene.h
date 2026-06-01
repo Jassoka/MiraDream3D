@@ -13,6 +13,7 @@ class Scene
     glm::vec3 mLight; //TODO: plusieurs lumières
     Node *mRootNode = nullptr;
     std::vector<Texture> mTextureList;
+    std::vector<Material> mMaterialList;
 };
 
 #endif //MIRADREAM3D_SCENE_HPP

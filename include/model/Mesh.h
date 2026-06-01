@@ -5,13 +5,12 @@
 #ifndef MIRADREAM3D_MESH_H
 #define MIRADREAM3D_MESH_H
 #include "geometry.hpp"
-#include "texture_types.hpp"
 
 
 class Mesh
 {
 private:
-    Material mMaterial = {};
+    uint32_t mMaterialID = {};
     std::vector<Vertex> mVertices;
     std::vector<Edge> mEdges;
     std::vector<HalfEdge> mHalfEdges;

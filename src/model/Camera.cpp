@@ -25,12 +25,18 @@ Camera::Camera(const glm::vec3 up,
     mTranslationMatrix = glm::translate(glm::mat4(1.0), position);
 }
 
+/**
+ * @return Returns View Matrix
+ */
 const glm::mat4& Camera::computeViewMatrix()
 {
     mViewMatrix = mRotationMatrix * mTranslationMatrix;
     return mViewMatrix;
 }
 
+/**
+ * @return Returns Perspective Matrix (projection)
+ */
 const glm::mat4& Camera::computePerspectiveMatrix()
 {
     const double f = mFarPlane;
