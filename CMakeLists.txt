@@ -13,6 +13,9 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Gestion des assets avec QT
+set(CMAKE_AUTORCC ON)
+
 #ASSIMP
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
@@ -22,6 +25,8 @@ set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "" FORCE)
 
 set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
+
+set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
 
 #Qt
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
@@ -36,9 +41,11 @@ add_subdirectory(src/model)
 add_subdirectory(src/view)
 add_subdirectory(src/controller)
 
+
 add_subdirectory(libs/assimp)
 set(PROJECT_SOURCES
         src/main.cpp
+        include/util/QTResourceManager.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -63,6 +70,10 @@ else()
         )
     endif()
 endif()
+
+target_compile_definitions(MiraDream3D PRIVATE
+        PROJECT_PATH="${CMAKE_SOURCE_DIR}/"
+)
 
 # Liste des modules
 target_link_libraries(MiraDream3D PRIVATE

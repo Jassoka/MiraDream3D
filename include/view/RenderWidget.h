@@ -20,11 +20,12 @@ public:
     virtual void initializeGL();    
     virtual void resizeGL(int width, int height);
     virtual void paintGL();
+    ~RenderWidget();
 
 public slots:
     virtual void timeOutSlot();
 private:
-    Renderer mCPUrenderer;
+    Renderer *mRenderer;
     QTimer *mTimer;
 };
 

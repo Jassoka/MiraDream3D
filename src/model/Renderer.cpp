@@ -3,6 +3,7 @@
 //
 
 #include "model/Renderer.h"
+#include "util/QTResourceManager.hpp"
 
 Renderer::Renderer(const float initialAspectRatio, QOpenGLFunctions *glFuncs):
 mEngineCamera(Camera (
@@ -27,5 +28,6 @@ Renderer::~Renderer()
 
 void Renderer::initShaders()
 {
-    this->mShaderManager.loadShader( PROJECT_PATH "");
+    std::string const VertexShader = QTResourceManager::readEmbeddedRessource(":/assets/shaders/standard.vert");
+    this->mShaderManager.loadShader(VertexShader, "Vertex Shader", GL_VERTEX_SHADER, this->mGlFuncs);
 }

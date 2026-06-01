@@ -7,9 +7,21 @@ add_library(Model STATIC
         ../../include/model/Mesh.h
 
         ../../include/model/Renderer.h
+        ../../include/model/ShaderManager.h
+        ../../include/model/Shader.h
+        ShaderManager.cpp
+        Renderer.cpp
+        Scene.cpp
+        Shader.cpp
 )
 
 target_include_directories(Model PUBLIC
         ${DIR_INC}
+        ${CMAKE_SOURCE_DIR}/include/util
         ${CMAKE_SOURCE_DIR}/libs
+)
+
+target_link_libraries(Model PRIVATE
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::OpenGLWidgets
 )

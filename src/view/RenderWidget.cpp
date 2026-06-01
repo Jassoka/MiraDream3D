@@ -1,10 +1,6 @@
 #include "view/RenderWidget.h"
 #include <QOpenGLFunctions>
 
-
-
-
-
 RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) : QOpenGLWidget(parent) {
     if (framesPerSecond==0)
         mTimer=NULL;
@@ -19,9 +15,13 @@ RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) : QOpenGLWidget
 
 
 void RenderWidget::initializeGL() {
+    QOpenGLFunctions* glFuncs = QOpenGLContext::currentContext()->functions();
+
     initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+
+    this->mRenderer = new Renderer(this->width()/this->height(), glFuncs);
     //setupShaders
     //setupBuffers
 
@@ -40,4 +40,10 @@ void RenderWidget::paintGL() {
 
 
 void RenderWidget::timeOutSlot() {
+}
+
+RenderWidget::~RenderWidget()
+{
+    delete mRenderer;
+    delete mTimer;
 }
