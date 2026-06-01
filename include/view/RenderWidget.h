@@ -8,6 +8,8 @@
 #include <QtOpenGL>
 #include <QOpenGLWidget>
 
+#include "model/Renderer.h"
+
 /**
  * @brief Widget in which we show the 3D render
  */
@@ -22,6 +24,7 @@ public:
 public slots:
     virtual void timeOutSlot();
 private:
+    Renderer mCPUrenderer;
     QTimer *mTimer;
 };
 
