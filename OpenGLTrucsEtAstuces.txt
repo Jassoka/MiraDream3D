@@ -1,0 +1,42 @@
+Pour la gestion de la profondeur :
+https://opengl.developpez.com/tutoriels/apprendre-opengl-4/?page=test-de-profondeur-depth-testing
+
+
+
+
+
+
+
+
+resizeGL(int w, int h):
+
+Appelée à chaque fois que le widget est redimensionné. Aussi appelée juste après initializeGL().
+
+Sert principalement à recalculer la matrice de projection et à mettre à jour le viewport. Les paramètres w et h sont en pixels physiques (tiennent compte du devicePixelRatio).
+
+
+
+
+paintGL():
+
+Appelée à chaque repaint. C'est la boucle de rendu principale. Qt gère le swap des buffers automatiquement après cet appel.
+
+Toujours commencer par glClear. Le contexte est déjà actif quand Qt appelle cette fonction — pas besoin de makeCurrent() ici. Ne jamais appeler swapBuffers() manuellement.
+
+
+
+
+update():
+
+Demande un repaint asynchrone. Qt planifie un appel à paintGL() dans la boucle d'événements.
+
+Ne jamais appeler paintGL() directement — utiliser toujours update(). Pour une animation continue, appeler update() à la fin de paintGL() lui-même, ou utiliser un QTimer.
+
+
+
+
+Depuis un slot externe ou un thread :
+
+makeCurrent();
+// ... appels OpenGL ...
+doneCurrent();

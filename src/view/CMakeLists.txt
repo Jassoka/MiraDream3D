@@ -1,6 +1,8 @@
 add_library(View STATIC
         mainwindow.cpp
         ${DIR_INC}/view/mainwindow.h
+        ../../include/view/RenderWidget.h
+        RenderWidget.cpp
 )
 
 target_include_directories(View PUBLIC

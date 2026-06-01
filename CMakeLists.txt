@@ -13,6 +13,17 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+#ASSIMP
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+set(ASSIMP_NO_EXPORT ON CACHE BOOL "" FORCE)
+
+set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "" FORCE)
+
+set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
+
+#Qt
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
@@ -25,6 +36,7 @@ add_subdirectory(src/model)
 add_subdirectory(src/view)
 add_subdirectory(src/controller)
 
+add_subdirectory(libs/assimp)
 set(PROJECT_SOURCES
         src/main.cpp
 )
@@ -58,6 +70,7 @@ target_link_libraries(MiraDream3D PRIVATE
         View
         Controller
         Qt6::Widgets
+        Qt6::OpenGLWidgets
 )
 
 target_link_libraries(MiraDream3D PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)

@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "RenderWidget.h"
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -10,5 +12,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
+private:
+    RenderWidget* mRenderWidget;
 };
 #endif // MAINWINDOW_H
