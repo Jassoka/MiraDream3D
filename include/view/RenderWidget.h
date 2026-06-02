@@ -16,14 +16,18 @@
 class RenderWidget : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
 public:
-    explicit RenderWidget(const Scene *scene, int framesPerSecond=0, QWidget *parent = nullptr);
+    explicit RenderWidget(int framesPerSecond=0, QWidget *parent = nullptr);
     virtual void initializeGL();    
     virtual void resizeGL(int width, int height);
     virtual void paintGL();
+    void setRenderer(Renderer *renderer);
     ~RenderWidget();
 
 public slots:
     virtual void timeOutSlot();
+
+signals:
+    void initRenderer(QOpenGLFunctions* fonctionsGL, float aspectRatio);
 private:
     Renderer *mRenderer;
     QTimer *mTimer;

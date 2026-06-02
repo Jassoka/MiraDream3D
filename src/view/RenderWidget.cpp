@@ -1,8 +1,8 @@
 #include "view/RenderWidget.h"
 #include <QOpenGLFunctions>
 
-RenderWidget::RenderWidget(const Scene *scene, int framesPerSecond, QWidget *parent) : QOpenGLWidget(parent) {
-    this->mRenderer = new Renderer(this->width()/this->height(), QOpenGLContext::currentContext()->functions());
+RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) : QOpenGLWidget(parent) {
+
     if (framesPerSecond==0)
         mTimer=NULL;
     else {
@@ -14,10 +14,20 @@ RenderWidget::RenderWidget(const Scene *scene, int framesPerSecond, QWidget *par
     }
 }
 
+void RenderWidget::setRenderer(Renderer *renderer)
+{
+    this->mRenderer = renderer;
+}
+
 void RenderWidget::initializeGL() {
     initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+
+
+    auto* glFuncs = QOpenGLContext::currentContext()->functions();
+    float aspectRatio = static_cast<float>(this->width()) / static_cast<float>(this->height());
+    emit initRenderer(glFuncs, aspectRatio);
 
     //setupShaders
     //setupBuffers

@@ -13,6 +13,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
+public slots:
+
 private:
     RenderWidget* mRenderWidget;
     Engine *mEngine;
