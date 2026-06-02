@@ -17,8 +17,9 @@ void loadFile(std::string file, Scene scene) {
     Assimp::Importer importer;
 
     const aiScene* aiScene = importer.ReadFile(file,
-        0//aiProcess_Triangulate
-
+        aiProcess_JoinIdenticalVertices|
+        aiProcess_GenSmoothNormals//aiProcess_Triangulate
+    //TODO bah la on denature le fichier pardis, implementer la gestion de plusieurs nor;ales par point
     );
 
     if (!aiScene) {

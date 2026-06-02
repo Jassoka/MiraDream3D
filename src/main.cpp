@@ -12,6 +12,6 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
     Scene scene = Scene();
-    loadFile("/Users/mathispean/Desktop/Programmation/c++/Projet_C_2/MiraDream3D/testObjects/cube.obj",scene);
+    loadFile("/Users/mathispean/Desktop/Programmation/c++/Projet_C_2/MiraDream3D/testObjects/cubegpt.obj",scene);
     return QApplication::exec();
 }

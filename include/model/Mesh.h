@@ -13,6 +13,7 @@ class Mesh
 public:
     Mesh(uint32_t MaterialID);
     Mesh(aiMesh &meshAi);
+    void printMesh();
     void addVertex(Vertex &vertex);
     void addEdge(Edge &edge);
     void addHalfEdge(HalfEdge &halfEdge);
