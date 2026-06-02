@@ -1,4 +1,5 @@
 #include "model/Node.h"
+#include <cassert>
 
 void Node::addChild(Node* nodePtr) {
     this->mChildren.push_back(nodePtr);
