@@ -13,8 +13,20 @@
  */
 class Node
 {
+public:
+
+    void addChild(Node* nodePtr);
+    size_t getChildrenSize() const;
+    Node* getChild(const uint32_t n) const;
+
+    void addMesh(uint32_t meshId);
+    size_t getMeshesSize() const;
+    uint32_t getMesh(const uint32_t n) const ;
+
+
+
 private:
-    Mesh *mMesh = nullptr;
+    std::vector<uint32_t> mMeshes;
     std::vector<Node*> mChildren;
 };
 

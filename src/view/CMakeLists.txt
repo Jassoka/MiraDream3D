@@ -11,6 +11,7 @@ target_include_directories(View PUBLIC
 
 target_link_libraries(View PRIVATE
         Model
+        assimp
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::OpenGLWidgets
 )

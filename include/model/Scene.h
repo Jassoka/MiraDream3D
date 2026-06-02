@@ -2,8 +2,8 @@
 // Created by Mathis Pean on 27/05/2026.
 //
 
-#ifndef MIRADREAM3D_SCENE_HPP
-#define MIRADREAM3D_SCENE_HPP
+#ifndef MIRADREAM3D_SCENE_H
+#define MIRADREAM3D_SCENE_H
 #include "Camera.h"
 #include "Node.h"
 #include "texture_types.hpp"
@@ -22,10 +22,17 @@ private:
     Camera mSceneCamera; //TODO: plusieurs caméras
     glm::vec3 mLight; //TODO: plusieurs lumières
     Node *mRootNode = nullptr;
+    std::vector<Mesh> mMeshList;
     std::vector<Texture> mTextureList;
     std::vector<Material> mMaterialList;
 public:
+
+    void addNode(Node* nodePtr);
+    void addMesh(Mesh &mesh);
+    void addTexture(Texture &texture);
+    void addMaterial(Material &material);
     Scene();
+    ~Scene();
 };
 
-#endif //MIRADREAM3D_SCENE_HPP
+#endif //MIRADREAM3D_SCENE_H
