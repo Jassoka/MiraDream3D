@@ -16,7 +16,7 @@
 class RenderWidget : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
 public:
-    explicit RenderWidget(int framesPerSecond=0, QWidget *parent = 0);
+    explicit RenderWidget(const Scene *scene, int framesPerSecond=0, QWidget *parent = nullptr);
     virtual void initializeGL();    
     virtual void resizeGL(int width, int height);
     virtual void paintGL();

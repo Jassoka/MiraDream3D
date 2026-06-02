@@ -24,10 +24,10 @@ private:
 
     Camera mEngineCamera;
     ShaderManager mShaderManager;
-    Scene *mScene = nullptr;
+    const Scene *mScene = nullptr;
     QOpenGLFunctions *mGlFuncs = nullptr;
 public:
-    Renderer(float initialAspectRatio, QOpenGLFunctions *glFuncs);
+    Renderer(const Scene *scene, float initialAspectRatio, QOpenGLFunctions *glFuncs);
     ~Renderer();
 
     void initShaders();

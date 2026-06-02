@@ -2,6 +2,10 @@
 add_library(Controller STATIC
         loadFile.cpp
         ../../include/controller/loadFile.h
+        ../../include/controller/SceneController.h
+        ../../include/controller/Engine.h
+        SceneController.cpp
+        Engine.cpp
 )
 target_include_directories(Controller PUBLIC
         ${DIR_INC}

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "RenderWidget.h"
+#include "controller/Engine.h"
 
 class MainWindow : public QMainWindow
 {
@@ -14,5 +15,6 @@ public:
     ~MainWindow() override;
 private:
     RenderWidget* mRenderWidget;
+    Engine *mEngine;
 };
 #endif // MAINWINDOW_H

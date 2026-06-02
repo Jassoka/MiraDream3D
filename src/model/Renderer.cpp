@@ -5,7 +5,7 @@
 #include "model/Renderer.h"
 #include "util/QTResourceManager.hpp"
 
-Renderer::Renderer(const float initialAspectRatio, QOpenGLFunctions *glFuncs):
+Renderer::Renderer(const Scene* scene, const float initialAspectRatio, QOpenGLFunctions *glFuncs):
 mEngineCamera(Camera (
         defaultEngineCameraUp,
         defaultEngineCameraRight,
@@ -15,11 +15,9 @@ mEngineCamera(Camera (
         defaultEngineCameraNearPlane,
         defaultEngineCameraFarPlane,
         initialAspectRatio
-    ))
-{
-    mGlFuncs = glFuncs;
-    mScene = new Scene();
-}
+    )),
+mScene(scene),
+mGlFuncs(glFuncs) {}
 
 Renderer::~Renderer()
 {
