@@ -5,7 +5,6 @@ add_library(Model STATIC
         Camera.cpp
         ../../include/model/Node.h
         ../../include/model/Mesh.h
-
         ../../include/model/Renderer.h
         ../../include/model/ShaderManager.h
         ../../include/model/Shader.h
