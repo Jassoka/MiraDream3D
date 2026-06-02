@@ -7,7 +7,7 @@
 
 #include <cstdint>
 #include <algorithm>
-#include <QImage>
+#include <QtGui/QImage>
 constexpr uint32_t TEXTURE_SIZE = 1024;
 
 

@@ -8,7 +8,7 @@
 #include <string>
 #include <unordered_map>
 #include <QOpenGLFunctions>
-#include <GL/gl.h>
+#include <QtOpenGL>
 #include "Shader.h"
 
 class ShaderManager

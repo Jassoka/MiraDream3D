@@ -1,7 +1,7 @@
 #include "view/RenderWidget.h"
 #include <QOpenGLFunctions>
 
-RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) : QOpenGLWidget(parent) {
+RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) : QOpenGLWidget(parent){
     if (framesPerSecond==0)
         mTimer=NULL;
     else {
