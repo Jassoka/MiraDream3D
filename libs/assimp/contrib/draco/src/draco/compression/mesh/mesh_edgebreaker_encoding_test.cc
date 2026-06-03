@@ -33,7 +33,7 @@ class MeshEdgebreakerEncodingTest : public ::testing::Test {
 
   void TestFile(const std::string &file_name, int compression_level) {
     const std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name));
-    ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+    ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
 
     TestMesh(mesh.get(), compression_level);
   }
@@ -78,7 +78,7 @@ TEST_F(MeshEdgebreakerEncodingTest, ThreeFacesOBJ) {
 }
 
 TEST_F(MeshEdgebreakerEncodingTest, TestPly) {
-  // Tests whether the edgebreaker successfully encodes and decodes the test
+  // Tests whether the edgebreaker successfully encodes and decodes the tests
   // file (ply with color).
   const std::string file_name = "test_pos_color.ply";
   TestFile(file_name);
@@ -95,7 +95,7 @@ TEST_F(MeshEdgebreakerEncodingTest, TestEncoderReuse) {
   // encode a given mesh.
   const std::string file_name = "test_pos_color.ply";
   const std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name));
-  ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+  ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
 
   MeshEdgebreakerEncoder encoder;
   EncoderOptions encoder_options = EncoderOptions::CreateDefaultOptions();
@@ -116,7 +116,7 @@ TEST_F(MeshEdgebreakerEncodingTest, TestDecoderReuse) {
   // decode a given mesh.
   const std::string file_name = "test_pos_color.ply";
   const std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name));
-  ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+  ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
 
   MeshEdgebreakerEncoder encoder;
   EncoderOptions encoder_options = EncoderOptions::CreateDefaultOptions();
@@ -152,7 +152,7 @@ TEST_F(MeshEdgebreakerEncodingTest, TestSingleConnectivityEncoding) {
   // attribute seams.
   const std::string file_name = "cube_att.obj";
   const std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name));
-  ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+  ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
 
   for (int i = 0; i < 2; ++i) {
     // Set the option to enable/disable single connectivity encoding.
@@ -234,7 +234,7 @@ TEST_F(MeshEdgebreakerEncodingTest, TestDegenerateMesh) {
   // Tests whether we can process a mesh that contains degenerate faces only.
   const std::string file_name = "degenerate_mesh.obj";
   const std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name));
-  ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+  ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
   EncoderBuffer buffer;
   MeshEdgebreakerEncoder encoder;
   EncoderOptions encoder_options = EncoderOptions::CreateDefaultOptions();

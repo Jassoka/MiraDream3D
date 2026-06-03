@@ -33,12 +33,12 @@ class GltfTestHelper {
 
   // Adds various mesh feature ID sets (via attributes and via textures),
   // structural metadata schema, property table, and property attributes to the
-  // box |scene| loaded from the test file testdata/Box/glTF/Box.gltf.
+  // box |scene| loaded from the tests file testdata/Box/glTF/Box.gltf.
   static void AddBoxMetaMeshFeatures(Scene *scene);
   static void AddBoxMetaStructuralMetadata(Scene *scene);
 
   // Checks the box |geometry| (draco::Mesh or draco::Scene) with  mesh features
-  // loaded from one of these test files, with or without Draco compression:
+  // loaded from one of these tests files, with or without Draco compression:
   // 1. testdata/BoxMeta/glTF/BoxMeta.gltf
   // 2. testdata/BoxMetaDraco/glTF/BoxMetaDraco.gltf
   template <typename GeometryT>
@@ -47,7 +47,7 @@ class GltfTestHelper {
 
   // Checks the box |geometry| (draco::Mesh or draco::Scene) with structural
   // metadata that includes schema, property table, and property attributes
-  // loaded from test file testdata/BoxMeta/glTF/BoxMeta.gltf.
+  // loaded from tests file testdata/BoxMeta/glTF/BoxMeta.gltf.
   template <typename GeometryT>
   static void CheckBoxMetaStructuralMetadata(const GeometryT &geometry,
                                              const UseCase &use_case) {

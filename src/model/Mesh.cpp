@@ -28,37 +28,44 @@ Mesh::Mesh(aiMesh &meshAi) {
         for (uint32_t k=0;k<faceAi->mNumIndices;k++) {
             this->mFaces[i].push_back(faceAi->mIndices[k]);
         }
-
     }
-    printMesh();
 }
 
+bool Mesh::operator==(const Mesh& other) const
+{
+    const bool sameVertices = this->mVertices == other.mVertices;
+    const bool sameFaces = this->mFaces == other.mFaces;
+    return sameFaces && sameVertices; //TODO: same edges and half edges
+}
 
-void Mesh::printMesh() {
-    for (auto vertex : mVertices) {
-
-        std::cout << vertex.x <<" "<< vertex.y <<" "<< vertex.z<<std::endl;
+std::ostream& operator<<(std::ostream& os, const Mesh &mesh) {
+    os << "Vertices:" << '\n' << "{ ";
+    for (const auto vertex : mesh.getVertices()) {
+        os << "(" << vertex.x <<", "<< vertex.y <<", "<< vertex.z<<") ";
     }
-    std::cout << "faces" <<std::endl;
-    for (auto face : this->mFaces) {
+    os << "}" << '\n';
+    os << "Faces: " << '\n' << "{ ";
+    for (const auto face : mesh.getFaces()) {
 
-        for (auto vertex : face) {
-            std::cout << vertex << " ";
+        for (const auto vertex : face) {
+            os << vertex << " ";
         }
-        std::cout  <<std::endl;
+        os << "| ";
     }
+    os << "}" << '\n';
+    return os;
 }
 
 
-void Mesh::addVertex(Vertex &vertex) {
+void Mesh::addVertex(const Vertex &vertex) {
     this->mVertices.push_back(vertex);
 }
-void Mesh::addEdge(Edge &edge) {
+void Mesh::addEdge(const Edge &edge) {
     this->mEdges.push_back(edge);
 }
-void Mesh::addHalfEdge(HalfEdge &halfEdge) {
+void Mesh::addHalfEdge(const HalfEdge &halfEdge) {
     this->mHalfEdges.push_back(halfEdge);
 }
-void Mesh::addFace(Face &face) {
+void Mesh::addFace(const Face &face) {
     this->mFaces.push_back(face);
 }

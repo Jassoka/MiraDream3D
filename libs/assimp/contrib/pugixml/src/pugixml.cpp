@@ -9897,11 +9897,11 @@ PUGI_IMPL_NS_BEGIN
 
 					if (cur[0] == ':')
 					{
-						if (cur[1] == '*') // namespace test ncname:*
+						if (cur[1] == '*') // namespace tests ncname:*
 						{
 							cur += 2; // :*
 						}
-						else if (PUGI_IMPL_IS_CHARTYPEX(cur[1], ctx_symbol)) // namespace test qname
+						else if (PUGI_IMPL_IS_CHARTYPEX(cur[1], ctx_symbol)) // namespace tests qname
 						{
 							cur++; // :
 
@@ -10083,7 +10083,7 @@ PUGI_IMPL_NS_BEGIN
 			double number;
 			// variable for ast_variable
 			xpath_variable* variable;
-			// node test for ast_step (node name/namespace/node type/pi target)
+			// node tests for ast_step (node name/namespace/node type/pi target)
 			const char_t* nodetest;
 			// table for ast_opt_translate_table
 			const unsigned char* table;
@@ -10678,7 +10678,7 @@ PUGI_IMPL_NS_BEGIN
 			case axis_ancestor:
 			case axis_ancestor_or_self:
 			{
-				if (axis == axis_ancestor_or_self && _test == nodetest_type_node) // reject attributes based on principal node type test
+				if (axis == axis_ancestor_or_self && _test == nodetest_type_node) // reject attributes based on principal node type tests
 					if (step_push(ns, a, p, alloc) & once)
 						return;
 
@@ -10698,7 +10698,7 @@ PUGI_IMPL_NS_BEGIN
 			case axis_descendant_or_self:
 			case axis_self:
 			{
-				if (_test == nodetest_type_node) // reject attributes based on principal node type test
+				if (_test == nodetest_type_node) // reject attributes based on principal node type tests
 					step_push(ns, a, p, alloc);
 
 				break;
@@ -11593,7 +11593,7 @@ PUGI_IMPL_NS_BEGIN
 			}
 
 			// Rewrite descendant-or-self::node()/child::foo with descendant::foo
-			// The former is a full form of //foo, the latter is much faster since it executes the node test immediately
+			// The former is a full form of //foo, the latter is much faster since it executes the node tests immediately
 			// Do a similar kind of rewrite for self/descendant/descendant-or-self axes
 			// Note that we only rewrite positionally invariant steps (//foo[1] != /descendant::foo[1])
 			if (_type == ast_step && (_axis == axis_child || _axis == axis_self || _axis == axis_descendant || _axis == axis_descendant_or_self) &&
@@ -12200,7 +12200,7 @@ PUGI_IMPL_NS_BEGIN
 
 			if (_lexer.current() == lex_string)
 			{
-				// node name test
+				// node name tests
 				nt_name = _lexer.contents();
 				_lexer.next();
 
@@ -12216,7 +12216,7 @@ PUGI_IMPL_NS_BEGIN
 					if (!axis_specified)
 						return error("Unknown axis");
 
-					// read actual node test
+					// read actual node tests
 					_lexer.next();
 
 					if (_lexer.current() == lex_multiply)
@@ -12232,13 +12232,13 @@ PUGI_IMPL_NS_BEGIN
 					}
 					else
 					{
-						return error("Unrecognized node test");
+						return error("Unrecognized node tests");
 					}
 				}
 
 				if (nt_type == nodetest_none)
 				{
-					// node type test or processing-instruction
+					// node type tests or processing-instruction
 					if (_lexer.current() == lex_open_brace)
 					{
 						_lexer.next();
@@ -12269,7 +12269,7 @@ PUGI_IMPL_NS_BEGIN
 						}
 						else
 						{
-							return error("Unmatched brace near node type test");
+							return error("Unmatched brace near node type tests");
 						}
 					}
 					// QName or NCName:*
@@ -12295,7 +12295,7 @@ PUGI_IMPL_NS_BEGIN
 			}
 			else
 			{
-				return error("Unrecognized node test");
+				return error("Unrecognized node tests");
 			}
 
 			const char_t* nt_name_copy = alloc_string(nt_name);
@@ -12433,7 +12433,7 @@ PUGI_IMPL_NS_BEGIN
 					if (*state != '(')
 						return parse_location_path();
 
-					// This looks like a function call; however this still can be a node-test. Check it.
+					// This looks like a function call; however this still can be a node-tests. Check it.
 					if (parse_node_test_type(_lexer.contents()) != nodetest_none)
 						return parse_location_path();
 				}

@@ -1,7 +1,7 @@
 
 add_library(Controller STATIC
-        loadFile.cpp
-        ../../include/controller/loadFile.h
+        AssetImporter.cpp
+        ../../include/controller/AssetImporter.h
         ../../include/controller/SceneController.h
         ../../include/controller/Engine.h
         SceneController.cpp

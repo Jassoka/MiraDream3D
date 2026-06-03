@@ -28,7 +28,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Unit test for the gtest_json_output module."""
+"""Unit tests for the gtest_json_output module."""
 
 import datetime
 import errno
@@ -620,16 +620,16 @@ SUPPORTS_TYPED_TESTS = (
 
 
 class GTestJsonOutputUnitTest(gtest_test_utils.TestCase):
-  """Unit test for Google Test's JSON output functionality."""
+  """Unit tests for Google Test's JSON output functionality."""
 
-  # This test currently breaks on platforms that do not support typed and
+  # This tests currently breaks on platforms that do not support typed and
   # type-parameterized tests, so we don't run it under them.
   if SUPPORTS_TYPED_TESTS:
 
     def testNonEmptyJsonOutput(self):
       """Verifies JSON output for a Google Test binary with non-empty output.
 
-      Runs a test program that generates a non-empty JSON output, and
+      Runs a tests program that generates a non-empty JSON output, and
       tests that the JSON output is expected.
       """
       self._TestJsonOutput(GTEST_PROGRAM_NAME, EXPECTED_NON_EMPTY, 1)
@@ -637,7 +637,7 @@ class GTestJsonOutputUnitTest(gtest_test_utils.TestCase):
   def testNoTestJsonOutput(self):
     """Verifies JSON output for a Google Test binary without actual tests.
 
-    Runs a test program that generates an JSON output for a binary with no
+    Runs a tests program that generates an JSON output for a binary with no
     tests, and tests that the JSON output is expected.
     """
 
@@ -646,7 +646,7 @@ class GTestJsonOutputUnitTest(gtest_test_utils.TestCase):
   def testTimestampValue(self):
     """Checks whether the timestamp attribute in the JSON output is valid.
 
-    Runs a test program that generates an empty JSON output, and checks if
+    Runs a tests program that generates an empty JSON output, and checks if
     the timestamp attribute in the testsuites tag is valid.
     """
     actual = self._GetJsonOutput('gtest_no_test_unittest', [], 0)
@@ -740,7 +740,7 @@ class GTestJsonOutputUnitTest(gtest_test_utils.TestCase):
   def testFilteredTestJsonOutput(self):
     """Verifies JSON output when a filter is applied.
 
-    Runs a test program that executes only some tests and verifies that
+    Runs a tests program that executes only some tests and verifies that
     non-selected tests do not show up in the JSON output.
     """
 

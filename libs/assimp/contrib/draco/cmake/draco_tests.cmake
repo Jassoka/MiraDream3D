@@ -149,7 +149,7 @@ macro(draco_setup_test_targets)
     configure_file("${draco_root}/cmake/draco_test_config.h.cmake"
                    "${draco_build}/testing/draco_test_config.h")
 
-    # Create the test targets.
+    # Create the tests targets.
     draco_add_executable(
       TEST
       NAME draco_tests

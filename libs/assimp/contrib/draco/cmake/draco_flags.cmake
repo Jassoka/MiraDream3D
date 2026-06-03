@@ -91,7 +91,7 @@ macro(draco_test_cxx_flag)
   # quite confusing.
   set(CMAKE_REQUIRED_QUIET TRUE)
 
-  # Run the actual compile test.
+  # Run the actual compile tests.
   unset(draco_all_cxx_flags_pass CACHE)
   message("--- Running combined CXX flags test, flags: ${all_cxx_flags}")
 
@@ -153,7 +153,7 @@ macro(draco_test_cxx_flag)
 endmacro()
 
 # Tests executable linker flags stored in list specified by FLAG_LIST_VAR_NAME,
-# adds flags to $DRACO_EXE_LINKER_FLAGS when test passes. Terminates
+# adds flags to $DRACO_EXE_LINKER_FLAGS when tests passes. Terminates
 # configuration when flag check fails. draco_set_cxx_flags() must be called
 # before calling this macro because it assumes $DRACO_CXX_FLAGS contains only
 # valid CXX flags.
@@ -179,7 +179,7 @@ macro(draco_test_exe_linker_flag)
   endif()
 
   # Tests of $DRACO_CXX_FLAGS have already passed. Include them with the linker
-  # test.
+  # tests.
   draco_set_and_stringify(DEST CMAKE_REQUIRED_FLAGS SOURCE_VARS DRACO_CXX_FLAGS)
 
   # Cache the global exe linker flags.
@@ -264,7 +264,7 @@ endmacro()
 # configuration and reports the error when any flags cause the build to fail.
 #
 # Note: draco_test_exe_linker_flag() does the real work of setting the flags and
-# running the test compile commands.
+# running the tests compile commands.
 macro(draco_set_exe_linker_flags)
   unset(linker_flag_lists)
 

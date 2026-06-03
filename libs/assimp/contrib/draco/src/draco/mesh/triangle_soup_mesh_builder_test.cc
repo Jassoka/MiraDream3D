@@ -212,7 +212,7 @@ TEST_F(TriangleSoupMeshBuilderTest, TestPerFaceAttribs) {
 }
 
 TEST_F(TriangleSoupMeshBuilderTest, PropagatesAttributeUniqueIds) {
-  // This test verifies that TriangleSoupMeshBuilder correctly applies
+  // This tests verifies that TriangleSoupMeshBuilder correctly applies
   // unique IDs to attributes.
   TriangleSoupMeshBuilder mb;
   mb.Start(1);
@@ -255,7 +255,7 @@ TEST_F(TriangleSoupMeshBuilderTest, NormalizedColor) {
       Vector4f(0.25f, 0.0f, 1.f, 1.f).data()));
 
   std::unique_ptr<Mesh> mesh = mb.Finalize();
-  ASSERT_NE(mesh, nullptr) << "Failed to build the test mesh.";
+  ASSERT_NE(mesh, nullptr) << "Failed to build the tests mesh.";
 
   EXPECT_EQ(mesh->num_points(), 4) << "Unexpected number of vertices.";
   EXPECT_EQ(mesh->num_faces(), 2) << "Unexpected number of faces.";

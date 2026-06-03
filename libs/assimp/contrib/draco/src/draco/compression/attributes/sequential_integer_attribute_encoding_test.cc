@@ -26,7 +26,7 @@ class SequentialIntegerAttributeEncodingTest : public ::testing::Test {
 };
 
 TEST_F(SequentialIntegerAttributeEncodingTest, DoesCompress) {
-  // This test verifies that IntegerEncoding encodes and decodes the given data.
+  // This tests verifies that IntegerEncoding encodes and decodes the given data.
   const std::vector<int32_t> values{1,   8,  7,  5, 5,   5, 9,
                                     155, -6, -9, 9, 125, 1, 0};
   PointAttribute pa;

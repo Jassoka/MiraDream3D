@@ -16,7 +16,7 @@
 """Tests installations of the Draco library.
 
 Builds the library in shared and static configurations on the current host
-system, and then confirms that a simple test application can link in both
+system, and then confirms that a simple tests application can link in both
 configurations.
 """
 
@@ -48,7 +48,7 @@ ENABLE_TRANSCODER = False
 # The Draco tree that this script uses.
 DRACO_SOURCES_PATH = os.path.abspath(os.path.join('..', '..', '..', '..'))
 
-# Path to this script and the rest of the test project files.
+# Path to this script and the rest of the tests project files.
 TEST_SOURCES_PATH = os.path.dirname(os.path.abspath(__file__))
 
 # The Draco build directories.
@@ -69,11 +69,11 @@ DRACO_SHARED_INSTALL_LIB_PATH = os.path.join(DRACO_SHARED_INSTALL_PATH, 'lib')
 # build jobs.
 NUM_PROCESSES = multiprocessing.cpu_count() - 1
 
-# The test project build directories.
+# The tests project build directories.
 TEST_SHARED_BUILD_PATH = os.path.join(TEST_SOURCES_PATH, '_test_build_shared')
 TEST_STATIC_BUILD_PATH = os.path.join(TEST_SOURCES_PATH, '_test_build_static')
 
-# The test project install directories.
+# The tests project install directories.
 TEST_SHARED_INSTALL_PATH = os.path.join(TEST_SOURCES_PATH,
                                         '_test_install_shared')
 TEST_STATIC_INSTALL_PATH = os.path.join(TEST_SOURCES_PATH,
@@ -164,7 +164,7 @@ def run_process_and_capture_output(cmd, env=None):
 
 
 def create_output_directories():
-  """Creates the build output directores for the test."""
+  """Creates the build output directores for the tests."""
   pathlib.Path(DRACO_SHARED_BUILD_PATH).mkdir(parents=True, exist_ok=True)
   pathlib.Path(DRACO_STATIC_BUILD_PATH).mkdir(parents=True, exist_ok=True)
   pathlib.Path(TEST_SHARED_BUILD_PATH).mkdir(parents=True, exist_ok=True)
@@ -172,7 +172,7 @@ def create_output_directories():
 
 
 def cleanup():
-  """Removes the build output directories from the test."""
+  """Removes the build output directories from the tests."""
   shutil.rmtree(DRACO_SHARED_BUILD_PATH)
   shutil.rmtree(DRACO_STATIC_BUILD_PATH)
   shutil.rmtree(DRACO_SHARED_INSTALL_PATH)
@@ -371,10 +371,10 @@ def build_and_install_draco():
 
 
 def build_test_project():
-  """Builds the test application in shared and static configurations."""
+  """Builds the tests application in shared and static configurations."""
   orig_dir = os.getcwd()
 
-  # Configure the test project against draco shared and build it.
+  # Configure the tests project against draco shared and build it.
   os.chdir(TEST_SHARED_BUILD_PATH)
   cmake_args = []
   cmake_args.append(f'-DCMAKE_INSTALL_PREFIX={TEST_SHARED_INSTALL_PATH}')
@@ -384,7 +384,7 @@ def build_test_project():
   cmake_build(cmake_args=['--target install'])
   run_install_check(TEST_SHARED_INSTALL_PATH)
 
-  # Configure the test project against draco static and build it.
+  # Configure the tests project against draco static and build it.
   os.chdir(TEST_STATIC_BUILD_PATH)
   cmake_args = []
   cmake_args.append(f'-DCMAKE_INSTALL_PREFIX={TEST_STATIC_INSTALL_PATH}')

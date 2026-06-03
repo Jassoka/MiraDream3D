@@ -25,7 +25,7 @@ TEST(DracoTranscoderTest, DefaultDracoCompression) {
   const std::string input_name = "sphere.gltf";
   const std::string input_filename = draco::GetTestFileFullPath(input_name);
   const std::string output_filename =
-      draco::GetTestTempFileFullPath("test.gltf");
+      draco::GetTestTempFileFullPath("tests.gltf");
 
   const draco::DracoTranscodingOptions options;
   DRACO_ASSIGN_OR_ASSERT(std::unique_ptr<draco::DracoTranscoder> dt,
@@ -37,7 +37,7 @@ TEST(DracoTranscoderTest, DefaultDracoCompression) {
   DRACO_ASSERT_OK(dt->Transcode(file_options));
 
   const std::string output_bin_filename =
-      draco::GetTestTempFileFullPath("test.bin");
+      draco::GetTestTempFileFullPath("tests.bin");
   const size_t output_bin_size = draco::GetFileSize(output_bin_filename);
   ASSERT_GT(output_bin_size, 0);
 }
@@ -47,7 +47,7 @@ TEST(DracoTranscoderTest, TestBinName) {
   const std::string input_name = "sphere.gltf";
   const std::string input_filename = draco::GetTestFileFullPath(input_name);
   const std::string output_filename =
-      draco::GetTestTempFileFullPath("test.gltf");
+      draco::GetTestTempFileFullPath("tests.gltf");
   const std::string output_bin_filename =
       draco::GetTestTempFileFullPath("different_name.bin");
 
@@ -70,7 +70,7 @@ TEST(DracoTranscoderTest, TestResourceDirName) {
   const std::string input_name = "sphere.gltf";
   const std::string input_filename = draco::GetTestFileFullPath(input_name);
   const std::string output_filename =
-      draco::GetTestTempFileFullPath("test.gltf");
+      draco::GetTestTempFileFullPath("tests.gltf");
   const std::string output_bin_filename =
       draco::GetTestTempFileFullPath("another_name.bin");
   const std::string output_resource_directory =
@@ -124,7 +124,7 @@ TEST(DracoTranscoderTest, SimpleGlbInput) {
   const std::string input_name = "Box/glTF_Binary/Box.glb";
   const std::string input_filename = draco::GetTestFileFullPath(input_name);
   const std::string output_filename =
-      draco::GetTestTempFileFullPath("test.gltf");
+      draco::GetTestTempFileFullPath("tests.gltf");
 
   const draco::DracoTranscodingOptions options;
   DRACO_ASSIGN_OR_ASSERT(std::unique_ptr<draco::DracoTranscoder> dt,
@@ -136,12 +136,12 @@ TEST(DracoTranscoderTest, SimpleGlbInput) {
   DRACO_ASSERT_OK(dt->Transcode(file_options));
 
   const std::string output_bin_filename =
-      draco::GetTestTempFileFullPath("test.bin");
+      draco::GetTestTempFileFullPath("tests.bin");
   const size_t output_bin_size = draco::GetFileSize(output_bin_filename);
   ASSERT_GT(output_bin_size, 0);
 }
 
-// Simple test to check glb input and setting smaller position quantizations
+// Simple tests to check glb input and setting smaller position quantizations
 // outputs a smaller file overall.
 TEST(DracoTranscoderTest, TestPositionQuantization) {
   const std::string input_name =

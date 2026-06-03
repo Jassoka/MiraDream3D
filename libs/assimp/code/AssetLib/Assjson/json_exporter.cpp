@@ -213,7 +213,7 @@ private:
             stream << "0.0";
             return stream;
         }
-        // f!=f is the most reliable test for NaNs that I know of
+        // f!=f is the most reliable tests for NaNs that I know of
         else if (f != f) {
             if (flags & Flag_WriteSpecialFloats) {
                 stream << "\"NaN\"";

@@ -109,7 +109,7 @@ struct CompareVerticesAlmostEqual {
             return false;
         }
 
-        // We just test the other attributes even if they're not present in the mesh.
+        // We just tests the other attributes even if they're not present in the mesh.
         // In this case they're initialized to 0 so the comparison succeeds.
         // By this method the non-present attributes are effectively ignored in the comparison.
 

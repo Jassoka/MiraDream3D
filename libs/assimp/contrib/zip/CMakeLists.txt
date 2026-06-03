@@ -49,7 +49,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
-# test
+# tests
 if (NOT CMAKE_DISABLE_TESTING)
   enable_testing()
   add_subdirectory(test)

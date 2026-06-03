@@ -60,7 +60,7 @@ static unsigned int foo() {
 
 // ------------------------------------------------------------------------------------------------
 TEST_F(VTAdjacencyTest, largeRandomDataSet) {
-    // build a test mesh with randomized input data
+    // build a tests mesh with randomized input data
     // *******************************************************************************
     aiMesh mesh;
 
@@ -87,7 +87,7 @@ TEST_F(VTAdjacencyTest, largeRandomDataSet) {
 // ------------------------------------------------------------------------------------------------
 TEST_F(VTAdjacencyTest, smallDataSet) {
 
-    // build a test mesh - this one is extremely small
+    // build a tests mesh - this one is extremely small
     // *******************************************************************************
     aiMesh mesh;
 
@@ -119,7 +119,7 @@ TEST_F(VTAdjacencyTest, smallDataSet) {
 
 // ------------------------------------------------------------------------------------------------
 TEST_F(VTAdjacencyTest, unreferencedVerticesSet) {
-    // build a test mesh which does not reference all vertices
+    // build a tests mesh which does not reference all vertices
     // *******************************************************************************
     aiMesh mesh;
 

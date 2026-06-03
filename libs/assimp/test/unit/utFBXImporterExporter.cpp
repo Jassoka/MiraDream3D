@@ -168,7 +168,7 @@ TEST_F(utFBXImporterExporter, importCubesComplexTransform) {
 
 TEST_F(utFBXImporterExporter, importCloseToIdentityTransforms) {
     Assimp::Importer importer;
-    // This was asserting in FBXConverter.cpp because the transforms appeared to be the identity by one test, but not by another.
+    // This was asserting in FBXConverter.cpp because the transforms appeared to be the identity by one tests, but not by another.
     // This asset should now load successfully.
     const aiScene *scene = importer.ReadFile(ASSIMP_TEST_MODELS_DIR "/FBX/close_to_identity_transforms.fbx", aiProcess_ValidateDataStructure);
     ASSERT_TRUE(scene);

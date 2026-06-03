@@ -36,7 +36,7 @@ endmacro()
 # cmake-format: off
 #   - OUTPUT_NAME: Override output file basename. Target basename defaults to
 #     NAME.
-#   - TEST: Flag. Presence means treat executable as a test.
+#   - TEST: Flag. Presence means treat executable as a tests.
 #   - DEFINES: List of preprocessor macro definitions.
 #   - INCLUDES: list of include directories for the target.
 #   - COMPILE_FLAGS: list of compiler flags for the target.
@@ -163,7 +163,7 @@ macro(draco_add_executable)
 
   if(exe_LIB_DEPS)
     if(CMAKE_CXX_COMPILER_ID MATCHES "^Clang|^GNU")
-      # Third party dependencies can introduce dependencies on system and test
+      # Third party dependencies can introduce dependencies on system and tests
       # libraries. Since the target created here is an executable, and CMake
       # does not provide a method of controlling order of link dependencies,
       # wrap all of the dependencies of this target in start/end group flags to
@@ -192,7 +192,7 @@ endmacro()
 #     NAME. OUTPUT_NAME is ignored when BUILD_SHARED_LIBS is enabled and CMake
 #     is generating a build for which MSVC is true. This is to avoid output
 #     basename collisions with DLL import libraries.
-#   - TEST: Flag. Presence means treat library as a test.
+#   - TEST: Flag. Presence means treat library as a tests.
 #   - DEFINES: List of preprocessor macro definitions.
 #   - INCLUDES: list of include directories for the target.
 #   - COMPILE_FLAGS: list of compiler flags for the target.

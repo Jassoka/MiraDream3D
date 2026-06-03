@@ -228,7 +228,7 @@ class EncodeTest : public ::testing::Test {
 };
 
 TEST_F(EncodeTest, TestExpertEncoderQuantization) {
-  // This test verifies that the expert encoder can quantize individual
+  // This tests verifies that the expert encoder can quantize individual
   // attributes even if they have the same type.
   auto mesh = CreateTestMesh();
   ASSERT_NE(mesh, nullptr);
@@ -244,7 +244,7 @@ TEST_F(EncodeTest, TestExpertEncoderQuantization) {
 }
 
 TEST_F(EncodeTest, TestEncoderQuantization) {
-  // This test verifies that Encoder applies the same quantization to all
+  // This tests verifies that Encoder applies the same quantization to all
   // attributes of the same type.
   auto mesh = CreateTestMesh();
   ASSERT_NE(mesh, nullptr);
@@ -259,7 +259,7 @@ TEST_F(EncodeTest, TestEncoderQuantization) {
 }
 
 TEST_F(EncodeTest, TestLinesObj) {
-  // This test verifies that Encoder can encode file that contains only line
+  // This tests verifies that Encoder can encode file that contains only line
   // segments (that are ignored).
   std::unique_ptr<draco::Mesh> mesh(
       draco::ReadMeshFromTestFile("test_lines.obj"));
@@ -277,7 +277,7 @@ TEST_F(EncodeTest, TestLinesObj) {
 }
 
 TEST_F(EncodeTest, TestQuantizedInfinity) {
-  // This test verifies that Encoder fails to encode point cloud when requesting
+  // This tests verifies that Encoder fails to encode point cloud when requesting
   // quantization of attribute that contains infinity values.
   std::unique_ptr<draco::PointCloud> pc(
       draco::ReadPointCloudFromTestFile("float_inf_point_cloud.ply"));
@@ -303,7 +303,7 @@ TEST_F(EncodeTest, TestQuantizedInfinity) {
 }
 
 TEST_F(EncodeTest, TestUnquantizedInfinity) {
-  // This test verifies that Encoder can successfully encode point cloud when
+  // This tests verifies that Encoder can successfully encode point cloud when
   // not requesting quantization of attribute that contains infinity values.
   std::unique_ptr<draco::PointCloud> pc(
       draco::ReadPointCloudFromTestFile("float_inf_point_cloud.ply"));
@@ -318,7 +318,7 @@ TEST_F(EncodeTest, TestUnquantizedInfinity) {
 }
 
 TEST_F(EncodeTest, TestQuantizedAndUnquantizedAttributes) {
-  // This test verifies that Encoder can successfully encode point cloud with
+  // This tests verifies that Encoder can successfully encode point cloud with
   // two float attribiutes - one quantized and another unquantized. The encoder
   // defaults to sequential encoding in this case.
   std::unique_ptr<draco::PointCloud> pc(
@@ -333,7 +333,7 @@ TEST_F(EncodeTest, TestQuantizedAndUnquantizedAttributes) {
 }
 
 TEST_F(EncodeTest, TestKdTreeEncoding) {
-  // This test verifies that the API can successfully encode a point cloud
+  // This tests verifies that the API can successfully encode a point cloud
   // defined by several attributes using the kd tree method.
   std::unique_ptr<draco::PointCloud> pc = CreateTestPointCloud();
   ASSERT_NE(pc, nullptr);
@@ -405,7 +405,7 @@ TEST_F(EncodeTest, TestNoPosQuantizationNormalCoding) {
 
 #ifdef DRACO_TRANSCODER_SUPPORTED
 TEST_F(EncodeTest, TestDracoCompressionOptions) {
-  // This test verifies that we can set the encoder's compression options via
+  // This tests verifies that we can set the encoder's compression options via
   // draco::Mesh's compression options.
   const auto mesh = draco::ReadMeshFromTestFile("test_nm.obj");
   ASSERT_NE(mesh, nullptr);
@@ -453,7 +453,7 @@ TEST_F(EncodeTest, TestDracoCompressionOptions) {
 }
 
 TEST_F(EncodeTest, TestDracoCompressionOptionsManualOverride) {
-  // This test verifies that we can use encoder's option to override compression
+  // This tests verifies that we can use encoder's option to override compression
   // options provided in draco::Mesh's compression options.
   const auto mesh = draco::ReadMeshFromTestFile("test_nm.obj");
   ASSERT_NE(mesh, nullptr);

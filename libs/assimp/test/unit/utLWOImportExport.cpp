@@ -56,7 +56,7 @@ public:
         EXPECT_NE(nullptr, scene->mMeshes[0]);
         EXPECT_EQ(24u, scene->mMeshes[0]->mNumVertices);
 
-        //This test model is using n-gons, so 6 faces instead of 12 tris
+        //This tests model is using n-gons, so 6 faces instead of 12 tris
         EXPECT_EQ(6u, scene->mMeshes[0]->mNumFaces);
         EXPECT_EQ(aiPrimitiveType_POLYGON, scene->mMeshes[0]->mPrimitiveTypes);
         EXPECT_EQ(true, scene->mMeshes[0]->HasTextureCoords(0));

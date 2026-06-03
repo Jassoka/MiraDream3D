@@ -230,7 +230,7 @@ dsNiceMatch equ 136+zlib1222add
 LastMatchGood:
 
 ;;; chainlen is decremented once beforehand so that the function can
-;;; use the sign flag instead of the zero flag for the exit test.
+;;; use the sign flag instead of the zero flag for the exit tests.
 ;;; It is then shifted into the high word, to make room for the wmask
 ;;; value, which it will always accompany.
 

@@ -96,7 +96,7 @@ void PretransformVerticesTest::SetUp() {
         mScene->mMaterials[i] = new aiMaterial();
     }
 
-    // add 25 test meshes
+    // add 25 tests meshes
     mScene->mMeshes = new aiMesh *[mScene->mNumMeshes = 25];
     for (unsigned int i = 0; i < 25; ++i) {
         aiMesh *mesh = mScene->mMeshes[i] = new aiMesh();

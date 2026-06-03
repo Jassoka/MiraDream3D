@@ -73,7 +73,7 @@ static constexpr unsigned int BufferSize = 4096;
 
 // ---------------------------------------------------------------------------------
 /// @brief  Returns true, if the character is upper-case.
-/// @param  in  The character to test.
+/// @param  in  The character to tests.
 /// @return true if upper-case, false if not.
 template <class char_t>
 AI_FORCE_INLINE bool IsUpper(char_t in) {
@@ -82,7 +82,7 @@ AI_FORCE_INLINE bool IsUpper(char_t in) {
 
 // ---------------------------------------------------------------------------------
 /// @brief  Returns true, if the character is lower-case.
-/// @param  in  The character to test.
+/// @param  in  The character to tests.
 /// @return true if lower-case, false if not.
 template <class char_t>
 AI_FORCE_INLINE bool IsLower(char_t in) {
@@ -91,7 +91,7 @@ AI_FORCE_INLINE bool IsLower(char_t in) {
 
 // ---------------------------------------------------------------------------------
 /// @brief  Returns true, if the character is a space.
-/// @param  in  The character to test.
+/// @param  in  The character to tests.
 /// @return true if a space, false if not.
 template <class char_t>
 AI_FORCE_INLINE bool IsSpace(char_t in) {
@@ -100,7 +100,7 @@ AI_FORCE_INLINE bool IsSpace(char_t in) {
 
 // ---------------------------------------------------------------------------------
 /// @brief  Returns true, if the character is a line end.
-/// @param  in  The character to test.
+/// @param  in  The character to tests.
 /// @return true if a line end, false if not.
 template <class char_t>
 AI_FORCE_INLINE bool IsLineEnd(char_t in) {
@@ -109,7 +109,7 @@ AI_FORCE_INLINE bool IsLineEnd(char_t in) {
 
 // ---------------------------------------------------------------------------------
 /// @brief  Returns true, if the character is a space or a line end.
-/// @param  in  The character to test.
+/// @param  in  The character to tests.
 /// @return true if a space or a line end, false if not.
 template <class char_t>
 AI_FORCE_INLINE bool IsSpaceOrNewLine(char_t in) {
@@ -173,7 +173,7 @@ AI_FORCE_INLINE bool SkipLine(const char_t **inout, const char_t *end) {
 
 // ---------------------------------------------------------------------------------
 /// @brief  Returns true, if the character is a space or a line end.
-/// @param  in  The character to test.
+/// @param  in  The character to tests.
 /// @param  out The buffer with the skipped data.
 /// @return true if valid.
 template <class char_t>
@@ -187,7 +187,7 @@ AI_FORCE_INLINE bool SkipSpacesAndLineEnd(const char_t *in, const char_t **out, 
 
 // ---------------------------------------------------------------------------------
 /// @brief  Returns true, if the character is a space or a line end.
-/// @param  in  The character to test.
+/// @param  in  The character to tests.
 /// @param  out The buffer with the skipped data.
 /// @return true if valid.
 template <class char_t>
@@ -222,7 +222,7 @@ AI_FORCE_INLINE bool GetNextLine(const char_t *&buffer, char_t out[BufferSize]) 
 
 // ---------------------------------------------------------------------------------
 /// @brief  Returns true, if the character is a number.
-/// @param  in  The character to test.
+/// @param  in  The character to tests.
 /// @return true if a number, false if not.
 template <class char_t>
 AI_FORCE_INLINE bool IsNumeric(char_t in) {

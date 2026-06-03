@@ -73,7 +73,7 @@ public:
         const aiScene *scene = importer.ReadFile(ASSIMP_TEST_MODELS_DIR "/3MF/box.3mf", 0);
 
         Assimp::Exporter exporter;
-        return AI_SUCCESS == exporter.Export(scene, "3mf", "test.3mf");
+        return AI_SUCCESS == exporter.Export(scene, "3mf", "tests.3mf");
     }
 #endif // ASSIMP_BUILD_NO_EXPORT
 };
@@ -92,7 +92,7 @@ TEST_F(utD3MFImporterExporter, roundtrip3MFtoMemTest) {
     /*EXPECT_TRUE(exporterTest());
 
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile("test.3mf", 0);
+    const aiScene *scene = importer.ReadFile("tests.3mf", 0);
     EXPECT_NE(nullptr, scene));*/
 }
 

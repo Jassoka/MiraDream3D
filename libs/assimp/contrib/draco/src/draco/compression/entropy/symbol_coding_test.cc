@@ -38,7 +38,7 @@ class SymbolCodingTest : public ::testing::Test {
 };
 
 TEST_F(SymbolCodingTest, TestLargeNumbers) {
-  // This test verifies that SymbolCoding successfully encodes an array of large
+  // This tests verifies that SymbolCoding successfully encodes an array of large
   // numbers.
   const uint32_t in[] = {12345678, 1223333, 111, 5};
   const int num_values = sizeof(in) / sizeof(uint32_t);
@@ -57,7 +57,7 @@ TEST_F(SymbolCodingTest, TestLargeNumbers) {
 }
 
 TEST_F(SymbolCodingTest, TestManyNumbers) {
-  // This test verifies that SymbolCoding successfully encodes an array of
+  // This tests verifies that SymbolCoding successfully encodes an array of
   // several numbers that repeat many times.
 
   // Value/frequency pairs.
@@ -91,7 +91,7 @@ TEST_F(SymbolCodingTest, TestManyNumbers) {
 }
 
 TEST_F(SymbolCodingTest, TestEmpty) {
-  // This test verifies that SymbolCoding successfully encodes an empty array.
+  // This tests verifies that SymbolCoding successfully encodes an empty array.
   EncoderBuffer eb;
   ASSERT_TRUE(EncodeSymbols(nullptr, 0, 1, nullptr, &eb));
   DecoderBuffer db;
@@ -101,7 +101,7 @@ TEST_F(SymbolCodingTest, TestEmpty) {
 }
 
 TEST_F(SymbolCodingTest, TestOneSymbol) {
-  // This test verifies that SymbolCoding successfully encodes an a single
+  // This tests verifies that SymbolCoding successfully encodes an a single
   // symbol.
   EncoderBuffer eb;
   const std::vector<uint32_t> in(1200, 0);
@@ -118,7 +118,7 @@ TEST_F(SymbolCodingTest, TestOneSymbol) {
 }
 
 TEST_F(SymbolCodingTest, TestBitLengths) {
-  // This test verifies that SymbolCoding successfully encodes symbols of
+  // This tests verifies that SymbolCoding successfully encodes symbols of
   // various bit lengths
   EncoderBuffer eb;
   std::vector<uint32_t> in;
@@ -141,7 +141,7 @@ TEST_F(SymbolCodingTest, TestBitLengths) {
 }
 
 TEST_F(SymbolCodingTest, TestLargeNumberCondition) {
-  // This test verifies that SymbolCoding successfully encodes large symbols
+  // This tests verifies that SymbolCoding successfully encodes large symbols
   // that are on the boundary between raw scheme and tagged scheme (18 bits).
   EncoderBuffer eb;
   constexpr int num_symbols = 1000000;

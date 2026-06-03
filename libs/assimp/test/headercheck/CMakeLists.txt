@@ -25,7 +25,7 @@ FOREACH( HEADER ${headers} )
 
   SET(TEST_FILE ${CMAKE_CURRENT_BINARY_DIR}/src-generated/${TEST_NAME}.cpp)
 
-  # create test file
+  # create tests file
   configure_file( headercheck.cpp.in ${TEST_FILE} )
   # add library
   add_library( ${TEST_NAME} EXCLUDE_FROM_ALL ${TEST_FILE} )

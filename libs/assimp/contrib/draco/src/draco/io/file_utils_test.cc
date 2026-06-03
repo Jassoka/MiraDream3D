@@ -22,7 +22,7 @@
 namespace {
 
 TEST(FileUtilsTest, SplitsPath) {
-  // Tests that the function SplitPath correctly splits a set of test paths.
+  // Tests that the function SplitPath correctly splits a set of tests paths.
   std::string folder_path, file_name;
   draco::SplitPath("file.x", &folder_path, &file_name);
   ASSERT_EQ(folder_path, ".");

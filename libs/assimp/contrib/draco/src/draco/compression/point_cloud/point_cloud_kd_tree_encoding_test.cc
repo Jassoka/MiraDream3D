@@ -49,7 +49,7 @@ class PointCloudKdTreeEncodingTest : public ::testing::Test {
       // separately, and then we compare all matching coordinates one by one.
       // TODO(ostava): Note that this is not guaranteed to work for quantized
       // point clouds because the order of points may actually change because
-      // of the quantization. The test should be make more robust to handle such
+      // of the quantization. The tests should be make more robust to handle such
       // case.
       std::sort(points_0.begin(), points_0.end());
       std::sort(points_1.begin(), points_1.end());
@@ -120,7 +120,7 @@ TEST_F(PointCloudKdTreeEncodingTest, TestIntKdTreeEncoding) {
   TestKdTreeEncoding(*pc);
 }
 
-// test higher dimensions with more attributes
+// tests higher dimensions with more attributes
 TEST_F(PointCloudKdTreeEncodingTest, TestIntKdTreeEncodingHigherDimension) {
   constexpr int num_points = 120;
   std::vector<std::array<uint32_t, 3>> points3(num_points);

@@ -307,7 +307,7 @@ using void_t = void;
 //
 // Note that this is distinct from is_convertible, which requires this be valid:
 //
-//     To test() {
+//     To tests() {
 //       return declval<From>();
 //     }
 //

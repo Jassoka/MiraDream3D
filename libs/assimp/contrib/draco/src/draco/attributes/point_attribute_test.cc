@@ -24,7 +24,7 @@ class PointAttributeTest : public ::testing::Test {
 };
 
 TEST_F(PointAttributeTest, TestCopy) {
-  // This test verifies that PointAttribute can copy data from another point
+  // This tests verifies that PointAttribute can copy data from another point
   // attribute.
   draco::PointAttribute pa;
   pa.Init(draco::GeometryAttribute::POSITION, 1, draco::DT_INT32, false, 10);

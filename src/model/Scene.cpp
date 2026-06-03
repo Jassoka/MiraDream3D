@@ -1,7 +1,7 @@
 //
 // Created by jassoka on 6/1/26.
 //
-#import "model/Scene.h"
+#include "model/Scene.h"
 
 Scene::Scene():
     mSceneCamera(Camera (
@@ -33,4 +33,9 @@ void Scene::addTexture(Texture &texture) {
 }
 void Scene::addMaterial(Material &material) {
     this->mMaterialList.push_back(material);
+}
+
+const std::vector<Mesh>& Scene::getMeshes() const
+{
+    return mMeshList;
 }

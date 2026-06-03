@@ -66,7 +66,7 @@ TEST_F( IOSystemTest, accessDirectoryStackTest ) {
     EXPECT_FALSE( pImp->PopDirectory() );
     EXPECT_EQ( 0U, pImp->StackSize() );
     EXPECT_FALSE( pImp->PushDirectory( "" ) );
-    std::string path = "test/";
+    std::string path = "tests/";
     EXPECT_TRUE( pImp->PushDirectory( path ) );
     EXPECT_EQ( 1U, pImp->StackSize() );
     EXPECT_EQ( path, pImp->CurrentDirectory() );

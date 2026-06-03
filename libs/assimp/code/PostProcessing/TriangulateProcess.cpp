@@ -204,7 +204,7 @@ void TriangulateProcess::Execute( aiScene* pScene) {
 // ------------------------------------------------------------------------------------------------
 // Triangulates the given mesh.
 bool TriangulateProcess::TriangulateMesh( aiMesh* pMesh) {
-    // Now we have aiMesh::mPrimitiveTypes, so this is only here for test cases
+    // Now we have aiMesh::mPrimitiveTypes, so this is only here for tests cases
     if (!pMesh->mPrimitiveTypes)    {
         bool bNeed = false;
 

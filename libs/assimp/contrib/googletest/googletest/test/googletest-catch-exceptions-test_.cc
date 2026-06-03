@@ -30,7 +30,7 @@
 //
 // Tests for Google Test itself. Tests in this file throw C++ or SEH
 // exceptions, and the output is verified by
-// googletest-catch-exceptions-test.py.
+// googletest-catch-exceptions-tests.py.
 
 #include <stdio.h>   // NOLINT
 #include <stdlib.h>  // For exit().
@@ -132,7 +132,7 @@ class CxxExceptionInConstructorTest : public Test {
 };
 
 TEST_F(CxxExceptionInConstructorTest, ThrowsExceptionInConstructor) {
-  ADD_FAILURE() << "CxxExceptionInConstructorTest test body "
+  ADD_FAILURE() << "CxxExceptionInConstructorTest tests body "
                 << "called unexpectedly.";
 }
 
@@ -176,7 +176,7 @@ class CxxExceptionInSetUpTestSuiteTest : public Test {
 
 TEST_F(CxxExceptionInSetUpTestSuiteTest, ThrowsExceptionInSetUpTestSuite) {
   printf("%s",
-         "CxxExceptionInSetUpTestSuiteTest test body "
+         "CxxExceptionInSetUpTestSuiteTest tests body "
          "called as expected.\n");
 }
 
@@ -215,7 +215,7 @@ class CxxExceptionInSetUpTest : public Test {
 };
 
 TEST_F(CxxExceptionInSetUpTest, ThrowsExceptionInSetUp) {
-  ADD_FAILURE() << "CxxExceptionInSetUpTest test body "
+  ADD_FAILURE() << "CxxExceptionInSetUpTest tests body "
                 << "called unexpectedly.";
 }
 

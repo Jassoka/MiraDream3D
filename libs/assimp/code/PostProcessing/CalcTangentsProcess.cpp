@@ -102,7 +102,7 @@ void CalcTangentsProcess::Execute(aiScene *pScene) {
 // Calculates tangents and bi-tangents for the given mesh
 bool CalcTangentsProcess::ProcessMesh(aiMesh *pMesh, unsigned int meshIndex) {
     // we assume that the mesh is still in the verbose vertex format where each face has its own set
-    // of vertices and no vertices are shared between faces. Sadly I don't know any quick test to
+    // of vertices and no vertices are shared between faces. Sadly I don't know any quick tests to
     // assert() it here.
     // assert( must be verbose, dammit);
 

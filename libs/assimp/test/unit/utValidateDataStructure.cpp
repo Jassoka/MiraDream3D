@@ -70,7 +70,7 @@ void ValidateDataStructureTest::SetUp()
     // setup a dummy scene with a single node
     scene = new aiScene();
     scene->mRootNode = new aiNode();
-    scene->mRootNode->mName.Set("<test>");
+    scene->mRootNode->mName.Set("<tests>");
 
     // add some translation
     scene->mRootNode->mTransformation.a4 = 1.f;
@@ -92,7 +92,7 @@ void ValidateDataStructureTest::TearDown()
 
 // ------------------------------------------------------------------------------------------------
 //Template
-//TEST_F(ScenePreprocessorTest, test)
+//TEST_F(ScenePreprocessorTest, tests)
 //{
 //}
 // TODO Conditions not yet checked:

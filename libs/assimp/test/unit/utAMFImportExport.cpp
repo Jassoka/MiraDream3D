@@ -61,7 +61,7 @@ TEST_F(utAMFImportExport, importAMFFromFileTest) {
 }
 
 
-// TODO: test models-nonbsd/AMF/3_bananas.amf.7z
+// TODO: tests models-nonbsd/AMF/3_bananas.amf.7z
 //       requires uncompressing it in memory and we don't currently have 7z decompressor
 
 

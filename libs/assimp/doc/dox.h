@@ -84,7 +84,7 @@ that you are free to use it in open- or closed-source projects, for commercial o
 as long as you retain the license information and take own responsibility for what you do with it. For details see
 the LICENSE file.
 
-You can find test models for almost all formats in the <assimp_root>/test/models directory. Beware, they're *free*,
+You can find tests models for almost all formats in the <assimp_root>/tests/models directory. Beware, they're *free*,
 but not all of them are *open-source*. If there's an accompanying '<file>\source.txt' file don't forget to read it.
 
 @section main_install Installation
@@ -584,7 +584,7 @@ an index into this array.
 An aiMesh is defined by a series of data channels. The presence of these data channels is defined
 by the contents of the imported file: by default there are only those data channels present in the mesh
 that were also found in the file. The only channels guaranteed to be always present are aiMesh::mVertices
-and aiMesh::mFaces. You can test for the presence of other data by testing the pointers against NULL
+and aiMesh::mFaces. You can tests for the presence of other data by testing the pointers against NULL
 or use the helper functions provided by aiMesh. You may also specify several post processing flags
 at Importer::ReadFile() to let assimp calculate or recalculate additional data channels for you.
 
@@ -669,7 +669,7 @@ Such textures are loaded into an aiTexture structure.
 
 In previous versions, the path from the query for `AI_MATKEY_TEXTURE(textureType, index)` would be
 `*<index>` where `<index>` is the index of the texture in aiScene::mTextures. Now this call will
-return a file path for embedded textures in FBX files. To test if it is an embedded texture use
+return a file path for embedded textures in FBX files. To tests if it is an embedded texture use
 aiScene::GetEmbeddedTexture. If the returned pointer is not null, it is embedded und can be loaded
 from the data structure. If it is null, search for a separate file. Other file types still use the
 old behaviour.<br>
@@ -704,7 +704,7 @@ Each aiMesh refers to one
 material by its index in the array. Due to the vastly diverging definitions and usages of material
 parameters there is no hard definition of a material structure. Instead a material is defined by
 a set of properties accessible by their names. Have a look at assimp/material.h to see what types of
-properties are defined. In this file there are also various functions defined to test for the
+properties are defined. In this file there are also various functions defined to tests for the
 presence of certain properties in a material and retrieve their values.
 
 @section mat_tex Textures
@@ -876,7 +876,7 @@ All material key constants start with 'AI_MATKEY' (it's an ugly macro for histor
     <td>n/a</td>
     <td>Defines the path of the n'th texture on the stack 't', where 'n' is any value >= 0 and 't'
     is one of the #aiTextureType enumerated values. A file path to an external file or an embedded
-    texture. Use aiScene::GetEmbeddedTexture to test if it is embedded for FBX files, in other cases
+    texture. Use aiScene::GetEmbeddedTexture to tests if it is embedded for FBX files, in other cases
     embedded textures start with '*' followed by an index into aiScene::mTextures.</td>
     <td>See the @ref mat_tex section above. Also see @ref textures for a more information about texture retrieval.</td>
   </tr>
@@ -1206,7 +1206,7 @@ for the details.).
 
 Note that these measurements are based on a single run of the importer and each of the post processing steps, so
 a single result set is far away from being significant in a statistic sense. While precision can be improved
-by running the test multiple times, the low accuracy of the timings may render the results useless
+by running the tests multiple times, the low accuracy of the timings may render the results useless
 for smaller files.
 
 A sample report looks like this (some unrelated log messages omitted, entries grouped for clarity):
@@ -1454,7 +1454,7 @@ Just look in OgreImporterMaterial.cpp
 - Load colors in custom materials
 - extend custom and normal material loading
 - fix bone hierarchy bug
-- test everything elaboratly
+- tests everything elaboratly
 - check for non existent animation keys (what happens if a one time not all bones have a key?)
 */
 
@@ -1465,7 +1465,7 @@ Just look in OgreImporterMaterial.cpp
 @section General
 
 Or - how to write your own loaders. It's easy. You just need to implement the #Assimp::BaseImporter class,
-which defines a few abstract methods, register your loader, test it carefully and provide test models for it.
+which defines a few abstract methods, register your loader, tests it carefully and provide tests models for it.
 
 OK, that sounds too easy :-). The whole procedure for a new loader merely looks like this:
 
@@ -1484,7 +1484,7 @@ guarded by a #define
 Wrap the same guard around your .cpp!</li>
 
 <li>Now advance to the <i>(register_new_importers_here)</i> line in the Importer.cpp and register your importer there - just like all the others do.</li>
-<li>Setup a suitable test environment (i.e. use AssimpView or your own application), make sure to enable
+<li>Setup a suitable tests environment (i.e. use AssimpView or your own application), make sure to enable
 the #aiProcess_ValidateDataStructure flag and enable verbose logging. That is, simply call before you import anything:
 @code
 DefaultLogger::create("AssimpLog.txt",Logger::VERBOSE)
@@ -1502,8 +1502,8 @@ Make sure that your loader compiles against all build configurations on all supp
 like Windows and Linux ( 32 bit and 64 bit ).
 </li>
 <li>
-Provide some _free_ test models in <tt>&lt;root&gt;/test/models/&lt;FormatName&gt;/</tt> and credit their authors.
-Test files for a file format shouldn't be too large (<i>~500 KiB in total</i>), and not too repetitive. Try to cover all format features with test data.
+Provide some _free_ tests models in <tt>&lt;root&gt;/tests/models/&lt;FormatName&gt;/</tt> and credit their authors.
+Test files for a file format shouldn't be too large (<i>~500 KiB in total</i>), and not too repetitive. Try to cover all format features with tests data.
 </li>
 <li>
 Done! Please, share your loader that everyone can profit from it!

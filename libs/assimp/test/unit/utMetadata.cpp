@@ -168,16 +168,16 @@ TEST_F( utMetadata, get_set_string_Test ) {
 
     unsigned int index( 0 );
     bool success( false );
-    const std::string key = "test";
-    success = m_data->Set( index, key, aiString( std::string( "test" ) ) );
+    const std::string key = "tests";
+    success = m_data->Set( index, key, aiString( std::string( "tests" ) ) );
     EXPECT_TRUE( success );
 
-    success = m_data->Set( index+10, key, aiString( std::string( "test" ) ) );
+    success = m_data->Set( index+10, key, aiString( std::string( "tests" ) ) );
     EXPECT_FALSE( success );
 
     aiString result;
     success = m_data->Get( key, result );
-    EXPECT_EQ( aiString( std::string( "test" ) ), result );
+    EXPECT_EQ( aiString( std::string( "tests" ) ), result );
     EXPECT_TRUE( success );
 
     success = m_data->Get( "bla", result );
@@ -189,7 +189,7 @@ TEST_F( utMetadata, get_set_aiVector3D_Test ) {
 
     unsigned int index( 0 );
     bool success( false );
-    const std::string key = "test";
+    const std::string key = "tests";
     aiVector3D vec( 1, 2, 3 );
 
     success = m_data->Set( index, key, vec );
@@ -214,7 +214,7 @@ TEST_F( utMetadata, copy_test ) {
     m_data->Set( 3, "float", fv );
     double dv = 2.0;
     m_data->Set( 4, "double", dv );
-    const aiString strVal( std::string( "test" ) );
+    const aiString strVal( std::string( "tests" ) );
     m_data->Set( 5, "aiString", strVal );
     aiVector3D vecVal( 1, 2, 3 );
     m_data->Set( 6, "aiVector3D", vecVal );
@@ -227,14 +227,14 @@ TEST_F( utMetadata, copy_test ) {
     aiMetadata copy(*m_data);
     EXPECT_EQ( 10u, copy.mNumProperties );
 
-    // bool test
+    // bool tests
     {
         bool v = true;
         EXPECT_TRUE( copy.Get( "bool", v ) );
         EXPECT_EQ( bv, v );
     }
 
-    // int32_t test
+    // int32_t tests
     {
         int32_t v = 127;
         bool ok = copy.Get( "int32", v );
@@ -242,7 +242,7 @@ TEST_F( utMetadata, copy_test ) {
         EXPECT_EQ( i32v, v );
     }
 
-    // uint32_t test
+    // uint32_t tests
     {
         uint32_t v = 0;
         bool ok = copy.Get("uint32_t", v);
@@ -250,7 +250,7 @@ TEST_F( utMetadata, copy_test ) {
         EXPECT_EQ( ui32, v );
     }
 
-    // int64_t test
+    // int64_t tests
     {
         int64_t v = -1;
         bool ok = copy.Get("int64_t", v);
@@ -258,7 +258,7 @@ TEST_F( utMetadata, copy_test ) {
         EXPECT_EQ( i64, v );
     }
 
-    // uint64_t test
+    // uint64_t tests
     {
         uint64_t v = 255;
         bool ok = copy.Get( "uint64", v );
@@ -266,35 +266,35 @@ TEST_F( utMetadata, copy_test ) {
         EXPECT_EQ( ui64v, v );
     }
 
-    // float test
+    // float tests
     {
         float v = -9.9999f;
         EXPECT_TRUE( copy.Get( "float", v ) );
         EXPECT_EQ( fv, v );
     }
 
-    // double test
+    // double tests
     {
         double v = -99.99;
         EXPECT_TRUE( copy.Get( "double", v ) );
         EXPECT_EQ( dv, v );
     }
 
-    // string test
+    // string tests
     {
         aiString v;
         EXPECT_TRUE( copy.Get( "aiString", v ) );
         EXPECT_EQ( strVal, v );
     }
 
-    // vector test
+    // vector tests
     {
         aiVector3D v;
         EXPECT_TRUE( copy.Get( "aiVector3D", v ) );
         EXPECT_EQ( vecVal, v );
     }
 
-    // metadata test
+    // metadata tests
     {
         aiMetadata v;
         EXPECT_TRUE( copy.Get( "aiMetadata", v ) );

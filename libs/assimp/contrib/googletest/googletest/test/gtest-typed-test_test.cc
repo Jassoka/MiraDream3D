@@ -42,7 +42,7 @@ using testing::Test;
 
 // Used for testing that SetUpTestSuite()/TearDownTestSuite(), fixture
 // ctor/dtor, and SetUp()/TearDown() work correctly in typed tests and
-// type-parameterized test.
+// type-parameterized tests.
 template <typename T>
 class CommonTest : public Test {
   // For some technical reason, SetUpTestSuite() and TearDownTestSuite()
@@ -110,8 +110,8 @@ TYPED_TEST(CommonTest, ValuesAreCorrect) {
   EXPECT_EQ(2, this->value_);
 }
 
-// The second test makes sure shared_ is not deleted after the first
-// test.
+// The second tests makes sure shared_ is not deleted after the first
+// tests.
 TYPED_TEST(CommonTest, ValuesAreStillCorrect) {
   // Static members of the fixture class template can also be visited
   // via 'this'.
@@ -140,11 +140,11 @@ class TypedTest2 : public Test {};
 // Types<...> type list.
 TYPED_TEST_SUITE(TypedTest2, Types<int>);
 
-// This also verifies that tests from different typed test cases can
+// This also verifies that tests from different typed tests cases can
 // share the same name.
 TYPED_TEST(TypedTest2, A) {}
 
-// Tests that a typed test case can be defined in a namespace.
+// Tests that a typed tests case can be defined in a namespace.
 
 namespace library1 {
 
@@ -233,17 +233,17 @@ TEST_F(TypedTestSuitePStateDeathTest, DetectsDuplicates) {
 TEST_F(TypedTestSuitePStateDeathTest, DetectsExtraTest) {
   EXPECT_DEATH_IF_SUPPORTED(
       state_.VerifyRegisteredTestNames("Suite", "foo.cc", 1, "A, B, C, D"),
-      "foo\\.cc.1.?: No test named D can be found in this test suite\\.");
+      "foo\\.cc.1.?: No tests named D can be found in this tests suite\\.");
 }
 
 TEST_F(TypedTestSuitePStateDeathTest, DetectsMissedTest) {
   EXPECT_DEATH_IF_SUPPORTED(
       state_.VerifyRegisteredTestNames("Suite", "foo.cc", 1, "A, C"),
-      "foo\\.cc.1.?: You forgot to list test B\\.");
+      "foo\\.cc.1.?: You forgot to list tests B\\.");
 }
 
-// Tests that defining a test for a parameterized test case generates
-// a run-time error if the test case has been registered.
+// Tests that defining a tests for a parameterized tests case generates
+// a run-time error if the tests case has been registered.
 TEST_F(TypedTestSuitePStateDeathTest, DetectsTestAfterRegistration) {
   state_.VerifyRegisteredTestNames("Suite", "foo.cc", 1, "A, B, C");
   EXPECT_DEATH_IF_SUPPORTED(
@@ -270,8 +270,8 @@ TYPED_TEST_P(DerivedTest, ValuesAreCorrect) {
   EXPECT_EQ(2, this->value_);
 }
 
-// The second test makes sure shared_ is not deleted after the first
-// test.
+// The second tests makes sure shared_ is not deleted after the first
+// tests.
 TYPED_TEST_P(DerivedTest, ValuesAreStillCorrect) {
   // Static members of the fixture class template can also be visited
   // via 'this'.
@@ -353,7 +353,7 @@ class TypedTestP2 : public Test {};
 TYPED_TEST_SUITE_P(TypedTestP2);
 
 // This also verifies that tests from different type-parameterized
-// test cases can share the same name.
+// tests cases can share the same name.
 TYPED_TEST_P(TypedTestP2, A) {}
 
 REGISTER_TYPED_TEST_SUITE_P(TypedTestP2, A);
@@ -368,17 +368,17 @@ IntBeforeRegisterTypedTestSuiteP before = 0;
 INSTANTIATE_TYPED_TEST_SUITE_P(Int, TypedTestP1, int);
 INSTANTIATE_TYPED_TEST_SUITE_P(Int, TypedTestP2, Types<int>);
 
-// Tests that the same type-parameterized test case can be
+// Tests that the same type-parameterized tests case can be
 // instantiated more than once in the same translation unit.
 INSTANTIATE_TYPED_TEST_SUITE_P(Double, TypedTestP2, Types<double>);
 
-// Tests that the same type-parameterized test case can be
+// Tests that the same type-parameterized tests case can be
 // instantiated in different translation units linked together.
 // (ContainerTest is also instantiated in gtest-typed-test_test.cc.)
 typedef Types<std::vector<double>, std::set<char> > MyContainers;
 INSTANTIATE_TYPED_TEST_SUITE_P(My, ContainerTest, MyContainers);
 
-// Tests that a type-parameterized test case can be defined and
+// Tests that a type-parameterized tests case can be defined and
 // instantiated in a namespace.
 
 namespace library2 {
@@ -401,7 +401,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(My, NumericTest, NumericTypes);
 static const char* GetTestName() {
   return testing::UnitTest::GetInstance()->current_test_info()->name();
 }
-// Test the stripping of space from test names
+// Test the stripping of space from tests names
 template <typename T>
 class TrimmedTest : public Test {};
 TYPED_TEST_SUITE_P(TrimmedTest);

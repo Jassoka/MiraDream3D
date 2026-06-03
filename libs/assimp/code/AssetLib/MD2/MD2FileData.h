@@ -54,7 +54,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace Assimp {
 namespace MD2 {
 
-// to make it easier for us, we test the magic word against both "endiannesses"
+// to make it easier for us, we tests the magic word against both "endiannesses"
 #define AI_MD2_MAGIC_NUMBER_BE  AI_MAKE_MAGIC("IDP2")
 #define AI_MD2_MAGIC_NUMBER_LE  AI_MAKE_MAGIC("2PDI")
 

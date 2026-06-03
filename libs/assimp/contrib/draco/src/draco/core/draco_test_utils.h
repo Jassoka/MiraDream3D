@@ -30,10 +30,10 @@
 
 namespace draco {
 
-// Returns test temporary directory.
+// Returns tests temporary directory.
 std::string GetTestTempDir();
 
-// Returns the full path to a given file system entry, such as test file or test
+// Returns the full path to a given file system entry, such as tests file or tests
 // directory.
 std::string GetTestFileFullPath(const std::string &entry_name);
 

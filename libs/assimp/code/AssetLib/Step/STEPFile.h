@@ -79,7 +79,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <assimp/LineSplitter.h>
 
 // uncomment this to have the loader evaluate all entities upon loading.
-// this is intended as stress test - by default, entities are evaluated
+// this is intended as stress tests - by default, entities are evaluated
 // lazily and therefore not unless needed.
 
 namespace Assimp {
@@ -850,7 +850,7 @@ public:
 
 #ifdef ASSIMP_IFC_TEST
 
-    // evaluate *all* entities in the file. this is a power test for the loader
+    // evaluate *all* entities in the file. this is a power tests for the loader
     void EvaluateAll() {
         for (ObjectMap::value_type &e : objects) {
             **e.second;

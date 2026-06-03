@@ -121,7 +121,7 @@ TEST_F(MetadataEncoderTest, TestSingleEntry) {
 TEST_F(MetadataEncoderTest, TestMultipleEntries) {
   metadata.AddEntryInt("int", 100);
   metadata.AddEntryDouble("double", 1.234);
-  const std::string entry_value = "test string entry";
+  const std::string entry_value = "tests string entry";
   metadata.AddEntryString("string", entry_value);
   ASSERT_EQ(metadata.num_entries(), 3);
 

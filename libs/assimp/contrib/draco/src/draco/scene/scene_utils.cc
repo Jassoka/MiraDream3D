@@ -262,7 +262,7 @@ StatusOr<std::unique_ptr<Scene>> SceneUtils::MeshToScene(
   if (num_mesh_materials <= 1) {
     const MeshIndex mesh_index = scene->AddMesh(std::move(mesh));
     if (mesh_index == kInvalidMeshIndex) {
-      // No idea whether this can happen.  It's not covered by any unit test.
+      // No idea whether this can happen.  It's not covered by any unit tests.
       return Status(Status::DRACO_ERROR, "Could not add Draco mesh to scene.");
     }
     mesh_group->AddMeshInstance({mesh_index, 0, {}});
@@ -279,7 +279,7 @@ StatusOr<std::unique_ptr<Scene>> SceneUtils::MeshToScene(
     const int32_t mat_att_id =
         mesh->GetNamedAttributeId(GeometryAttribute::MATERIAL);
     if (mat_att_id == -1) {
-      // Probably dead code, not covered by any unit test.
+      // Probably dead code, not covered by any unit tests.
       return Status(Status::DRACO_ERROR,
                     "Internal error in MeshToScene: "
                     "GetNamedAttributeId(MATERIAL) returned -1");
@@ -287,7 +287,7 @@ StatusOr<std::unique_ptr<Scene>> SceneUtils::MeshToScene(
     const PointAttribute *const mat_att =
         mesh->GetNamedAttribute(GeometryAttribute::MATERIAL);
     if (mat_att == nullptr) {
-      // Probably dead code, not covered by any unit test.
+      // Probably dead code, not covered by any unit tests.
       return Status(Status::DRACO_ERROR,
                     "Internal error in MeshToScene: "
                     "GetNamedAttribute(MATERIAL) returned nullptr");
@@ -300,12 +300,12 @@ StatusOr<std::unique_ptr<Scene>> SceneUtils::MeshToScene(
     // Note: cannot clear mesh here, since mat_att points into it.
     for (size_t i = 0; i < split_meshes.size(); ++i) {
       if (split_meshes[i] == nullptr) {
-        // Probably dead code, not covered by any unit test.
+        // Probably dead code, not covered by any unit tests.
         continue;
       }
       const MeshIndex mesh_index = scene->AddMesh(std::move(split_meshes[i]));
       if (mesh_index == kInvalidMeshIndex) {
-        // No idea whether this can happen.  It's not covered by any unit test.
+        // No idea whether this can happen.  It's not covered by any unit tests.
         return Status(Status::DRACO_ERROR,
                       "Could not add Draco mesh to scene.");
       }

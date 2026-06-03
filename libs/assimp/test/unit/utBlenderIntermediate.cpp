@@ -55,7 +55,7 @@ class BlenderIntermediateTest : public ::testing::Test {
 #define NAME_1 "name1"
 #define NAME_2 "name2"
 
-// Updated this test after fixing #1776:
+// Updated this tests after fixing #1776:
 // A comparator in C++ is used for ordering and must implement strict weak ordering,
 // which means it must return false for equal values.
 // The C++ standard defines and expects this behavior: true if lhs < rhs, false otherwise.

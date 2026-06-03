@@ -15,8 +15,8 @@
 
 static char ZIPNAME[L_tmpnam + 1] = {0};
 
-#define TESTDATA1 "Some test data 1...\0"
-#define TESTDATA2 "Some test data 2...\0"
+#define TESTDATA1 "Some tests data 1...\0"
+#define TESTDATA2 "Some tests data 2...\0"
 
 void test_setup(void) {
   strncpy(ZIPNAME, "z-XXXXXX\0", L_tmpnam);
@@ -24,21 +24,21 @@ void test_setup(void) {
 
   struct zip_t *zip = zip_open(ZIPNAME, ZIP_DEFAULT_COMPRESSION_LEVEL, 'w');
 
-  zip_entry_open(zip, "test/test-1.txt");
+  zip_entry_open(zip, "tests/tests-1.txt");
   zip_entry_write(zip, TESTDATA1, strlen(TESTDATA1));
   zip_entry_close(zip);
 
-  zip_entry_open(zip, "test\\test-2.txt");
+  zip_entry_open(zip, "tests\\tests-2.txt");
   zip_entry_write(zip, TESTDATA2, strlen(TESTDATA2));
   zip_entry_close(zip);
 
-  zip_entry_open(zip, "test\\empty/");
+  zip_entry_open(zip, "tests\\empty/");
   zip_entry_close(zip);
 
   zip_entry_open(zip, "empty/");
   zip_entry_close(zip);
 
-  zip_entry_open(zip, "dotfiles/.test");
+  zip_entry_open(zip, "dotfiles/.tests");
   zip_entry_write(zip, TESTDATA2, strlen(TESTDATA2));
   zip_entry_close(zip);
 
@@ -46,12 +46,12 @@ void test_setup(void) {
 }
 
 void test_teardown(void) {
-  UNLINK("test/test-1.txt");
-  UNLINK("test/test-2.txt");
-  UNLINK("test/empty");
-  UNLINK("test");
+  UNLINK("tests/tests-1.txt");
+  UNLINK("tests/tests-2.txt");
+  UNLINK("tests/empty");
+  UNLINK("tests");
   UNLINK("empty");
-  UNLINK("dotfiles/.test");
+  UNLINK("dotfiles/.tests");
   UNLINK("dotfiles");
   UNLINK(ZIPNAME);
 }
@@ -85,7 +85,7 @@ MU_TEST(test_extract) {
 
   memset((void *)&buf, 0, sizeof(struct buffer_t));
 
-  mu_assert_int_eq(0, zip_entry_open(zip, "test/test-1.txt"));
+  mu_assert_int_eq(0, zip_entry_open(zip, "tests/tests-1.txt"));
   mu_assert_int_eq(0, zip_entry_extract(zip, on_extract, &buf));
   mu_assert_int_eq(strlen(TESTDATA1), buf.size);
   mu_assert_int_eq(0, strncmp(buf.data, TESTDATA1, buf.size));
@@ -97,7 +97,7 @@ MU_TEST(test_extract) {
 
   memset((void *)&buf, 0, sizeof(struct buffer_t));
 
-  mu_assert_int_eq(0, zip_entry_open(zip, "dotfiles/.test"));
+  mu_assert_int_eq(0, zip_entry_open(zip, "dotfiles/.tests"));
   mu_assert_int_eq(0, zip_entry_extract(zip, on_extract, &buf));
   mu_assert_int_eq(strlen(TESTDATA2), buf.size);
   mu_assert_int_eq(0, strncmp(buf.data, TESTDATA2, buf.size));

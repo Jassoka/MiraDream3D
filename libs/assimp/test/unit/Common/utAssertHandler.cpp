@@ -41,7 +41,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "UnitTestPCH.h"
 
-/// Ensure this test has asserts on, even if the build type doesn't have asserts by default.
+/// Ensure this tests has asserts on, even if the build type doesn't have asserts by default.
 #if !defined(ASSIMP_BUILD_DEBUG)
 #define ASSIMP_BUILD_DEBUG
 #endif
@@ -72,7 +72,7 @@ namespace
         throw TestAssertException(failedExpression, file, line);
     }
 
-    /// Ensure that the default assert handler is restored after the test is finished.
+    /// Ensure that the default assert handler is restored after the tests is finished.
     struct ReplaceHandlerScope
     {
         ReplaceHandlerScope()

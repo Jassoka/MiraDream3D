@@ -44,7 +44,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /** @file  CompareDump.cpp
  *  @brief Implementation of the 'assimp cmpdmp', which compares
  *    two model dumps for equality. It plays an important role
- *    in the regression test suite.
+ *    in the regression tests suite.
  */
 
 #include "Main.h"

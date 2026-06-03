@@ -394,7 +394,7 @@ void HL1MDLLoader::read_textures() {
             const aiBlendMode blend_mode = aiBlendMode_Additive;
             scene_material->AddProperty(&blend_mode, 1, AI_MATKEY_BLEND_FUNC);
         } else if (ptexture[i].flags & AI_MDL_HL1_STUDIO_NF_MASKED) {
-            // Texture with 1 bit alpha test.
+            // Texture with 1 bit alpha tests.
             const aiTextureFlags use_alpha = aiTextureFlags_UseAlpha;
             scene_material->AddProperty(&use_alpha, 1, AI_MATKEY_TEXFLAGS(texture_type, 0));
             scene_material->AddProperty(&last_palette_color, 1, AI_MATKEY_COLOR_TRANSPARENT);

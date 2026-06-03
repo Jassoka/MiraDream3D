@@ -29,9 +29,9 @@ class IoPointCloudIoTest : public ::testing::Test {
                                const std::string &file_name) {
     const std::unique_ptr<PointCloud> encoded_pc =
         ReadPointCloudFromTestFile(file_name);
-    ASSERT_NE(encoded_pc, nullptr) << "Failed to load test model " << file_name;
+    ASSERT_NE(encoded_pc, nullptr) << "Failed to load tests model " << file_name;
     ASSERT_GE(encoded_pc->num_attributes(), expected_num_attributes)
-        << "Failed to load test model: " << file_name
+        << "Failed to load tests model: " << file_name
         << " wrong number of attributes" << std::endl;
 
     // Set quantization.

@@ -266,7 +266,7 @@ void IFCImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
     ProcessSpatialStructures(conv);
     MakeTreeRelative(conv);
 
-// NOTE - this is a stress test for the importer, but it works only
+// NOTE - this is a stress tests for the importer, but it works only
 // in a build with no entities disabled. See
 //     scripts/IFCImporter/CPPGenerator.py
 // for more information.

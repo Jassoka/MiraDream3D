@@ -63,7 +63,7 @@ namespace Assimp {
 */
 // ----------------------------------------------------------------------------------
 class ASSIMP_API ScenePreprocessor {
-    // Make ourselves a friend of the corresponding test unit.
+    // Make ourselves a friend of the corresponding tests unit.
     friend class ::ScenePreprocessorTest;
 
 public:

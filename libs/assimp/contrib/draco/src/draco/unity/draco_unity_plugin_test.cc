@@ -229,7 +229,7 @@ class DeprecatedDracoUnityPluginTest : public ::testing::Test {
     ASSERT_EQ(unity_mesh_->num_vertices, expected_num_vertices);
     ASSERT_TRUE(unity_mesh_->has_normal);
     ASSERT_NE(unity_mesh_->normal, nullptr);
-    // TODO(fgalligan): Also test color and tex_coord attributes.
+    // TODO(fgalligan): Also tests color and tex_coord attributes.
 
     draco::ReleaseUnityMesh(&unity_mesh_);
   }

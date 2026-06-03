@@ -66,7 +66,7 @@ for cc in /usr/local/bin/gcc /opt/llvm/clang/bin/clang; do
   done
 done
 
-# Do one test with an older version of GCC
+# Do one tests with an older version of GCC
 time docker run \
   --volume="${GTEST_ROOT}:/src:ro" \
   --workdir="/src" \

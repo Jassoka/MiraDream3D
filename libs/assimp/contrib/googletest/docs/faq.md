@@ -233,7 +233,7 @@ tests using each derived fixture.
 Typically, your code looks like this:
 
 ```c++
-// Defines a base test fixture.
+// Defines a base tests fixture.
 class BaseTest : public ::testing::Test {
  protected:
   ...
@@ -483,7 +483,7 @@ reference global and/or local variables, and can be:
 Some examples are shown here:
 
 ```c++
-// A death test can be a simple function call.
+// A death tests can be a simple function call.
 TEST(MyDeathTest, FunctionCall) {
   ASSERT_DEATH(Xyz(5), "Xyz failed");
 }
@@ -491,7 +491,7 @@ TEST(MyDeathTest, FunctionCall) {
 // Or a complex expression that references variables and functions.
 TEST(MyDeathTest, ComplexExpression) {
   const bool c = Condition();
-  ASSERT_DEATH((c ? Func1(0) : object2.Method("test")),
+  ASSERT_DEATH((c ? Func1(0) : object2.Method("tests")),
                "(Func1|Method) failed");
 }
 

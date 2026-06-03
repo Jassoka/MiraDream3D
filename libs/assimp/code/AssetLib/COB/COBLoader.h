@@ -70,7 +70,7 @@ namespace COB {
 // -------------------------------------------------------------------------------------------
 /** Importer class to load TrueSpace files (cob,scn) up to v6.
  *
- *  Currently relatively limited, loads only ASCII files and needs more test coverage. */
+ *  Currently relatively limited, loads only ASCII files and needs more tests coverage. */
 // -------------------------------------------------------------------------------------------
 class COBImporter final : public BaseImporter {
 public:

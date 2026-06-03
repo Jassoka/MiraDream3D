@@ -47,7 +47,7 @@ endmacro(create_search_paths)
 
 # clear cache variables if a certain variable changed
 macro(clear_if_changed TESTVAR)
-  # test against internal check variable
+  # tests against internal check variable
   if (NOT "${${TESTVAR}}" STREQUAL "${${TESTVAR}_INT_CHECK}")
     message(STATUS "${TESTVAR} changed.")
     foreach(var ${ARGN})

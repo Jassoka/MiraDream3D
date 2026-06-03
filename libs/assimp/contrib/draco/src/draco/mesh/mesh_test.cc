@@ -115,7 +115,7 @@ TEST(MeshTest, RemoveUnusedMaterials) {
 
 TEST(MeshTest, RemoveUnusedMaterialsOnPointClud) {
   // Input mesh has 29 materials defined in the source file but only 7 are
-  // actually used. Same as above test but we remove all faces and treat the
+  // actually used. Same as above tests but we remove all faces and treat the
   // model as a point cloud.
   const std::unique_ptr<draco::Mesh> mesh =
       draco::ReadMeshFromTestFile("mat_test.obj");
@@ -268,7 +268,7 @@ TEST(MeshTest, TestAddNewAttributeWithConnectivity) {
 
   // Map all corners to the value index 0 except for corner 1 that is mapped to
   // value index 1. This should result in a new point being created on either
-  // corner 1 or corner 4 (see figure at the beginning of this test).
+  // corner 1 or corner 4 (see figure at the beginning of this tests).
   corner_to_point.assign(6, draco::AttributeValueIndex(0));
   corner_to_point[draco::CornerIndex(1)] = draco::AttributeValueIndex(1);
 

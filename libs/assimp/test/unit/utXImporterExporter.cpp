@@ -51,7 +51,7 @@ class utXImporterExporter : public AbstractImportExportBase {
 public:
     virtual bool importerTest() {
         Assimp::Importer importer;
-        const aiScene *scene = importer.ReadFile(ASSIMP_TEST_MODELS_DIR "/X/test.x", aiProcess_ValidateDataStructure);
+        const aiScene *scene = importer.ReadFile(ASSIMP_TEST_MODELS_DIR "/X/tests.x", aiProcess_ValidateDataStructure);
         return nullptr != scene;
     }
 };

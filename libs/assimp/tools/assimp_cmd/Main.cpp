@@ -235,7 +235,7 @@ int main (int argc, char* argv[]) {
 	}
 
 	// assimp testbatchload
-	// Used by /test/other/streamload.py to load a list of files
+	// Used by /tests/other/streamload.py to load a list of files
 	// using the same importer instance to check for incompatible
 	// importers.
 	if (! strcmp(argv[1], "testbatchload")) {

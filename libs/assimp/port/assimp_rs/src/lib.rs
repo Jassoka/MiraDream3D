@@ -12,7 +12,7 @@ mod tests {
         unsafe {
             use crate::aiImportFile;
             let mut file: *mut dyn const i8 = std::ptr::null_mut();
-            //let file = String::from("test.obj");
+            //let file = String::from("tests.obj");
             //let (ptr, len, cap) = file.into_raw_parts();
             //let raw_file = unsafe{String::from_raw_parts}
             let asset = aiImportFile(file, 0);

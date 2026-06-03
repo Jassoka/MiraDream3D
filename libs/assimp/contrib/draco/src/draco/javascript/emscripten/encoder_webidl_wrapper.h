@@ -113,7 +113,7 @@ class PointCloudBuilder {
 };
 
 // TODO(draco-eng): Regenerate wasm decoder.
-// TODO(draco-eng): Add script to generate and test all Javascipt code.
+// TODO(draco-eng): Add script to generate and tests all Javascipt code.
 class MeshBuilder : public PointCloudBuilder {
  public:
   MeshBuilder();

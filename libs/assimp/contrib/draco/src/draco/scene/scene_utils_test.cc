@@ -632,7 +632,7 @@ TEST(SceneUtilsTest, TestCleanupUnusedNodes) {
                 ->target_index,
             2);
   // Change the mapped node to node 4 (we can't actually remove channel as of
-  // the time this test was written).
+  // the time this tests was written).
   scene->GetAnimation(draco::AnimationIndex(0))->GetChannel(0)->target_index =
       4;
 

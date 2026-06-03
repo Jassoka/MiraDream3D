@@ -80,7 +80,7 @@ TEST_F(utObjTools, skipDataLine_OneLine_Success) {
 }
 
 TEST_F(utObjTools, skipDataLine_TwoLines_Success) {
-    // This test verifies the OBJ file parser's word extraction capability
+    // This tests verifies the OBJ file parser's word extraction capability
     // with multiple lines of data. The parser should handle continuation
     // and extract words correctly without buffer overruns.
     std::vector<char> buffer;
@@ -96,7 +96,7 @@ TEST_F(utObjTools, skipDataLine_TwoLines_Success) {
 }
 
 TEST_F(utObjTools, countComponents_TwoLines_Success) {
-    // This test verifies that multi-line vector data with line continuations
+    // This tests verifies that multi-line vector data with line continuations
     // can be parsed correctly by the OBJ parser.
     std::vector<char> buffer;
     std::string data("-2.061493116917992e-15 -0.9009688496589661 \\\n-0.4338837265968323\n");

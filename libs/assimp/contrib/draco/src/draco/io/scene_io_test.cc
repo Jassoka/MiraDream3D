@@ -25,7 +25,7 @@
 namespace {
 
 TEST(SceneTest, TestSceneIO) {
-  // A simple test that verifies that the scene is loaded and saved using the
+  // A simple tests that verifies that the scene is loaded and saved using the
   // scene_io.h API.
   const std::string file_name =
       draco::GetTestFileFullPath("CesiumMilkTruck/glTF/CesiumMilkTruck.gltf");
@@ -49,7 +49,7 @@ TEST(SceneTest, TestSceneIO) {
 }
 
 TEST(SceneTest, TestSaveToPly) {
-  // A simple test that verifies that a loaded scene can be stored in a PLY file
+  // A simple tests that verifies that a loaded scene can be stored in a PLY file
   // format.
   const std::string file_name =
       draco::GetTestFileFullPath("CesiumMilkTruck/glTF/CesiumMilkTruck.gltf");
@@ -66,7 +66,7 @@ TEST(SceneTest, TestSaveToPly) {
 }
 
 TEST(SceneTest, TestSaveToObj) {
-  // A simple test that verifies that a loaded scene can be stored in an OBJ
+  // A simple tests that verifies that a loaded scene can be stored in an OBJ
   // file format.
   const std::string file_name =
       draco::GetTestFileFullPath("CesiumMilkTruck/glTF/CesiumMilkTruck.gltf");

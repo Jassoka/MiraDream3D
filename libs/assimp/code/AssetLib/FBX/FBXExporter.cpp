@@ -1172,7 +1172,7 @@ void FBXExporter::WriteObjects () {
               }
           }
           vVertexIndice[mi].insert(
-            // TODO test whether this can be end or not
+            // TODO tests whether this can be end or not
             vVertexIndice[mi].end(),
             vertex_indices.begin() + v_offset,
             vertex_indices.end()

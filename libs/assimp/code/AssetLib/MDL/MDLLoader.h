@@ -356,7 +356,7 @@ protected:
 
     // -------------------------------------------------------------------
     /** Handles materials that are just referencing another material
-     * There is no test file for this feature, but Conitec's doc
+     * There is no tests file for this feature, but Conitec's doc
      * say it is used.
      */
     void HandleMaterialReferences_3DGS_MDL7();

@@ -104,7 +104,7 @@ enum BlendFunc {
 };
 
 // ---------------------------------------------------------------------------
-/** @brief Specifies alpha test modi for Quake texture maps
+/** @brief Specifies alpha tests modi for Quake texture maps
  */
 enum AlphaTestFunc {
     AT_NONE,
@@ -125,7 +125,7 @@ struct ShaderMapBlock {
     //! Name of referenced map
     std::string name;
 
-    //! Blend and alpha test settings for texture
+    //! Blend and alpha tests settings for texture
     BlendFunc blend_src, blend_dest;
     AlphaTestFunc alpha_test;
 

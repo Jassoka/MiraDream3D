@@ -1086,7 +1086,7 @@ bool ClipperBase::AddPath(const Path &pg, PolyType PolyTyp, bool Closed)
   catch(...)
   {
     delete [] edges;
-    throw; //range test fails
+    throw; //range tests fails
   }
   TEdge *eStart = &edges[0];
 
@@ -3166,7 +3166,7 @@ void Clipper::FixupOutPolygon(OutRec &outrec)
             return;
         }
 
-        //test for duplicate points and collinear edges ...
+        //tests for duplicate points and collinear edges ...
         if ((pp->Pt == pp->Next->Pt) || (pp->Pt == pp->Prev->Pt) ||
             (SlopesEqual(pp->Prev->Pt, pp->Pt, pp->Next->Pt, m_UseFullRange) &&
             (!preserveCol || !Pt2IsBetweenPt1AndPt3(pp->Prev->Pt, pp->Pt, pp->Next->Pt))))

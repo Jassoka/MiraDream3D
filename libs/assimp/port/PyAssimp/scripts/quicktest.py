@@ -2,9 +2,9 @@
 #-*- coding: UTF-8 -*-
 
 """
-This module uses the sample.py script to load all test models it finds.
+This module uses the sample.py script to load all tests models it finds.
 
-Note: this is not an exhaustive test suite, it does not check the
+Note: this is not an exhaustive tests suite, it does not check the
 data structures in detail. It just verifies whether basic
 loading and querying of 3d models using pyassimp works.
 """
@@ -19,8 +19,8 @@ import sample
 from pyassimp import errors
 
 # Paths to model files.
-basepaths = [os.path.join('..', '..', '..', 'test', 'models'),
-             os.path.join('..', '..', '..', 'test', 'models-nonbsd')]
+basepaths = [os.path.join('..', '..', '..', 'tests', 'models'),
+             os.path.join('..', '..', '..', 'tests', 'models-nonbsd')]
 
 # Valid extensions for 3D model files.
 extensions = ['.3ds', '.x', '.lwo', '.obj', '.md5mesh', '.dxf', '.ply', '.stl',

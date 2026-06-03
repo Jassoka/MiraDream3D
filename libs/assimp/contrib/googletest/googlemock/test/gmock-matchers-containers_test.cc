@@ -1275,7 +1275,7 @@ TEST(WhenSortedByTest, ExplainsMatchResult) {
 }
 
 // WhenSorted() is a simple wrapper on WhenSortedBy().  Hence we don't
-// need to test it as exhaustively as we test the latter.
+// need to tests it as exhaustively as we tests the latter.
 
 TEST(WhenSortedTest, WorksForEmptyContainer) {
   const vector<int> numbers;
@@ -1971,7 +1971,7 @@ TEST_F(UnorderedElementsAreTest, WorksWithMoveOnly) {
 }
 
 // One naive implementation of the matcher runs in O(N!) time, which is too
-// slow for many real-world inputs. This test shows that our matcher can match
+// slow for many real-world inputs. This tests shows that our matcher can match
 // 100 inputs very quickly (a few milliseconds).  An O(100!) is 10^158
 // iterations and obviously effectively incomputable.
 // [ RUN      ] UnorderedElementsAreTest.Performance
@@ -2497,7 +2497,7 @@ class PredicateFormatterFromMatcherTest : public ::testing::Test {
   enum Behavior { kInitialSuccess, kAlwaysFail, kFlaky };
 
   // A matcher that can return different results when used multiple times on the
-  // same input. No real matcher should do this; but this lets us test that we
+  // same input. No real matcher should do this; but this lets us tests that we
   // detect such behavior and fail appropriately.
   class MockMatcher : public MatcherInterface<Behavior> {
    public:
@@ -2660,16 +2660,16 @@ TEST_P(ElementsAreTestP, CanExplainMismatchRightSize) {
 
 TEST(ElementsAreTest, MatchesOneElementVector) {
   vector<std::string> test_vector;
-  test_vector.push_back("test string");
+  test_vector.push_back("tests string");
 
-  EXPECT_THAT(test_vector, ElementsAre(StrEq("test string")));
+  EXPECT_THAT(test_vector, ElementsAre(StrEq("tests string")));
 }
 
 TEST(ElementsAreTest, MatchesOneElementList) {
   list<std::string> test_list;
-  test_list.push_back("test string");
+  test_list.push_back("tests string");
 
-  EXPECT_THAT(test_list, ElementsAre("test string"));
+  EXPECT_THAT(test_list, ElementsAre("tests string"));
 }
 
 TEST(ElementsAreTest, MatchesThreeElementVector) {
@@ -2723,10 +2723,10 @@ TEST(ElementsAreTest, MatchesTenElementVector) {
 
 TEST(ElementsAreTest, DoesNotMatchWrongSize) {
   vector<std::string> test_vector;
-  test_vector.push_back("test string");
-  test_vector.push_back("test string");
+  test_vector.push_back("tests string");
+  test_vector.push_back("tests string");
 
-  Matcher<vector<std::string>> m = ElementsAre(StrEq("test string"));
+  Matcher<vector<std::string>> m = ElementsAre(StrEq("tests string"));
   EXPECT_FALSE(m.Matches(test_vector));
 }
 
@@ -2734,7 +2734,7 @@ TEST(ElementsAreTest, DoesNotMatchWrongValue) {
   vector<std::string> test_vector;
   test_vector.push_back("other string");
 
-  Matcher<vector<std::string>> m = ElementsAre(StrEq("test string"));
+  Matcher<vector<std::string>> m = ElementsAre(StrEq("tests string"));
   EXPECT_FALSE(m.Matches(test_vector));
 }
 
@@ -2825,11 +2825,11 @@ TEST(ElementsAreTest, AcceptsStringLiteral) {
   EXPECT_THAT(array, Not(ElementsAre("hi", "one", "too")));
 }
 
-// Declared here with the size unknown.  Defined AFTER the following test.
+// Declared here with the size unknown.  Defined AFTER the following tests.
 extern const char kHi[];
 
 TEST(ElementsAreTest, AcceptsArrayWithUnknownSize) {
-  // The size of kHi is not known in this test, but ElementsAre() should
+  // The size of kHi is not known in this tests, but ElementsAre() should
   // still accept it.
 
   std::string array1[] = {"hi"};
@@ -2856,7 +2856,7 @@ TEST(ElementsAreTest, MakesCopyOfArguments) {
 }
 
 // Tests for ElementsAreArray().  Since ElementsAreArray() shares most
-// of the implementation with ElementsAre(), we don't test it as
+// of the implementation with ElementsAre(), we don't tests it as
 // thoroughly here.
 
 TEST(ElementsAreArrayTest, CanBeCreatedWithValueArray) {
@@ -2969,7 +2969,7 @@ TEST(ElementsAreArrayTest, CanBeCreatedWithIteratorRange) {
 }
 
 // Since ElementsAre() and ElementsAreArray() share much of the
-// implementation, we only do a test for native arrays here.
+// implementation, we only do a tests for native arrays here.
 TEST(ElementsAreArrayTest, WorksWithNativeArray) {
   ::std::string a[] = {"hi", "ho"};
   ::std::string b[] = {"hi", "ho"};

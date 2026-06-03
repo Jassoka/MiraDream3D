@@ -28,7 +28,7 @@ TEST(FileWriterUtilsTest, SplitPathPrivateWindows) {
 
 TEST(FileWriterUtilsTest, DirectoryExistsTest) {
   ASSERT_TRUE(DirectoryExists(GetTestTempDir()));
-  ASSERT_FALSE(DirectoryExists("fake/test/subdir"));
+  ASSERT_FALSE(DirectoryExists("fake/tests/subdir"));
 }
 
 #ifdef DRACO_TRANSCODER_SUPPORTED

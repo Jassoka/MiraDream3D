@@ -30,7 +30,7 @@ class MeshAreEquivalentTest : public ::testing::Test {};
 TEST_F(MeshAreEquivalentTest, TestOnIndenticalMesh) {
   const std::string file_name = "test_nm.obj";
   const std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name));
-  ASSERT_NE(mesh, nullptr) << "Failed to load test model." << file_name;
+  ASSERT_NE(mesh, nullptr) << "Failed to load tests model." << file_name;
 
 #ifdef DRACO_TRANSCODER_SUPPORTED
   // Add mesh feature ID set to the mesh.
@@ -50,9 +50,9 @@ TEST_F(MeshAreEquivalentTest, TestPermutedOneFace) {
   const std::unique_ptr<Mesh> mesh_0(ReadMeshFromTestFile(file_name_0));
   const std::unique_ptr<Mesh> mesh_1(ReadMeshFromTestFile(file_name_1));
   const std::unique_ptr<Mesh> mesh_2(ReadMeshFromTestFile(file_name_2));
-  ASSERT_NE(mesh_0, nullptr) << "Failed to load test model." << file_name_0;
-  ASSERT_NE(mesh_1, nullptr) << "Failed to load test model." << file_name_1;
-  ASSERT_NE(mesh_2, nullptr) << "Failed to load test model." << file_name_2;
+  ASSERT_NE(mesh_0, nullptr) << "Failed to load tests model." << file_name_0;
+  ASSERT_NE(mesh_1, nullptr) << "Failed to load tests model." << file_name_1;
+  ASSERT_NE(mesh_2, nullptr) << "Failed to load tests model." << file_name_2;
   MeshAreEquivalent equiv;
   ASSERT_TRUE(equiv(*mesh_0, *mesh_0));
   ASSERT_TRUE(equiv(*mesh_0, *mesh_1));   // Face rotated.
@@ -64,8 +64,8 @@ TEST_F(MeshAreEquivalentTest, TestPermutedTwoFaces) {
   const std::string file_name_1 = "two_faces_312.obj";
   const std::unique_ptr<Mesh> mesh_0(ReadMeshFromTestFile(file_name_0));
   const std::unique_ptr<Mesh> mesh_1(ReadMeshFromTestFile(file_name_1));
-  ASSERT_NE(mesh_0, nullptr) << "Failed to load test model." << file_name_0;
-  ASSERT_NE(mesh_1, nullptr) << "Failed to load test model." << file_name_1;
+  ASSERT_NE(mesh_0, nullptr) << "Failed to load tests model." << file_name_0;
+  ASSERT_NE(mesh_1, nullptr) << "Failed to load tests model." << file_name_1;
   MeshAreEquivalent equiv;
   ASSERT_TRUE(equiv(*mesh_0, *mesh_0));
   ASSERT_TRUE(equiv(*mesh_1, *mesh_1));
@@ -77,20 +77,20 @@ TEST_F(MeshAreEquivalentTest, TestPermutedThreeFaces) {
   const std::string file_name_1 = "three_faces_312.obj";
   const std::unique_ptr<Mesh> mesh_0(ReadMeshFromTestFile(file_name_0));
   const std::unique_ptr<Mesh> mesh_1(ReadMeshFromTestFile(file_name_1));
-  ASSERT_NE(mesh_0, nullptr) << "Failed to load test model." << file_name_0;
-  ASSERT_NE(mesh_1, nullptr) << "Failed to load test model." << file_name_1;
+  ASSERT_NE(mesh_0, nullptr) << "Failed to load tests model." << file_name_0;
+  ASSERT_NE(mesh_1, nullptr) << "Failed to load tests model." << file_name_1;
   MeshAreEquivalent equiv;
   ASSERT_TRUE(equiv(*mesh_0, *mesh_0));
   ASSERT_TRUE(equiv(*mesh_1, *mesh_1));
   ASSERT_TRUE(equiv(*mesh_0, *mesh_1));
 }
 
-// This test checks that the edgebreaker algorithm does not change the mesh up
+// This tests checks that the edgebreaker algorithm does not change the mesh up
 // to the order of faces and vertices.
 TEST_F(MeshAreEquivalentTest, TestOnBigMesh) {
   const std::string file_name = "test_nm.obj";
   const std::unique_ptr<Mesh> mesh0(ReadMeshFromTestFile(file_name));
-  ASSERT_NE(mesh0, nullptr) << "Failed to load test model." << file_name;
+  ASSERT_NE(mesh0, nullptr) << "Failed to load tests model." << file_name;
 
   std::unique_ptr<Mesh> mesh1;
   std::stringstream ss;

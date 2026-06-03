@@ -180,7 +180,7 @@ TEST_F(FindDegeneratesProcessTest, meshRemoval) {
     scene->mNumMeshes = 5;
     scene->mMeshes = new aiMesh*[5];
 
-    /// Use the mesh which doesn't get completely stripped of faces from the main test.
+    /// Use the mesh which doesn't get completely stripped of faces from the main tests.
     aiMesh* meshWhichSurvives = mMesh;
     mMesh = nullptr;
 

@@ -240,7 +240,7 @@ void LWOImporter::LoadLWOBSurface(unsigned int size) {
 
         IFF::SubChunkHeader head = IFF::LoadSubChunk(mFileBuffer);
 
-        /*  A single test file (sonycam.lwo) seems to have invalid surface chunks.
+        /*  A single tests file (sonycam.lwo) seems to have invalid surface chunks.
          *  I'm assuming it's the fault of a single, unknown exporter so there are
          *  probably THOUSANDS of them. Here's a dirty workaround:
          *

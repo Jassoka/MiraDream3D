@@ -44,7 +44,7 @@
 #include <assimp/LogStream.hpp>
 
 // The default hard-coded path. Can be overridden by supplying a path through the command line.
-static std::string modelpath = "../../test/models/OBJ/spider.obj";
+static std::string modelpath = "../../tests/models/OBJ/spider.obj";
 
 HGLRC       hRC = nullptr;         // Permanent Rendering Context
 HDC         hDC = nullptr;            // Private GDI Device Context

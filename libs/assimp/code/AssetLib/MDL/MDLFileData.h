@@ -66,7 +66,7 @@ namespace Assimp {
 namespace MDL {
 
 // -------------------------------------------------------------------------------------
-// to make it easier for us, we test the magic word against both "endiannesses"
+// to make it easier for us, we tests the magic word against both "endiannesses"
 
 // magic bytes used in Quake 1 MDL meshes
 #define AI_MDL_MAGIC_NUMBER_BE  AI_MAKE_MAGIC("IDPO")

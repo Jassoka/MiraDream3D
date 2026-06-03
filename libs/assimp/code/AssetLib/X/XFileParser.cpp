@@ -931,7 +931,7 @@ void XFileParser::TestForSeparator() {
     if (mP >= mEnd)
         return;
 
-    // test and skip
+    // tests and skip
     if (*mP == ';' || *mP == ',')
         mP++;
 }

@@ -308,7 +308,7 @@ class GltfEncoderTest : public ::testing::Test {
   void MeshToDecodedGltfMesh(const Mesh &mesh,
                              std::unique_ptr<Mesh> *mesh_gltf) {
     const std::string gltf_file_full_path =
-        draco::GetTestTempFileFullPath("test.gltf");
+        draco::GetTestTempFileFullPath("tests.gltf");
     EncodeMeshToFile(mesh, gltf_file_full_path);
     *mesh_gltf = std::move(ReadMeshFromFile(gltf_file_full_path)).value();
     ASSERT_NE(*mesh_gltf, nullptr);
@@ -319,7 +319,7 @@ class GltfEncoderTest : public ::testing::Test {
   void MeshToDecodedGltfScene(const Mesh &mesh,
                               std::unique_ptr<Scene> *scene_gltf) {
     const std::string gltf_file_full_path =
-        draco::GetTestTempFileFullPath("test.gltf");
+        draco::GetTestTempFileFullPath("tests.gltf");
     EncodeMeshToFile(mesh, gltf_file_full_path);
     *scene_gltf = std::move(ReadSceneFromFile(gltf_file_full_path)).value();
     ASSERT_NE(*scene_gltf, nullptr);
@@ -347,7 +347,7 @@ class GltfEncoderTest : public ::testing::Test {
 
   void SceneToDecodedGltfScene(const Scene &scene,
                                std::unique_ptr<Scene> *scene_gltf) {
-    SceneToDecodedGltfScene(scene, "test.gltf", scene_gltf);
+    SceneToDecodedGltfScene(scene, "tests.gltf", scene_gltf);
   }
 
   void EncodeMeshToGltfAndCompare(Mesh *mesh) {
@@ -372,7 +372,7 @@ class GltfEncoderTest : public ::testing::Test {
   void test_encoding(const std::string &file_name) {
     const std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name, true));
 
-    ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+    ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
     EncodeMeshToGltfAndCompare(mesh.get());
   }
 };
@@ -399,7 +399,7 @@ TEST_F(GltfEncoderTest, ImportTangentAttribute) {
 }
 
 TEST_F(GltfEncoderTest, EncodeColorTexture) {
-  const std::string tex_file_name = draco::GetTestFileFullPath("test.png");
+  const std::string tex_file_name = draco::GetTestFileFullPath("tests.png");
   std::unique_ptr<draco::Texture> texture =
       draco::ReadTextureFromFile(tex_file_name).value();
   ASSERT_NE(texture, nullptr);
@@ -511,7 +511,7 @@ TEST_F(GltfEncoderTest, EncodeNamedGenericAttribute) {
 }
 
 TEST_F(GltfEncoderTest, EncodeMetallicRoughnessTexture) {
-  const std::string tex_file_name = draco::GetTestFileFullPath("test.png");
+  const std::string tex_file_name = draco::GetTestFileFullPath("tests.png");
   std::unique_ptr<draco::Texture> texture =
       draco::ReadTextureFromFile(tex_file_name).value();
   ASSERT_NE(texture, nullptr);
@@ -527,7 +527,7 @@ TEST_F(GltfEncoderTest, EncodeMetallicRoughnessTexture) {
 }
 
 TEST_F(GltfEncoderTest, EncodeOcclusionTexture) {
-  const std::string tex_file_name = draco::GetTestFileFullPath("test.png");
+  const std::string tex_file_name = draco::GetTestFileFullPath("tests.png");
   std::unique_ptr<draco::Texture> texture =
       draco::ReadTextureFromFile(tex_file_name).value();
   ASSERT_NE(texture, nullptr);
@@ -543,7 +543,7 @@ TEST_F(GltfEncoderTest, EncodeOcclusionTexture) {
 }
 
 TEST_F(GltfEncoderTest, EncodeEmissiveTexture) {
-  const std::string tex_file_name = draco::GetTestFileFullPath("test.png");
+  const std::string tex_file_name = draco::GetTestFileFullPath("tests.png");
   std::unique_ptr<draco::Texture> texture =
       draco::ReadTextureFromFile(tex_file_name).value();
   ASSERT_NE(texture, nullptr);
@@ -607,9 +607,9 @@ TEST_F(GltfEncoderTest, EncodeBoneAnimation) {
   ASSERT_NE(anim, nullptr);
   ASSERT_TRUE(anim->GetName().empty());
 
-  // TODO(b/145703399): Figure out how to test that all of the input accessors
+  // TODO(b/145703399): Figure out how to tests that all of the input accessors
   // in animation channels in the encoded glTF file will be the same for this
-  // test file.
+  // tests file.
   const int num_input_accessors = 57;
   const int num_output_accessors = 57;
   CheckAnimationAccessors(*transcoded_scene, num_input_accessors,
@@ -696,7 +696,7 @@ TEST_F(GltfEncoderTest, DracoCompressionCheckOptions) {
   ASSERT_NE(scene, nullptr);
 
   const std::string gltf_file_full_path =
-      draco::GetTestTempFileFullPath("test.gltf");
+      draco::GetTestTempFileFullPath("tests.gltf");
   std::string folder_path;
   std::string gltf_file_name;
   draco::SplitPath(gltf_file_full_path, &folder_path, &gltf_file_name);
@@ -792,7 +792,7 @@ TEST_F(GltfEncoderTest, TestQuantizationPerAttribute) {
   ASSERT_NE(scene, nullptr);
 
   const std::string gltf_file_full_path =
-      draco::GetTestTempFileFullPath("test.gltf");
+      draco::GetTestTempFileFullPath("tests.gltf");
   std::string folder_path;
   std::string gltf_file_name;
   draco::SplitPath(gltf_file_full_path, &folder_path, &gltf_file_name);
@@ -924,7 +924,7 @@ TEST_F(GltfEncoderTest, TestOutputType) {
   ASSERT_NE(scene, nullptr);
 
   const std::string gltf_file_full_path =
-      draco::GetTestTempFileFullPath("test.gltf");
+      draco::GetTestTempFileFullPath("tests.gltf");
   std::string folder_path;
   std::string gltf_file_name;
   draco::SplitPath(gltf_file_full_path, &folder_path, &gltf_file_name);
@@ -1612,7 +1612,7 @@ TEST_F(GltfEncoderTest, EncodeSceneWithMeshFeaturesWithStructuralMetadata) {
   use_case.has_mesh_features = true;
   use_case.has_structural_metadata = true;
 
-  // Read test file from file.
+  // Read tests file from file.
   const std::unique_ptr<Scene> scene(DecodeTestGltfFileToScene(file_name));
   ASSERT_NE(scene, nullptr);
 
@@ -1632,7 +1632,7 @@ TEST_F(GltfEncoderTest, EncodeSceneWithMeshFeaturesWithDracoCompression) {
   use_case.has_draco_compression = true;
   use_case.has_mesh_features = true;
 
-  // Read test file from file.
+  // Read tests file from file.
   const std::unique_ptr<Scene> scene(DecodeTestGltfFileToScene(file_name));
   ASSERT_NE(scene, nullptr);
 
@@ -1651,7 +1651,7 @@ TEST_F(GltfEncoderTest, EncodeMeshWithMeshFeaturesWithStructuralMetadata) {
   use_case.has_mesh_features = true;
   use_case.has_structural_metadata = true;
 
-  // Read test file from file.
+  // Read tests file from file.
   const std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name));
   ASSERT_NE(mesh, nullptr);
 
@@ -1671,7 +1671,7 @@ TEST_F(GltfEncoderTest, EncodeMeshWithMeshFeaturesWithDracoCompression) {
   use_case.has_draco_compression = true;
   use_case.has_mesh_features = true;
 
-  // Read test file from file.
+  // Read tests file from file.
   const std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name));
   ASSERT_NE(mesh, nullptr);
 
@@ -1682,7 +1682,7 @@ TEST_F(GltfEncoderTest, EncodeMeshWithMeshFeaturesWithDracoCompression) {
   GltfTestHelper::CheckBoxMetaMeshFeatures(*mesh_from_gltf, use_case);
 }
 
-// This test verifies that b/245519530 is fixed. It loads mesh with various mesh
+// This tests verifies that b/245519530 is fixed. It loads mesh with various mesh
 // feature ID sets, enables Draco compression, converts mesh to scene, and
 // encodes the scene to glTF.
 TEST_F(GltfEncoderTest, EncodeMeshWithMeshFeaturesWithDracoCompressionAsScene) {
@@ -1694,7 +1694,7 @@ TEST_F(GltfEncoderTest, EncodeMeshWithMeshFeaturesWithDracoCompressionAsScene) {
   use_case.has_mesh_features = true;
   use_case.has_structural_metadata = true;
 
-  // Read test file from file.
+  // Read tests file from file.
   std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name));
   ASSERT_NE(mesh, nullptr);
 
@@ -1717,7 +1717,7 @@ TEST_F(GltfEncoderTest, EncodeMeshWithMeshFeaturesWithDracoCompressionAsScene) {
 TEST_F(GltfEncoderTest, EncodeMeshWithMeshFeaturesWithMultiplePrimitives) {
   const std::string file_name = "BoxesMeta/glTF/BoxesMeta.gltf";
 
-  // Read test file from file.
+  // Read tests file from file.
   const std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name));
   ASSERT_NE(mesh, nullptr);
   // All mesh features should share two textures.
@@ -1767,7 +1767,7 @@ TEST_F(GltfEncoderTest,
        EncodeMeshWithPropertyAttributesWithMultiplePrimitives) {
   const std::string file_name = "BoxesMeta/glTF/BoxesMeta.gltf";
 
-  // Read test file from file.
+  // Read tests file from file.
   const std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name));
   ASSERT_NE(mesh, nullptr);
   ASSERT_EQ(mesh->NumPropertyAttributesIndices(), 2);
@@ -1809,7 +1809,7 @@ TEST_F(GltfEncoderTest, EncodePointCloudWithMaterials) {
   const std::string file_name =
       "SphereTwoMaterials/sphere_two_materials_point_cloud.gltf";
 
-  // Read test file from file.
+  // Read tests file from file.
   const std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name));
   ASSERT_NE(mesh, nullptr);
 

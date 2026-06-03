@@ -299,7 +299,7 @@ int ZEXPORT deflateInit2_(strm, level, method, windowBits, memLevel, strategy,
     if (s == Z_NULL) return Z_MEM_ERROR;
     strm->state = (struct internal_state FAR *)s;
     s->strm = strm;
-    s->status = INIT_STATE;     /* to pass state test in deflateReset() */
+    s->status = INIT_STATE;     /* to pass state tests in deflateReset() */
 
     s->wrap = wrap;
     s->gzhead = Z_NULL;

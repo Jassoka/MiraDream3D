@@ -68,7 +68,7 @@ TEST(MeshGroupTest, TestRemoveMeshInstanceWithNoOccurrences) {
   // Test that no mesh instances are removed from mesh group when removing the
   // instances by the base mesh index that is not in the mesh group.
 
-  // Create test mesh group.
+  // Create tests mesh group.
   MeshGroup mesh_group;
   mesh_group.AddMeshInstance({MeshIndex(1), 0, {}});
   mesh_group.AddMeshInstance({MeshIndex(3), 0, {}});
@@ -85,7 +85,7 @@ TEST(MeshGroupTest, TestRemoveMeshInstanceWithNoOccurrences) {
 TEST(MeshGroupTest, TestRemoveTheOnlyMeshInstance) {
   // Test that the only mesh instance can be removed from mesh group.
 
-  // Create test mesh group.
+  // Create tests mesh group.
   MeshGroup mesh_group;
   MeshGroup::MaterialsVariantsMapping mapping(70, {0, 1});
   mesh_group.AddMeshInstance({MeshIndex(7), 70, {mapping}});
@@ -100,7 +100,7 @@ TEST(MeshGroupTest, TestRemoveTheOnlyMeshInstance) {
 TEST(MeshGroupTest, TestRemoveOneMeshInstances) {
   // Test a mesh instance can be removed from mesh group.
 
-  // Create test mesh group.
+  // Create tests mesh group.
   MeshGroup mesh_group;
   mesh_group.AddMeshInstance({MeshIndex(1), 0, {}});
   mesh_group.AddMeshInstance({MeshIndex(3), 0, {}});
@@ -120,7 +120,7 @@ TEST(MeshGroupTest, TestRemoveOneMeshInstances) {
 TEST(MeshGroupTest, TestRemoveThreeMeshInstances) {
   // Test that multiple mesh instances can be removed from a mesh group.
 
-  // Create test mesh group.
+  // Create tests mesh group.
   MeshGroup mesh_group;
   mesh_group.AddMeshInstance({MeshIndex(1), 10, MakeMappings(1)});
   mesh_group.AddMeshInstance({MeshIndex(3), 30, MakeMappings(3)});
@@ -151,7 +151,7 @@ TEST(MeshGroupTest, TestRemoveThreeMeshInstances) {
 TEST(MeshGroupTest, TestCopy) {
   // Tests that a mesh group can be copied.
 
-  // Create test mesh group.
+  // Create tests mesh group.
   MeshGroup mesh_group;
   mesh_group.SetName("Mesh-1-3-5-7");
   mesh_group.AddMeshInstance({MeshIndex(1), 10, MakeMappings(1)});

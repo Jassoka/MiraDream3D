@@ -677,7 +677,7 @@ void NFFImporter::InternReadFile(const std::string &file, aiScene *pScene, IOSys
                         out->normals[out->vertices.size() - n - 1] = v;
                     }
                     if (out == currentMeshWithUVCoords) {
-                        // FIX: in one test file this wraps over multiple lines
+                        // FIX: in one tests file this wraps over multiple lines
                         SkipSpaces(&sz, lineEnd);
                         if (IsLineEnd(*sz)) {
                             GetNextLine(buffer, line);

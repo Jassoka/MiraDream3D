@@ -221,7 +221,7 @@ TEST(utBlenderImporter, importFleurOptonl) {
     ASSERT_NE(nullptr, scene);
 }
 
-/// This test contains a default cube with subdivision surface modifier and a default cube with subdivision surface applied.
+/// This tests contains a default cube with subdivision surface modifier and a default cube with subdivision surface applied.
 /// Vertices should be identical.
 TEST_F(utBlenderImporterExporter, importBlendWithSubdivisionSurface) {
     Assimp::Importer importer;

@@ -50,7 +50,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace Assimp {
 
-/** Custom test class providing several math related utilities. */
+/** Custom tests class providing several math related utilities. */
 class AssimpMathTest : public ::testing::Test {
 public:
     /** Return a random non-null 2D vector. */

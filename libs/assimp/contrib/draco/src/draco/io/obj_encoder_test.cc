@@ -61,7 +61,7 @@ class ObjEncoderTest : public ::testing::Test {
   void test_encoding(const std::string &file_name) {
     const std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name, true));
 
-    ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+    ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
     ASSERT_GT(mesh->num_faces(), 0);
 
     const std::unique_ptr<Mesh> decoded_mesh = EncodeAndDecodeMesh(mesh.get());

@@ -109,7 +109,7 @@ TEST_F(utPLYImportExport, importPLYwithUV) {
 
     EXPECT_NE(nullptr, scene);
     EXPECT_NE(nullptr, scene->mMeshes[0]);
-    // This test model is using n-gons, so 6 faces instead of 12 tris
+    // This tests model is using n-gons, so 6 faces instead of 12 tris
     EXPECT_EQ(6u, scene->mMeshes[0]->mNumFaces);
     EXPECT_EQ(aiPrimitiveType_POLYGON, scene->mMeshes[0]->mPrimitiveTypes);
     EXPECT_EQ(true, scene->mMeshes[0]->HasTextureCoords(0));
@@ -121,7 +121,7 @@ TEST_F(utPLYImportExport, importBinaryPLY) {
 
     EXPECT_NE(nullptr, scene);
     EXPECT_NE(nullptr, scene->mMeshes[0]);
-    // This test model is double sided, so 12 faces instead of 6
+    // This tests model is double sided, so 12 faces instead of 6
     EXPECT_EQ(12u, scene->mMeshes[0]->mNumFaces);
 }
 
@@ -132,7 +132,7 @@ TEST_F(utPLYImportExport, importBinaryPLYWithRNNewline) {
 
     ASSERT_NE(nullptr, scene);
     ASSERT_NE(nullptr, scene->mMeshes[0]);
-    // This test model is double sided, so 12 faces instead of 6
+    // This tests model is double sided, so 12 faces instead of 6
     ASSERT_EQ(12u, scene->mMeshes[0]->mNumFaces);
     // Also check if the indices were parsed correctly
     ASSERT_EQ(3u, scene->mMeshes[0]->mFaces[0].mNumIndices);

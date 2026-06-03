@@ -30,15 +30,15 @@ void test_teardown(void) {
 }
 
 #define CRC32DATA1 2220805626
-#define TESTDATA1 "Some test data 1...\0"
+#define TESTDATA1 "Some tests data 1...\0"
 
 MU_TEST(test_write) {
   struct zip_t *zip = zip_open(ZIPNAME, ZIP_DEFAULT_COMPRESSION_LEVEL, 'w');
   mu_check(zip != NULL);
 
-  mu_assert_int_eq(0, zip_entry_open(zip, "test/test-1.txt"));
+  mu_assert_int_eq(0, zip_entry_open(zip, "tests/tests-1.txt"));
   mu_assert_int_eq(0, zip_entry_write(zip, TESTDATA1, strlen(TESTDATA1)));
-  mu_assert_int_eq(0, strcmp(zip_entry_name(zip), "test/test-1.txt"));
+  mu_assert_int_eq(0, strcmp(zip_entry_name(zip), "tests/tests-1.txt"));
   mu_assert_int_eq(0, zip_entry_index(zip));
   mu_assert_int_eq(strlen(TESTDATA1), zip_entry_size(zip));
   mu_check(CRC32DATA1 == zip_entry_crc32(zip));

@@ -76,7 +76,7 @@
  *       error.
  *
  *    6) 64 bit integers may or may not be defined.  Test for their
- *       presence with the test: #ifdef INT64_MAX or #ifdef UINT64_MAX.
+ *       presence with the tests: #ifdef INT64_MAX or #ifdef UINT64_MAX.
  *       Note that this is different from the C99 specification which
  *       requires the existence of 64 bit support in the compiler.  If
  *       this is not defined for your platform, yet it is capable of
@@ -84,7 +84,7 @@
  *       been extended to cover all of your system's capabilities.
  *
  *    7) (u)intptr_t may or may not be defined.  Test for its presence
- *       with the test: #ifdef PTRDIFF_MAX.  If this is not defined
+ *       with the tests: #ifdef PTRDIFF_MAX.  If this is not defined
  *       for your platform, then it is because this file has not yet
  *       been extended to cover all of your system's capabilities, not
  *       because its optional.

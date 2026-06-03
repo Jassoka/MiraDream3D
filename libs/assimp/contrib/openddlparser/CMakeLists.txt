@@ -161,7 +161,7 @@ if (DDL_BUILD_TESTS)
     )
     target_link_libraries(openddlparser_unittest openddlparser Threads::Threads)
     target_compile_features(openddlparser_unittest PRIVATE cxx_std_11)
-    target_compile_definitions(openddlparser_unittest PRIVATE OPENDDL_TEST_DATA="${PROJECT_SOURCE_DIR}/test/TestData")
+    target_compile_definitions(openddlparser_unittest PRIVATE OPENDDL_TEST_DATA="${PROJECT_SOURCE_DIR}/tests/TestData")
 endif ()
 
 if (DDL_BUILD_PARSER_DEMO)

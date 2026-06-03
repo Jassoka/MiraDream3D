@@ -32,6 +32,8 @@ private:
      PixelBuffer mPixels;
 public:
     explicit Texture(QImage &img) : mPixels{} {
+        //TODO: supprimer, model n'a pas besoin de fonctions de qt,
+        // c'est controller qui doit se charger de la traduction en char* ou autre structure convenable
         assert(img.width() == TEXTURE_SIZE && img.height() == TEXTURE_SIZE); // Texture de taille fixe
         img = img.convertToFormat(QImage::Format_RGBA8888);
         img = img.mirrored();

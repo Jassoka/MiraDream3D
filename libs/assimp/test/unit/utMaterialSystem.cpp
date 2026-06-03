@@ -117,11 +117,11 @@ TEST_F(MaterialSystemTest, testColorProperty) {
 // ------------------------------------------------------------------------------------------------
 TEST_F(MaterialSystemTest, testStringProperty) {
     aiString s;
-    s.Set("Hello, this is a small test");
+    s.Set("Hello, this is a small tests");
     this->pcMat->AddProperty(&s, "testKey6");
     s.Set("358358");
     EXPECT_EQ(AI_SUCCESS, pcMat->Get("testKey6", 0, 0, s));
-    EXPECT_STREQ("Hello, this is a small test", s.data);
+    EXPECT_STREQ("Hello, this is a small tests", s.data);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -231,7 +231,7 @@ TEST_F(MaterialSystemTest, testMaterialTextureTypeEnum) {
 
     int32_t maxTextureType = 0;
     static constexpr int32_t bigNumber = 255;
-    EXPECT_GT(bigNumber, AI_TEXTURE_TYPE_MAX) << "AI_TEXTURE_TYPE_MAX too large for valid enum test, increase bigNumber";
+    EXPECT_GT(bigNumber, AI_TEXTURE_TYPE_MAX) << "AI_TEXTURE_TYPE_MAX too large for valid enum tests, increase bigNumber";
 
     // Loop until a value larger than any enum
     for (int32_t i = 0; i < bigNumber; ++i) {

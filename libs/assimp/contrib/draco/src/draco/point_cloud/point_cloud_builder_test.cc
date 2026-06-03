@@ -46,7 +46,7 @@ class PointCloudBuilderTest : public ::testing::Test {
 };
 
 TEST_F(PointCloudBuilderTest, IndividualTest_NoDedup) {
-  // This test verifies that PointCloudBuilder can construct point cloud using
+  // This tests verifies that PointCloudBuilder can construct point cloud using
   // SetAttributeValueForPoint API without deduplication.
   PointCloudBuilder builder;
   builder.Start(10);
@@ -72,7 +72,7 @@ TEST_F(PointCloudBuilderTest, IndividualTest_NoDedup) {
 }
 
 TEST_F(PointCloudBuilderTest, IndividualTest_Dedup) {
-  // This test verifies that PointCloudBuilder can construct point cloud using
+  // This tests verifies that PointCloudBuilder can construct point cloud using
   // SetAttributeValueForPoint API with deduplication.
   PointCloudBuilder builder;
   builder.Start(10);
@@ -92,7 +92,7 @@ TEST_F(PointCloudBuilderTest, IndividualTest_Dedup) {
 }
 
 TEST_F(PointCloudBuilderTest, BatchTest) {
-  // This test verifies that PointCloudBuilder can construct point cloud using
+  // This tests verifies that PointCloudBuilder can construct point cloud using
   // SetAttributeValuesForAllPoints API.
   PointCloudBuilder builder;
   builder.Start(10);
@@ -119,7 +119,7 @@ TEST_F(PointCloudBuilderTest, BatchTest) {
 }
 
 TEST_F(PointCloudBuilderTest, MultiUse) {
-  // This test verifies that PointCloudBuilder can be used multiple times
+  // This tests verifies that PointCloudBuilder can be used multiple times
   PointCloudBuilder builder;
   {
     builder.Start(10);
@@ -175,7 +175,7 @@ TEST_F(PointCloudBuilderTest, MultiUse) {
 }
 
 TEST_F(PointCloudBuilderTest, PropagatesAttributeUniqueIds) {
-  // This test verifies that PointCloudBuilder correctly applies unique IDs to
+  // This tests verifies that PointCloudBuilder correctly applies unique IDs to
   // attributes.
   PointCloudBuilder builder;
   builder.Start(10);

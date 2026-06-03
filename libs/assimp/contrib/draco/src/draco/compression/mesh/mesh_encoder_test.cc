@@ -33,7 +33,7 @@ class MeshEncoderTest : public ::testing::TestWithParam<MeshEncoderTestParams> {
  protected:
   MeshEncoderTest() {}
 
-  // Fills out_method with id of the encoding method used for the test.
+  // Fills out_method with id of the encoding method used for the tests.
   // Returns false if the encoding method is not set properly.
   bool GetMethod(MeshEncoderMethod *out_method) const {
     if (GetParam().encoding_method == "sequential") {
@@ -48,10 +48,10 @@ class MeshEncoderTest : public ::testing::TestWithParam<MeshEncoderTestParams> {
   }
 
   void TestGolden(const std::string &file_name) {
-    // This test verifies that a given set of meshes are encoded to an expected
+    // This tests verifies that a given set of meshes are encoded to an expected
     // output. This is useful for catching bugs in code changes that are not
     // supposed to change the encoding.
-    // The test is expected to fail when the encoding is modified. In such case,
+    // The tests is expected to fail when the encoding is modified. In such case,
     // the golden files need to be updated to reflect the changes.
     MeshEncoderMethod method;
     ASSERT_TRUE(GetMethod(&method))
@@ -68,7 +68,7 @@ class MeshEncoderTest : public ::testing::TestWithParam<MeshEncoderTestParams> {
     golden_file_name += std::to_string(kDracoMeshBitstreamVersionMinor);
     golden_file_name += ".drc";
     const std::unique_ptr<Mesh> mesh(ReadMeshFromTestFile(file_name));
-    ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+    ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
 
     ExpertEncoder encoder(*mesh);
     encoder.SetEncodingMethod(method);
@@ -79,7 +79,7 @@ class MeshEncoderTest : public ::testing::TestWithParam<MeshEncoderTestParams> {
     }
     EncoderBuffer buffer;
     const Status status = encoder.EncodeToBuffer(&buffer);
-    EXPECT_TRUE(status.ok()) << "Failed encoding test mesh " << file_name
+    EXPECT_TRUE(status.ok()) << "Failed encoding tests mesh " << file_name
                              << " with method " << GetParam().encoding_method;
     DRACO_ASSERT_OK(status);
     // Check that the encoded mesh was really encoded with the selected method.
@@ -95,7 +95,7 @@ class MeshEncoderTest : public ::testing::TestWithParam<MeshEncoderTestParams> {
           CompareGoldenFile(golden_file_name, buffer.data(), buffer.size()))
           << "Encoded data is different from the golden file. Please verify "
              "that the encoding works as expected and update the golden file "
-             "if necessary (run the test with --update_golden_files flag).";
+             "if necessary (run the tests with --update_golden_files flag).";
     } else {
       // Save the files into the local folder.
       EXPECT_TRUE(

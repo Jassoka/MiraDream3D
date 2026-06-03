@@ -77,7 +77,7 @@ TEST(MaterialTest, TestMaterialAccess) {
   ASSERT_EQ(material.NumTextureMaps(), 0);
 
   std::unique_ptr<draco::Texture> texture =
-      draco::ReadTextureFromFile(draco::GetTestFileFullPath("test.png"))
+      draco::ReadTextureFromFile(draco::GetTestFileFullPath("tests.png"))
           .value();
   ASSERT_NE(texture, nullptr);
 
@@ -89,7 +89,7 @@ TEST(MaterialTest, TestMaterialAccess) {
             material.GetTextureMapByType(draco::TextureMap::COLOR));
 
   std::unique_ptr<draco::Texture> texture2 =
-      draco::ReadTextureFromFile(draco::GetTestFileFullPath("test.png"))
+      draco::ReadTextureFromFile(draco::GetTestFileFullPath("tests.png"))
           .value();
   ASSERT_NE(texture2, nullptr);
   material.SetTextureMap(std::move(texture2), draco::TextureMap::EMISSIVE, 1);
@@ -103,7 +103,7 @@ TEST(MaterialTest, TestMaterialAccess) {
   // Try to add the emissive texture one more time. This should replace the
   // previous instance of the emissive texture on the material.
   std::unique_ptr<draco::Texture> texture3 =
-      draco::ReadTextureFromFile(draco::GetTestFileFullPath("test.png"))
+      draco::ReadTextureFromFile(draco::GetTestFileFullPath("tests.png"))
           .value();
   ASSERT_NE(texture3, nullptr);
   material.SetTextureMap(std::move(texture2), draco::TextureMap::EMISSIVE, 2);
@@ -114,7 +114,7 @@ TEST(MaterialTest, TestMaterialAccess) {
 
   std::unique_ptr<draco::TextureMap> texture_map4(new draco::TextureMap());
   std::unique_ptr<draco::Texture> texture4 =
-      draco::ReadTextureFromFile(draco::GetTestFileFullPath("test.png"))
+      draco::ReadTextureFromFile(draco::GetTestFileFullPath("tests.png"))
           .value();
   material.SetTextureMap(std::move(texture4), draco::TextureMap::ROUGHNESS, 0);
   ASSERT_EQ(material.NumTextureMaps(), 3);
@@ -178,7 +178,7 @@ TEST(MaterialTest, TestMaterialCopy) {
   material.SetSpecularColorFactor(draco::Vector3f(0.4f, 1.f, 1.f));
 
   std::unique_ptr<draco::Texture> texture =
-      draco::ReadTextureFromFile(draco::GetTestFileFullPath("test.png"))
+      draco::ReadTextureFromFile(draco::GetTestFileFullPath("tests.png"))
           .value();
   ASSERT_NE(texture, nullptr);
   material.SetTextureMap(std::move(texture), draco::TextureMap::EMISSIVE, 2);
@@ -258,13 +258,13 @@ TEST(MaterialTest, RemoveTextureMap) {
 
   // Add some dummy textures to the material.
   std::unique_ptr<draco::Texture> texture =
-      draco::ReadTextureFromFile(draco::GetTestFileFullPath("test.png"))
+      draco::ReadTextureFromFile(draco::GetTestFileFullPath("tests.png"))
           .value();
   ASSERT_NE(texture, nullptr);
   material.SetTextureMap(std::move(texture), draco::TextureMap::COLOR, 0);
 
   std::unique_ptr<draco::Texture> texture_2 =
-      draco::ReadTextureFromFile(draco::GetTestFileFullPath("test.png"))
+      draco::ReadTextureFromFile(draco::GetTestFileFullPath("tests.png"))
           .value();
 
   material.SetTextureMap(std::move(texture), draco::TextureMap::EMISSIVE, 0);
@@ -295,7 +295,7 @@ TEST(MaterialTest, SharedTexture) {
 
   // Add some dummy textures to the material.
   std::unique_ptr<draco::Texture> texture =
-      draco::ReadTextureFromFile(draco::GetTestFileFullPath("test.png"))
+      draco::ReadTextureFromFile(draco::GetTestFileFullPath("tests.png"))
           .value();
   ASSERT_NE(texture, nullptr);
   draco::Texture *texture_raw = texture.get();
@@ -307,7 +307,7 @@ TEST(MaterialTest, SharedTexture) {
   ASSERT_EQ(material.NumTextureMaps(), 2);
 
   // Read a new texture.
-  texture = draco::ReadTextureFromFile(draco::GetTestFileFullPath("test.png"))
+  texture = draco::ReadTextureFromFile(draco::GetTestFileFullPath("tests.png"))
                 .value();
   // Texture is not owned by the material so we expect a failure.
   ASSERT_FALSE(

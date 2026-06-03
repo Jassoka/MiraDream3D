@@ -342,8 +342,8 @@ fn main() {
     let path = CString::new("/tmp/rust.zip").unwrap();
     let mode: libc::c_char = 'w' as libc::c_char;
 
-    let entryname = CString::new("test.txt").unwrap();
-    let content = "test content\0";
+    let entryname = CString::new("tests.txt").unwrap();
+    let content = "tests content\0";
 
     unsafe {
         let zip: *mut Zip = zip_open(path.as_ptr(), 5, mode);
@@ -425,9 +425,9 @@ Zip = ffi.dlopen(ctypes.util.find_library("zip"))
 
 ptr = Zip.zip_open("/tmp/python.zip", 6, 'w')
 
-status = Zip.zip_entry_open(ptr, "test")
+status = Zip.zip_entry_open(ptr, "tests")
 
-content = "test content"
+content = "tests content"
 status = Zip.zip_entry_write(ptr, content, len(content))
 
 Zip.zip_entry_close(ptr)

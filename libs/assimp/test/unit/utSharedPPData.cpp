@@ -74,16 +74,16 @@ void SharedPPDataTest::TearDown()
 TEST_F(SharedPPDataTest, testPODProperty)
 {
     int i = 5;
-    shared->AddProperty("test",i);
+    shared->AddProperty("tests",i);
 	int o = 0;
-    EXPECT_TRUE(shared->GetProperty("test",o));
+    EXPECT_TRUE(shared->GetProperty("tests",o));
     EXPECT_EQ(5, o);
     EXPECT_FALSE(shared->GetProperty("test2",o));
     EXPECT_EQ(5, o);
 
     float f = 12.f, m = -98.7654f;
-    shared->AddProperty("test",f);
-    EXPECT_TRUE(shared->GetProperty("test",m));
+    shared->AddProperty("tests",f);
+    EXPECT_TRUE(shared->GetProperty("tests",m));
     EXPECT_EQ(12.f, m);
 }
 

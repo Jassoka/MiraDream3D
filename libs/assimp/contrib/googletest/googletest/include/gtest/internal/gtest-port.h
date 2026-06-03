@@ -633,7 +633,7 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 
 #endif  // GTEST_HAS_CLONE
 
-// Determines whether to support stream redirection. This is used to test
+// Determines whether to support stream redirection. This is used to tests
 // output correctness and to implement death tests.
 #ifndef GTEST_HAS_STREAM_REDIRECTION
 // By default, we assume that stream redirection is supported on all
@@ -685,7 +685,7 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 #define GTEST_WIDE_STRING_USES_UTF16_ 0
 #endif
 
-// Determines whether test results can be streamed to a socket.
+// Determines whether tests results can be streamed to a socket.
 #if defined(GTEST_OS_LINUX) || defined(GTEST_OS_GNU_KFREEBSD) || \
     defined(GTEST_OS_DRAGONFLY) || defined(GTEST_OS_FREEBSD) ||  \
     defined(GTEST_OS_NETBSD) || defined(GTEST_OS_OPENBSD) ||     \
@@ -1253,7 +1253,7 @@ class GTEST_API_ Notification {
     cv_.notify_all();
   }
 
-  // Blocks until the controller thread notifies. Must be called from a test
+  // Blocks until the controller thread notifies. Must be called from a tests
   // thread.
   void WaitForNotification() {
     std::unique_lock<std::mutex> lock(mu_);

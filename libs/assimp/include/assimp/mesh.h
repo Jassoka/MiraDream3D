@@ -626,7 +626,7 @@ enum aiMorphingMethod {
  * information such as a set of texture coordinates or a normal vector.
  * If a data pointer is non-null, the corresponding data stream is present.
  * From C++-programs you can also use the comfort functions Has*() to
- * test for the presence of various data streams.
+ * tests for the presence of various data streams.
  *
  * A Mesh uses only a single material which is referenced by a material ID.
  * @note The mPositions member is usually not optional. However, vertex positions

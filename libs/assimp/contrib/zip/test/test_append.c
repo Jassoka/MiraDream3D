@@ -16,7 +16,7 @@
 static char ZIPNAME[L_tmpnam + 1] = {0};
 static int total_entries = 0;
 
-#define TESTDATA1 "Some test data 1...\0"
+#define TESTDATA1 "Some tests data 1...\0"
 
 void test_setup(void) {
   strncpy(ZIPNAME, "z-XXXXXX\0", L_tmpnam);
@@ -24,7 +24,7 @@ void test_setup(void) {
 
   struct zip_t *zip = zip_open(ZIPNAME, ZIP_DEFAULT_COMPRESSION_LEVEL, 'w');
 
-  zip_entry_open(zip, "test/test-1.txt");
+  zip_entry_open(zip, "tests/tests-1.txt");
   zip_entry_write(zip, TESTDATA1, strlen(TESTDATA1));
   zip_entry_close(zip);
   ++total_entries;
@@ -34,15 +34,15 @@ void test_setup(void) {
 
 void test_teardown(void) { UNLINK(ZIPNAME); }
 
-#define TESTDATA2 "Some test data 2...\0"
+#define TESTDATA2 "Some tests data 2...\0"
 #define CRC32DATA2 2532008468
 
 MU_TEST(test_append) {
   struct zip_t *zip = zip_open(ZIPNAME, ZIP_DEFAULT_COMPRESSION_LEVEL, 'a');
   mu_check(zip != NULL);
 
-  mu_assert_int_eq(0, zip_entry_open(zip, "test\\test-2.txt"));
-  mu_assert_int_eq(0, strcmp(zip_entry_name(zip), "test/test-2.txt"));
+  mu_assert_int_eq(0, zip_entry_open(zip, "tests\\tests-2.txt"));
+  mu_assert_int_eq(0, strcmp(zip_entry_name(zip), "tests/tests-2.txt"));
   mu_assert_int_eq(total_entries, zip_entry_index(zip));
   mu_assert_int_eq(0, zip_entry_write(zip, TESTDATA2, strlen(TESTDATA2)));
   mu_assert_int_eq(strlen(TESTDATA2), zip_entry_size(zip));
@@ -52,8 +52,8 @@ MU_TEST(test_append) {
   zip_close(zip);
 
   zip = zip_open(ZIPNAME, ZIP_DEFAULT_COMPRESSION_LEVEL, 'a');
-  mu_assert_int_eq(0, zip_entry_open(zip, "test\\empty/"));
-  mu_assert_int_eq(0, strcmp(zip_entry_name(zip), "test/empty/"));
+  mu_assert_int_eq(0, zip_entry_open(zip, "tests\\empty/"));
+  mu_assert_int_eq(0, strcmp(zip_entry_name(zip), "tests/empty/"));
   mu_assert_int_eq(0, zip_entry_size(zip));
   mu_assert_int_eq(0, zip_entry_crc32(zip));
   mu_assert_int_eq(total_entries, zip_entry_index(zip));
@@ -70,8 +70,8 @@ MU_TEST(test_append) {
   mu_assert_int_eq(0, zip_entry_close(zip));
   ++total_entries;
 
-  mu_assert_int_eq(0, zip_entry_open(zip, "dotfiles/.test"));
-  mu_assert_int_eq(0, strcmp(zip_entry_name(zip), "dotfiles/.test"));
+  mu_assert_int_eq(0, zip_entry_open(zip, "dotfiles/.tests"));
+  mu_assert_int_eq(0, strcmp(zip_entry_name(zip), "dotfiles/.tests"));
   mu_assert_int_eq(0, zip_entry_size(zip));
   mu_assert_int_eq(0, zip_entry_crc32(zip));
   mu_assert_int_eq(0, zip_entry_write(zip, TESTDATA2, strlen(TESTDATA2)));

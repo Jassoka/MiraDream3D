@@ -1323,7 +1323,7 @@ ZEXTERN gzFile ZEXPORT gzopen OF((const char *path, const char *mode));
      These functions, as well as gzip, will read and decode a sequence of gzip
    streams in a file.  The append function of gzopen() can be used to create
    such a file.  (Also see gzflush() for another way to do this.)  When
-   appending, gzopen does not test whether the file begins with a gzip stream,
+   appending, gzopen does not tests whether the file begins with a gzip stream,
    nor does it look for the end of the gzip streams to begin appending.  gzopen
    will simply append a gzip stream to the existing file.
 

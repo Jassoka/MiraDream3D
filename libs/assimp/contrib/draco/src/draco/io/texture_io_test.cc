@@ -29,7 +29,7 @@ namespace {
 
 // Tests loading of textures from a buffer.
 TEST(TextureIoTest, TestLoadFromBuffer) {
-  const std::string file_name = draco::GetTestFileFullPath("test.png");
+  const std::string file_name = draco::GetTestFileFullPath("tests.png");
   std::vector<uint8_t> image_data;
   ASSERT_TRUE(draco::ReadFileToBuffer(file_name, &image_data));
 

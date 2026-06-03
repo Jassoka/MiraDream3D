@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-// This program is used to test the installed version of Draco. It does just
+// This program is used to tests the installed version of Draco. It does just
 // enough to confirm that an application using Draco can compile and link
 // against an installed version of Draco without errors. It does not perform
 // any sort of library tests.
@@ -39,6 +39,6 @@ int main(int /*argc*/, char** /*argv*/) {
   (void)num_meshes;
 #endif
 
-  printf("Partial sanity test passed.\n");
+  printf("Partial sanity tests passed.\n");
   return 0;
 }

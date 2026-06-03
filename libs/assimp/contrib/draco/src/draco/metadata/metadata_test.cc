@@ -79,7 +79,7 @@ TEST_F(MetadataTest, TestArrayEntry) {
 }
 
 TEST_F(MetadataTest, TestStringEntry) {
-  const std::string entry_value = "test string entry";
+  const std::string entry_value = "tests string entry";
   metadata.AddEntryString("string", entry_value);
   std::string return_value;
   ASSERT_TRUE(metadata.GetEntryString("string", &return_value));

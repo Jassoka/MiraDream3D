@@ -61,7 +61,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace Assimp {
 namespace MD3 {
 
-// to make it easier for us, we test the magic word against both "endiannesses"
+// to make it easier for us, we tests the magic word against both "endiannesses"
 #define AI_MD3_MAGIC_NUMBER_BE  AI_MAKE_MAGIC("IDP3")
 #define AI_MD3_MAGIC_NUMBER_LE  AI_MAKE_MAGIC("3PDI")
 

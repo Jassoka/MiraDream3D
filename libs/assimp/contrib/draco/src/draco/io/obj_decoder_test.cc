@@ -70,11 +70,11 @@ class ObjDecoderTest : public ::testing::Test {
 
   void test_decoding(const std::string &file_name) {
     const std::unique_ptr<Mesh> mesh(DecodeObj<Mesh>(file_name));
-    ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+    ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
     ASSERT_GT(mesh->num_faces(), 0);
 
     const std::unique_ptr<PointCloud> pc(DecodeObj<PointCloud>(file_name));
-    ASSERT_NE(pc, nullptr) << "Failed to load test model " << file_name;
+    ASSERT_NE(pc, nullptr) << "Failed to load tests model " << file_name;
     ASSERT_GT(pc->num_points(), 0);
   }
 };
@@ -93,7 +93,7 @@ TEST_F(ObjDecoderTest, SubObjects) {
   // Tests loading an Obj with sub objects.
   const std::string file_name = "cube_att_sub_o.obj";
   const std::unique_ptr<Mesh> mesh(DecodeObj<Mesh>(file_name));
-  ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+  ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
   ASSERT_GT(mesh->num_faces(), 0);
 
   // A sub object attribute should be the fourth attribute of the mesh (in this
@@ -110,7 +110,7 @@ TEST_F(ObjDecoderTest, SubObjectsWithMetadata) {
   // Tests loading an Obj with sub objects.
   const std::string file_name = "cube_att_sub_o.obj";
   const std::unique_ptr<Mesh> mesh(DecodeObjWithMetadata<Mesh>(file_name));
-  ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+  ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
   ASSERT_GT(mesh->num_faces(), 0);
 
   ASSERT_EQ(mesh->num_attributes(), 4);
@@ -131,7 +131,7 @@ TEST_F(ObjDecoderTest, QuadTriangulateOBJ) {
   // Tests loading an Obj with quad faces.
   const std::string file_name = "cube_quads.obj";
   const std::unique_ptr<Mesh> mesh(DecodeObj<Mesh>(file_name));
-  ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+  ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
   ASSERT_EQ(mesh->num_faces(), 12);
 
   ASSERT_EQ(mesh->num_attributes(), 3);
@@ -145,7 +145,7 @@ TEST_F(ObjDecoderTest, QuadPreserveOBJ) {
   constexpr bool kStoreAddedEdgesPerVertex = false;
   const std::unique_ptr<Mesh> mesh(DecodeObjWithPolygons<Mesh>(
       file_name, kRegularizeQuads, kStoreAddedEdgesPerVertex));
-  ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+  ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
   ASSERT_EQ(mesh->num_faces(), 12);
 
   ASSERT_EQ(mesh->num_attributes(), 4);
@@ -187,7 +187,7 @@ TEST_F(ObjDecoderTest, OctagonTriangulatedOBJ) {
   // Tests that we can load an obj with an octagon triangulated.
   const std::string file_name = "octagon.obj";
   const std::unique_ptr<Mesh> mesh(DecodeObj<Mesh>(file_name));
-  ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+  ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
 
   ASSERT_EQ(mesh->num_attributes(), 1);
   ASSERT_EQ(mesh->num_points(), 8);
@@ -202,7 +202,7 @@ TEST_F(ObjDecoderTest, OctagonPreservedOBJ) {
   constexpr bool kStoreAddedEdgesPerVertex = false;
   const std::unique_ptr<Mesh> mesh(DecodeObjWithPolygons<Mesh>(
       file_name, kRegularizeQuads, kStoreAddedEdgesPerVertex));
-  ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+  ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
 
   ASSERT_EQ(mesh->num_attributes(), 2);
   ASSERT_EQ(mesh->attribute(0)->attribute_type(), GeometryAttribute::POSITION);
@@ -282,7 +282,7 @@ TEST_F(ObjDecoderTest, WrongAttributeMapping) {
 }
 
 TEST_F(ObjDecoderTest, TestObjDecodingAll) {
-  // test if we can read all obj that are currently in test folder.
+  // tests if we can read all obj that are currently in tests folder.
   test_decoding("bunny_norm.obj");
   test_decoding("cube_att.obj");
   test_decoding("cube_att_partial.obj");

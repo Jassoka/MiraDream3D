@@ -54,7 +54,7 @@ TEST_F(utMatrix3x3Test, FromToMatrixTest) {
 
     const double PRECISION = 0.000001;
 
-    // axes test
+    // axes tests
     aiVector3D axes[] = { aiVector3D(1, 0, 0), aiVector3D(0, 1, 0), aiVector3D(0, 0, 1) };
 
     for (int i = 0; i < 3; ++i) {
@@ -68,7 +68,7 @@ TEST_F(utMatrix3x3Test, FromToMatrixTest) {
         }
     }
 
-    // random test
+    // random tests
     const int NUM_SAMPLES = 10000;
 
     aiVector3D from, to;

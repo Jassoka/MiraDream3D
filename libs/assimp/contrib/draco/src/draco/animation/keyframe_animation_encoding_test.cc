@@ -51,7 +51,7 @@ class KeyframeAnimationEncodingTest : public ::testing::Test {
     ASSERT_EQ(animation0.num_animations(), animation1.num_animations());
 
     if (quantized) {
-      // TODO(b/199760123) : Add test for stable quantization.
+      // TODO(b/199760123) : Add tests for stable quantization.
       // Quantization will result in slightly different values.
       // Skip comparing values.
       return;

@@ -24,7 +24,7 @@ namespace draco {
 class MeshCleanupTest : public ::testing::Test {};
 
 TEST_F(MeshCleanupTest, TestDegneratedFaces) {
-  // This test verifies that the mesh cleanup tools removes degenerated faces.
+  // This tests verifies that the mesh cleanup tools removes degenerated faces.
   TriangleSoupMeshBuilder mb;
   mb.Start(2);
   const int pos_att_id =
@@ -41,7 +41,7 @@ TEST_F(MeshCleanupTest, TestDegneratedFaces) {
   // clang-format on
 
   std::unique_ptr<Mesh> mesh = mb.Finalize();
-  ASSERT_NE(mesh, nullptr) << "Failed to build the test mesh.";
+  ASSERT_NE(mesh, nullptr) << "Failed to build the tests mesh.";
   ASSERT_EQ(mesh->num_faces(), 2) << "Wrong number of faces in the input mesh.";
   MeshCleanupOptions cleanup_options;
   DRACO_ASSERT_OK(MeshCleanup::Cleanup(mesh.get(), cleanup_options));
@@ -49,7 +49,7 @@ TEST_F(MeshCleanupTest, TestDegneratedFaces) {
 }
 
 TEST_F(MeshCleanupTest, TestDegneratedFacesAndIsolatedVertices) {
-  // This test verifies that the mesh cleanup tools removes degenerated faces
+  // This tests verifies that the mesh cleanup tools removes degenerated faces
   // and isolated vertices.
   TriangleSoupMeshBuilder mb;
   mb.Start(2);
@@ -82,7 +82,7 @@ TEST_F(MeshCleanupTest, TestDegneratedFacesAndIsolatedVertices) {
   // clang-format on
 
   std::unique_ptr<Mesh> mesh = mb.Finalize();
-  ASSERT_NE(mesh, nullptr) << "Failed to build the test mesh.";
+  ASSERT_NE(mesh, nullptr) << "Failed to build the tests mesh.";
   ASSERT_EQ(mesh->num_faces(), 2) << "Wrong number of faces in the input mesh.";
   ASSERT_EQ(mesh->num_points(), 5)
       << "Wrong number of point ids in the input mesh.";
@@ -123,7 +123,7 @@ TEST_F(MeshCleanupTest, TestAttributes) {
   // clang-format on
 
   std::unique_ptr<Mesh> mesh = mb.Finalize();
-  ASSERT_NE(mesh, nullptr) << "Failed to build the test mesh.";
+  ASSERT_NE(mesh, nullptr) << "Failed to build the tests mesh.";
   ASSERT_EQ(mesh->num_faces(), 2) << "Wrong number of faces in the input mesh.";
   ASSERT_EQ(mesh->num_points(), 5)
       << "Wrong number of point ids in the input mesh.";
@@ -141,7 +141,7 @@ TEST_F(MeshCleanupTest, TestAttributes) {
 }
 
 TEST_F(MeshCleanupTest, TestDuplicateFaces) {
-  // This test verifies that the mesh cleanup tool removes duplicate faces.
+  // This tests verifies that the mesh cleanup tool removes duplicate faces.
   TriangleSoupMeshBuilder mb;
   mb.Start(5);
   const int pos_att_id =

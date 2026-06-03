@@ -212,7 +212,7 @@ void MDLImporter::InternReadFile(const std::string &pFile,
             iGSFileVersion = 0;
             InternReadFile_Quake1();
         }
-        // GameStudio A<old> MDL2 format - used by some test models that come with 3DGS
+        // GameStudio A<old> MDL2 format - used by some tests models that come with 3DGS
         else if (AI_MDL_MAGIC_NUMBER_BE_GS3 == iMagicWord || AI_MDL_MAGIC_NUMBER_LE_GS3 == iMagicWord) {
             ASSIMP_LOG_DEBUG("MDL subtype: 3D GameStudio A2, magic word is MDL2");
             iGSFileVersion = 2;

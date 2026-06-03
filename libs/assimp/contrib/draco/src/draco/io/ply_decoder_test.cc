@@ -37,23 +37,23 @@ class PlyDecoderTest : public ::testing::Test {
   void test_decoding(const std::string &file_name, int num_faces,
                      uint32_t num_points, std::unique_ptr<Mesh> *out_mesh) {
     std::unique_ptr<Mesh> mesh(DecodePly<Mesh>(file_name));
-    ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+    ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
     ASSERT_EQ(mesh->num_faces(), num_faces);
     if (out_mesh) {
       *out_mesh = std::move(mesh);
     }
 
     const std::unique_ptr<PointCloud> pc(DecodePly<PointCloud>(file_name));
-    ASSERT_NE(pc, nullptr) << "Failed to load test model " << file_name;
+    ASSERT_NE(pc, nullptr) << "Failed to load tests model " << file_name;
     ASSERT_EQ(pc->num_points(), num_points);
   }
   void test_decoding(const std::string &file_name) {
     const std::unique_ptr<Mesh> mesh(DecodePly<Mesh>(file_name));
-    ASSERT_NE(mesh, nullptr) << "Failed to load test model " << file_name;
+    ASSERT_NE(mesh, nullptr) << "Failed to load tests model " << file_name;
     ASSERT_GT(mesh->num_faces(), 0);
 
     const std::unique_ptr<PointCloud> pc(DecodePly<PointCloud>(file_name));
-    ASSERT_NE(pc, nullptr) << "Failed to load test model " << file_name;
+    ASSERT_NE(pc, nullptr) << "Failed to load tests model " << file_name;
     ASSERT_GT(pc->num_points(), 0);
   }
 };
@@ -75,7 +75,7 @@ TEST_F(PlyDecoderTest, TestPlyNormals) {
 }
 
 TEST_F(PlyDecoderTest, TestPlyDecodingAll) {
-  // test if we can read all ply that are currently in test folder.
+  // tests if we can read all ply that are currently in tests folder.
   test_decoding("bun_zipper.ply");
   // test_decoding("cube_att.ply"); // tested
   test_decoding("test_extra_whitespace.ply");

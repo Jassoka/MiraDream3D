@@ -68,7 +68,7 @@ public:
     static ai_real calculateAreaOfTriangle( const aiFace& face, aiMesh* mesh );
 
     /// @brief Will calculate the intersection between a ray and a plane
-    /// @param ray          The ray to test for
+    /// @param ray          The ray to tests for
     /// @param planePos     A point on the plane
     /// @param planeNormal  The plane normal to describe its orientation
     /// @param pos          The position of the intersection.

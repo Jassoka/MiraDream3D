@@ -62,7 +62,7 @@ protected:
 
 TEST_F(utScene, findNodeTest) {
 	scene->mRootNode = new aiNode();
-	scene->mRootNode->mName.Set("test");
+	scene->mRootNode->mName.Set("tests");
 	aiNode *child = new aiNode;
 	child->mName.Set("child");
 	scene->mRootNode->addChildren(1, &child);
@@ -96,7 +96,7 @@ TEST_F(utScene, deepCopyTest) {
     scene->mMeshes = new aiMesh *[scene->mNumMeshes] ();
     scene->mMeshes[0] = new aiMesh ();
 
-    scene->mMeshes[0]->SetTextureCoordsName (0, aiString ("test"));
+    scene->mMeshes[0]->SetTextureCoordsName (0, aiString ("tests"));
 
     {
         aiScene* copied = nullptr;

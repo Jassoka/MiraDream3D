@@ -50,7 +50,7 @@ std::string RemoveFileExtension(const std::string &filename);
 // to the input file. If |sibling_file_full_path| has no directory, the relative
 // path itself |input_file_relative_path| is returned. A common use case is for
 // the |input_file_relative_path| to be just a file name. See usage examples in
-// the unit test.
+// the unit tests.
 std::string GetFullPath(const std::string &input_file_relative_path,
                         const std::string &sibling_file_full_path);
 

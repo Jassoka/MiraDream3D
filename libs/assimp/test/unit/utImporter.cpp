@@ -66,7 +66,7 @@ protected:
 #define InputData_BLOCK_SIZE 1310
 
 // clang-format off
-// test data for Importer::ReadFileFromMemory() - ./test/3DS/CameraRollAnim.3ds
+// tests data for Importer::ReadFileFromMemory() - ./tests/3DS/CameraRollAnim.3ds
 static unsigned char InputData_abRawBlock[1310] = {
      77, 77, 30,  5,  0,  0,  2,  0, 10,  0,  0,  0,  3,  0,  0,  0, 61, 61, 91,  3,  0,  0,
      62, 61, 10,  0,  0,  0,  3,  0,  0,  0,  0,  1, 10,  0,  0,  0,  0,  0,128, 63,  0, 64,
@@ -129,7 +129,7 @@ static unsigned char InputData_abRawBlock[1310] = {
       0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,
      96,233, 20,194, 67,196, 97,190,147, 56,182, 65 };
 // clang-format on
-#define AIUT_DEF_ERROR_TEXT "sorry, this is a test"
+#define AIUT_DEF_ERROR_TEXT "sorry, this is a tests"
 
 static const aiImporterDesc desc = {
     "UNIT TEST - IMPORTER",
@@ -147,7 +147,7 @@ static const aiImporterDesc desc = {
 class TestPlugin : public BaseImporter {
 public:
     virtual bool CanRead(
-            const std::string &pFile, IOSystem * /*pIOHandler*/, bool /*test*/) const {
+            const std::string &pFile, IOSystem * /*pIOHandler*/, bool /*tests*/) const {
         std::string::size_type pos = pFile.find_last_of('.');
         // no file extension - can't read
         if (pos == std::string::npos)
@@ -202,9 +202,9 @@ TEST_F(ImporterTest, testFloatProperty) {
 
 // ------------------------------------------------------------------------------------------------
 TEST_F(ImporterTest, testStringProperty) {
-    bool b = pImp->SetPropertyString("quakquak", "test");
+    bool b = pImp->SetPropertyString("quakquak", "tests");
     EXPECT_TRUE(!b);
-    EXPECT_EQ("test", pImp->GetPropertyString("quakquak", "weghwekg"));
+    EXPECT_EQ("tests", pImp->GetPropertyString("quakquak", "weghwekg"));
     EXPECT_EQ("ILoveYou", pImp->GetPropertyString("not_there", "ILoveYou"));
 }
 
@@ -248,7 +248,7 @@ TEST_F(ImporterTest, testExtensionCheck) {
 TEST_F(ImporterTest, testMultipleReads) {
     // see http://sourceforge.net/projects/assimp/forums/forum/817654/topic/3591099
     // Check whether reading and post-processing multiple times using
-    // the same objects is *generally* fine. This test doesn't target
+    // the same objects is *generally* fine. This tests doesn't target
     // importers. Testing post-processing stability is the main point.
 
     const unsigned int flags =
@@ -264,7 +264,7 @@ TEST_F(ImporterTest, testMultipleReads) {
             aiProcess_OptimizeMeshes |
             aiProcess_OptimizeGraph;
 
-    EXPECT_TRUE(pImp->ReadFile(ASSIMP_TEST_MODELS_DIR "/X/test.x", flags));
+    EXPECT_TRUE(pImp->ReadFile(ASSIMP_TEST_MODELS_DIR "/X/tests.x", flags));
     //EXPECT_TRUE(pImp->ReadFile(ASSIMP_TEST_MODELS_DIR "/X/dwarf.x",flags)); # is in nonbsd
     EXPECT_TRUE(pImp->ReadFile(ASSIMP_TEST_MODELS_DIR "/X/Testwuson.X", flags));
     EXPECT_TRUE(pImp->ReadFile(ASSIMP_TEST_MODELS_DIR "/X/anim_test.x", flags));
@@ -310,9 +310,9 @@ protected:
 
     void InternReadFile(const std::string &pFile, aiScene *, Assimp::IOSystem *) override {
         if (pFile == "deadlyImportError.fail") {
-            throw DeadlyImportError("Deadly import error test. Details: ", 42, " More Details: ", "Failure");
+            throw DeadlyImportError("Deadly import error tests. Details: ", 42, " More Details: ", "Failure");
         } else if (pFile == "stdException.fail") {
-            throw std::runtime_error("std::exception test");
+            throw std::runtime_error("std::exception tests");
         } else if (pFile == "unexpectedException.fail") {
             throw 5;
         }
@@ -325,7 +325,7 @@ TEST_F(ImporterTest, deadlyImportError) {
     pImp->SetIOHandler(new TestIOSystem);
     const aiScene *scene = pImp->ReadFile("deadlyImportError.fail", 0);
     EXPECT_EQ(scene, nullptr);
-    EXPECT_STREQ(pImp->GetErrorString(), "Deadly import error test. Details: 42 More Details: Failure");
+    EXPECT_STREQ(pImp->GetErrorString(), "Deadly import error tests. Details: 42 More Details: Failure");
     EXPECT_NE(pImp->GetException(), std::exception_ptr());
 }
 
@@ -334,12 +334,12 @@ TEST_F(ImporterTest, stdException) {
     pImp->SetIOHandler(new TestIOSystem);
     const aiScene *scene = pImp->ReadFile("stdException.fail", 0);
     EXPECT_EQ(scene, nullptr);
-    EXPECT_STREQ(pImp->GetErrorString(), "std::exception test");
+    EXPECT_STREQ(pImp->GetErrorString(), "std::exception tests");
     EXPECT_NE(pImp->GetException(), std::exception_ptr());
     try {
         std::rethrow_exception(pImp->GetException());
     } catch (const std::exception &e) {
-        EXPECT_STREQ(e.what(), "std::exception test");
+        EXPECT_STREQ(e.what(), "std::exception tests");
     } catch (...) {
         EXPECT_TRUE(false);
     }

@@ -78,7 +78,7 @@ using testing::internal::ParseNaturalNumber;
 namespace testing {
 namespace internal {
 
-// A helper class whose objects replace the death test factory for a
+// A helper class whose objects replace the death tests factory for a
 // single UnitTest object during their lifetimes.
 class ReplaceDeathTestFactory {
  public:
@@ -137,7 +137,7 @@ class TestForDeathTest : public testing::Test {
   // A static member function that's expected to die.
   static void StaticMemberFunction() { DieInside("StaticMemberFunction"); }
 
-  // A method of the test fixture that may die.
+  // A method of the tests fixture that may die.
   void MemberFunction() {
     if (should_die_) DieInside("MemberFunction");
   }
@@ -184,7 +184,7 @@ bool DieIfLessThan(int x, int y) {
   return true;
 }
 
-// Tests that ASSERT_DEATH can be used outside a TEST, TEST_F, or test fixture.
+// Tests that ASSERT_DEATH can be used outside a TEST, TEST_F, or tests fixture.
 void DeathTestSubroutine() {
   EXPECT_DEATH(GlobalFunction(), "death.*GlobalFunction");
   ASSERT_DEATH(GlobalFunction(), "death.*GlobalFunction");
@@ -240,7 +240,7 @@ TEST(ExitStatusPredicateTest, ExitedWithCode) {
 
 // Returns the exit status of a process that calls _exit(2) with a
 // given exit code.  This is a helper function for the
-// ExitStatusPredicateTest test suite.
+// ExitStatusPredicateTest tests suite.
 static int NormalExitStatus(int exit_code) {
   pid_t child_pid = fork();
   if (child_pid == 0) {
@@ -255,7 +255,7 @@ static int NormalExitStatus(int exit_code) {
 // If the signal does not cause the process to die, then it returns
 // instead the exit status of a process that exits normally with exit
 // code 1.  This is a helper function for the ExitStatusPredicateTest
-// test suite.
+// tests suite.
 static int KilledExitStatus(int signum) {
   pid_t child_pid = fork();
   if (child_pid == 0) {
@@ -304,12 +304,12 @@ TEST(ExitStatusPredicateTest, KilledBySignal) {
 #pragma GCC diagnostic ignored "-Wempty-body"
 #pragma GCC diagnostic ignored "-Wpragmas"
 #endif
-// Tests that the death test macros expand to code which may or may not
+// Tests that the death tests macros expand to code which may or may not
 // be followed by operator<<, and that in either case the complete text
 // comprises only a single C++ statement.
 TEST_F(TestForDeathTest, SingleStatement) {
   if (AlwaysFalse())
-    // This would fail if executed; this is a compilation test only
+    // This would fail if executed; this is a compilation tests only
     ASSERT_DEATH(return, "");
 
   if (AlwaysTrue())
@@ -330,11 +330,11 @@ TEST_F(TestForDeathTest, SingleStatement) {
 #pragma GCC diagnostic pop
 #endif
 
-// Tests that death test macros expand to code which interacts well with switch
+// Tests that death tests macros expand to code which interacts well with switch
 // statements.
 TEST_F(TestForDeathTest, SwitchStatement) {
   // Microsoft compiler usually complains about switch statements without
-  // case labels. We suppress that warning for this test.
+  // case labels. We suppress that warning for this tests.
   GTEST_DISABLE_MSC_WARNINGS_PUSH_(4065)
 
   switch (0)
@@ -349,14 +349,14 @@ TEST_F(TestForDeathTest, SwitchStatement) {
 }
 
 // Tests that a static member function can be used in a "fast" style
-// death test.
+// death tests.
 TEST_F(TestForDeathTest, StaticMemberFunctionFastStyle) {
   GTEST_FLAG_SET(death_test_style, "fast");
   ASSERT_DEATH(StaticMemberFunction(), "death.*StaticMember");
 }
 
-// Tests that a method of the test fixture can be used in a "fast"
-// style death test.
+// Tests that a method of the tests fixture can be used in a "fast"
+// style death tests.
 TEST_F(TestForDeathTest, MemberFunctionFastStyle) {
   GTEST_FLAG_SET(death_test_style, "fast");
   should_die_ = true;
@@ -487,13 +487,13 @@ TEST_F(TestForDeathTest, DoesNotExecuteAtforkHooks) {
 
 #endif  // GTEST_HAS_CLONE && GTEST_HAS_PTHREAD
 
-// Tests that a method of another class can be used in a death test.
+// Tests that a method of another class can be used in a death tests.
 TEST_F(TestForDeathTest, MethodOfAnotherClass) {
   const MayDie x(true);
   ASSERT_DEATH(x.MemberFunction(), "MayDie\\:\\:MemberFunction");
 }
 
-// Tests that a global function can be used in a death test.
+// Tests that a global function can be used in a death tests.
 TEST_F(TestForDeathTest, GlobalFunction) {
   EXPECT_DEATH(GlobalFunction(), "GlobalFunction");
 }
@@ -515,18 +515,18 @@ TEST_F(TestForDeathTest, AcceptsAnythingConvertibleToRE) {
   EXPECT_DEATH(GlobalFunction(), ::std::string(regex_c_str).c_str());
 }
 
-// Tests that a non-void function can be used in a death test.
+// Tests that a non-void function can be used in a death tests.
 TEST_F(TestForDeathTest, NonVoidFunction) {
   ASSERT_DEATH(NonVoidFunction(), "NonVoidFunction");
 }
 
-// Tests that functions that take parameter(s) can be used in a death test.
+// Tests that functions that take parameter(s) can be used in a death tests.
 TEST_F(TestForDeathTest, FunctionWithParameter) {
   EXPECT_DEATH(DieIf(true), "DieIf\\(\\)");
   EXPECT_DEATH(DieIfLessThan(2, 3), "DieIfLessThan");
 }
 
-// Tests that ASSERT_DEATH can be used outside a TEST, TEST_F, or test fixture.
+// Tests that ASSERT_DEATH can be used outside a TEST, TEST_F, or tests fixture.
 TEST_F(TestForDeathTest, OutsideFixture) { DeathTestSubroutine(); }
 
 // Tests that death tests can be done inside a loop.
@@ -536,7 +536,7 @@ TEST_F(TestForDeathTest, InsideLoop) {
   }
 }
 
-// Tests that a compound statement can be used in a death test.
+// Tests that a compound statement can be used in a death tests.
 TEST_F(TestForDeathTest, CompoundStatement) {
   EXPECT_DEATH(
       {  // NOLINT
@@ -547,17 +547,17 @@ TEST_F(TestForDeathTest, CompoundStatement) {
       "DieIfLessThan");
 }
 
-// Tests that code that doesn't die causes a death test to fail.
+// Tests that code that doesn't die causes a death tests to fail.
 TEST_F(TestForDeathTest, DoesNotDie) {
   EXPECT_NONFATAL_FAILURE(EXPECT_DEATH(DieIf(false), "DieIf"), "failed to die");
 }
 
-// Tests that a death test fails when the error message isn't expected.
+// Tests that a death tests fails when the error message isn't expected.
 TEST_F(TestForDeathTest, ErrorMessageMismatch) {
   EXPECT_NONFATAL_FAILURE(
       {  // NOLINT
         EXPECT_DEATH(DieIf(true), "DieIfLessThan")
-            << "End of death test message.";
+            << "End of death tests message.";
       },
       "died but not with expected error");
 }
@@ -570,14 +570,14 @@ void ExpectDeathTestHelper(bool* aborted) {
   *aborted = false;
 }
 
-// Tests that EXPECT_DEATH doesn't abort the test on failure.
+// Tests that EXPECT_DEATH doesn't abort the tests on failure.
 TEST_F(TestForDeathTest, EXPECT_DEATH) {
   bool aborted = true;
   EXPECT_NONFATAL_FAILURE(ExpectDeathTestHelper(&aborted), "failed to die");
   EXPECT_FALSE(aborted);
 }
 
-// Tests that ASSERT_DEATH does abort the test on failure.
+// Tests that ASSERT_DEATH does abort the tests on failure.
 TEST_F(TestForDeathTest, ASSERT_DEATH) {
   static bool aborted;
   EXPECT_FATAL_FAILURE(
@@ -611,7 +611,7 @@ TEST_F(TestForDeathTest, RunawayIsFailure) {
 // failure.
 TEST_F(TestForDeathTest, ReturnIsFailure) {
   EXPECT_FATAL_FAILURE(ASSERT_DEATH(return, "Bar"),
-                       "illegal return in test statement.");
+                       "illegal return in tests statement.");
 }
 
 // Tests that EXPECT_DEBUG_DEATH works as expected, that is, you can stream a
@@ -699,7 +699,7 @@ void ExpectDebugDeathHelper(bool* aborted) {
 #ifdef GTEST_OS_WINDOWS
 TEST(PopUpDeathTest, DoesNotShowPopUpOnAbort) {
   printf(
-      "This test should be considered failing if it shows "
+      "This tests should be considered failing if it shows "
       "any pop-up dialogs.\n");
   fflush(stdout);
 
@@ -871,7 +871,7 @@ TEST_F(TestForDeathTest, DeathTestUnexpectedReturnOutput) {
                                 return;
                               },
                               ""),
-                          "    Result: illegal return in test statement.\n"
+                          "    Result: illegal return in tests statement.\n"
                           " Error msg:\n"
                           "[  DEATH   ] returning\n");
 }
@@ -1014,7 +1014,7 @@ void MockDeathTestFactory::SetParameters(bool create, DeathTest::TestRole role,
   abort_args_.clear();
 }
 
-// Sets test to NULL (if create_ is false) or to the address of a new
+// Sets tests to NULL (if create_ is false) or to the address of a new
 // MockDeathTest object with parameters taken from the last call
 // to SetParameters (if create_ is true).  Always returns true.
 bool MockDeathTestFactory::Create(
@@ -1029,9 +1029,9 @@ bool MockDeathTestFactory::Create(
   return true;
 }
 
-// A test fixture for testing the logic of the GTEST_DEATH_TEST_ macro.
+// A tests fixture for testing the logic of the GTEST_DEATH_TEST_ macro.
 // It installs a MockDeathTestFactory that is used for the duration
-// of the test case.
+// of the tests case.
 class MacroLogicDeathTest : public testing::Test {
  protected:
   static testing::internal::ReplaceDeathTestFactory* replacer_;
@@ -1049,8 +1049,8 @@ class MacroLogicDeathTest : public testing::Test {
     factory_ = nullptr;
   }
 
-  // Runs a death test that breaks the rules by returning.  Such a death
-  // test cannot be run directly from a test routine that uses a
+  // Runs a death tests that breaks the rules by returning.  Such a death
+  // tests cannot be run directly from a tests routine that uses a
   // MockDeathTest, or the remainder of the routine will not be executed.
   static void RunReturningDeathTest(bool* flag) {
     ASSERT_DEATH(
@@ -1079,7 +1079,7 @@ TEST_F(MacroLogicDeathTest, NothingHappens) {
   EXPECT_FALSE(factory_->TestDeleted());
 }
 
-// Test that the parent process doesn't run the death test code,
+// Test that the parent process doesn't run the death tests code,
 // and that the Passed method returns false when the (simulated)
 // child process exits with status 0:
 TEST_F(MacroLogicDeathTest, ChildExitsSuccessfully) {
@@ -1110,7 +1110,7 @@ TEST_F(MacroLogicDeathTest, ChildExitsUnsuccessfully) {
   EXPECT_TRUE(factory_->TestDeleted());
 }
 
-// Tests that the (simulated) child process executes the death test
+// Tests that the (simulated) child process executes the death tests
 // code, and is aborted with the correct AbortReason if it
 // executes a return statement.
 TEST_F(MacroLogicDeathTest, ChildPerformsReturn) {
@@ -1137,9 +1137,9 @@ TEST_F(MacroLogicDeathTest, ChildDoesNotDie) {
   EXPECT_EQ(1, factory_->AssumeRoleCalls());
   EXPECT_EQ(0, factory_->WaitCalls());
   EXPECT_EQ(0U, factory_->PassedCalls());
-  // This time there are two calls to Abort: one since the test didn't
+  // This time there are two calls to Abort: one since the tests didn't
   // die, and another from the ReturnSentinel when it's destroyed.  The
-  // sentinel normally isn't destroyed if a test doesn't die, since
+  // sentinel normally isn't destroyed if a tests doesn't die, since
   // _exit(2) is called in that case by ForkingDeathTest, but not by
   // our MockDeathTest.
   ASSERT_EQ(2U, factory_->AbortCalls());
@@ -1149,8 +1149,8 @@ TEST_F(MacroLogicDeathTest, ChildDoesNotDie) {
   EXPECT_TRUE(factory_->TestDeleted());
 }
 
-// Tests that a successful death test does not register a successful
-// test part.
+// Tests that a successful death tests does not register a successful
+// tests part.
 TEST(SuccessRegistrationDeathTest, NoSuccessPart) {
   EXPECT_DEATH(_exit(1), "");
   EXPECT_EQ(0, GetUnitTestImpl()->current_test_result()->total_part_count());
@@ -1410,7 +1410,7 @@ TEST(ConditionalDeathMacrosTest, WarnsWhenDeathTestsNotAvailable) {
                              "Death tests are not supported on this platform"));
   ASSERT_TRUE(NULL != strstr(output.c_str(), ";"));
 
-  // The streamed message should not be printed as there is no test failure.
+  // The streamed message should not be printed as there is no tests failure.
   CaptureStderr();
   EXPECT_DEATH_IF_SUPPORTED(;, "") << "streamed message";
   output = GetCapturedStderr();
@@ -1455,14 +1455,14 @@ namespace {
 #pragma GCC diagnostic ignored "-Wempty-body"
 #pragma GCC diagnostic ignored "-Wpragmas"
 #endif
-// Tests that the death test macros expand to code which may or may not
+// Tests that the death tests macros expand to code which may or may not
 // be followed by operator<<, and that in either case the complete text
 // comprises only a single C++ statement.
 //
 // The syntax should work whether death tests are available or not.
 TEST(ConditionalDeathMacrosSyntaxDeathTest, SingleStatement) {
   if (AlwaysFalse())
-    // This would fail if executed; this is a compilation test only
+    // This would fail if executed; this is a compilation tests only
     ASSERT_DEATH_IF_SUPPORTED(return, "");
 
   if (AlwaysTrue())
@@ -1483,11 +1483,11 @@ TEST(ConditionalDeathMacrosSyntaxDeathTest, SingleStatement) {
 #pragma GCC diagnostic pop
 #endif
 
-// Tests that conditional death test macros expand to code which interacts
+// Tests that conditional death tests macros expand to code which interacts
 // well with switch statements.
 TEST(ConditionalDeathMacrosSyntaxDeathTest, SwitchStatement) {
   // Microsoft compiler usually complains about switch statements without
-  // case labels. We suppress that warning for this test.
+  // case labels. We suppress that warning for this tests.
   GTEST_DISABLE_MSC_WARNINGS_PUSH_(4065)
 
   switch (0)
@@ -1501,7 +1501,7 @@ TEST(ConditionalDeathMacrosSyntaxDeathTest, SwitchStatement) {
   GTEST_DISABLE_MSC_WARNINGS_POP_()
 }
 
-// Tests that a test case whose name ends with "DeathTest" works fine
+// Tests that a tests case whose name ends with "DeathTest" works fine
 // on Windows.
 TEST(NotADeathTest, Test) { SUCCEED(); }
 

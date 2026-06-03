@@ -45,7 +45,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "UnitTestPCH.h"
 
 // ---------------------------------------------------------------------------
-/** Abstract base class to test import and export
+/** Abstract base class to tests import and export
  */
  // ---------------------------------------------------------------------------
 class AbstractImportExportBase : public ::testing::Test {
@@ -53,11 +53,11 @@ public:
     /// @brief  The class destructor.
     virtual ~AbstractImportExportBase();
 
-    /// @brief  The importer-test, will return true for successful import.
+    /// @brief  The importer-tests, will return true for successful import.
     /// @return true for success, false for failure.
     virtual bool importerTest();
 
-    /// @brief  The exporter-test, will return true for successful import.
+    /// @brief  The exporter-tests, will return true for successful import.
     /// @return true for success, false for failure.
     virtual bool exporterTest();
 };

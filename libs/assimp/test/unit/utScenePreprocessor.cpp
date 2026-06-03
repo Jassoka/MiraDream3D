@@ -74,7 +74,7 @@ void ScenePreprocessorTest::SetUp() {
     // setup a dummy scene with a single node
     mScene = new aiScene();
     mScene->mRootNode = new aiNode();
-    mScene->mRootNode->mName.Set("<test>");
+    mScene->mRootNode->mName.Set("<tests>");
 
     // add some translation
     mScene->mRootNode->mTransformation.a4 = 1.f;
@@ -154,13 +154,13 @@ TEST_F(ScenePreprocessorTest, testMeshPreprocessingNeg) {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Make a dummy animation with a single channel, '<test>'
+// Make a dummy animation with a single channel, '<tests>'
 aiAnimation *MakeDummyAnimation() {
     aiAnimation *p = new aiAnimation();
     p->mNumChannels = 1;
     p->mChannels = new aiNodeAnim *[1];
     aiNodeAnim *anim = p->mChannels[0] = new aiNodeAnim();
-    anim->mNodeName.Set("<test>");
+    anim->mNodeName.Set("<tests>");
     return p;
 }
 

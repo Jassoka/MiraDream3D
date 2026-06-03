@@ -103,7 +103,7 @@ MU_TEST(test_write_permissions) {
   mu_assert_int_eq(WMODE, file_stats.st_mode);
 }
 
-#define TESTDATA1 "Some test data 1...\0"
+#define TESTDATA1 "Some tests data 1...\0"
 
 MU_TEST(test_unix_permissions) {
   // UNIX or APPLE
@@ -128,7 +128,7 @@ MU_TEST(test_unix_permissions) {
 MU_TEST(test_mtime) {
   struct MZ_FILE_STAT_STRUCT file_stat1, file_stat2;
 
-  const char *filename = "test.data";
+  const char *filename = "tests.data";
   FILE *stream = NULL;
   struct zip_t *zip = NULL;
 #if defined(_MSC_VER)

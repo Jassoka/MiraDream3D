@@ -504,7 +504,7 @@ namespace o3dgc
     void Arithmetic_Codec::set_buffer(unsigned max_code_bytes,
                                       unsigned char * user_buffer)
     {
-                                                      // test for reasonable sizes
+                                                      // tests for reasonable sizes
       if (!max_code_bytes)// || (max_code_bytes > 0x10000000U)) // updated by K. Mammou
       {
         AC_Error("invalid codec buffer size");

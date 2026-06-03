@@ -80,7 +80,7 @@ Display a really helpful text.
 /**
 @page iinfo 'info'-Command
 
-Load a model file and print basic statistics. Full postprocessing is applied unless the <tt>-r</tt> switch is specified. Sample output (<tt>assimp info ./test/models/3DS/mar_rifle.3ds</tt>):
+Load a model file and print basic statistics. Full postprocessing is applied unless the <tt>-r</tt> switch is specified. Sample output (<tt>assimp info ./tests/models/3DS/mar_rifle.3ds</tt>):
 
 @verbatim
 Launching model import ...           OK
@@ -148,7 +148,7 @@ Optional. Don't perform any postprocessing. The long form of this parameter is <
 @page cmpdump 'cmpdump'-Command
 
 <b>Used for Assimp's internal regression testing.</b> Compare two mini dumps (produced using <tt>assimp dump .. -b -s</tt>) and
-report any differences. In the regression test suite, this facility is used to build a database of
+report any differences. In the regression tests suite, this facility is used to build a database of
 'known-to-be-fine' mini dumps, which are regularly compared against current results to detect regressions.
 
 <h3>Syntax:</h3>
@@ -181,7 +181,7 @@ Required. Archived dump from some point in the past.
 @page dump 'dump'-Command
 
 Generate a text or binary dump of a model. This is the core component of Assimp's internal
-regression test suite but it could also be useful for other developers to quickly
+regression tests suite but it could also be useful for other developers to quickly
 examine the contents of a model. Note that text dumps are not intended to be used as
 intermediate format, Assimp is not able to read them again, nor is the file format
 stable or well-defined. It may change with every revision without notice.
@@ -221,7 +221,7 @@ The long form of this parameter is <tt>--binary</tt>.
 Optional. If this switch is specified, the dump is shortened to include only
 min/max values for all vertex components and animation channels. The resulting
 file is much smaller, but the original model can't be reconstructed from it. This is
-used by Assimp's regression test suite, comparing those minidumps provides
+used by Assimp's regression tests suite, comparing those minidumps provides
 a fast way to verify whether a loader works correctly or not.
 The long form of this parameter is <tt>--short</tt>.
 </p>
@@ -238,11 +238,11 @@ See the @link common common parameters page @endlink for more information.
 <h3>Sample:</h3>
 
 @code
-assimp dump test.3ds test.txt -l -cfull
-assimp dump test.3ds test.txt -include-log -config=full
+assimp dump tests.3ds tests.txt -l -cfull
+assimp dump tests.3ds tests.txt -include-log -config=full
 @endcode
 
-Dumps 'test.3ds' to 'test.txt' after executing full post-processing on tehe imported data.
+Dumps 'tests.3ds' to 'tests.txt' after executing full post-processing on tehe imported data.
 The log output is included with the dump.
 
 
@@ -339,11 +339,11 @@ See the @link common common parameters page @endlink for more information.
 <h3>Sample:</h3>
 
 @code
-assimp extract test.mdl test.bmp --texture=0 --validate-data-structure
-assimp extract test.mdl test.bmp -t=0 -vds
+assimp extract tests.mdl tests.bmp --texture=0 --validate-data-structure
+assimp extract tests.mdl tests.bmp -t=0 -vds
 @endcode
 
-Extracts the first embedded texture (if any) from test.mdl after validating the
+Extracts the first embedded texture (if any) from tests.mdl after validating the
 imported data structure and writes it to <tt>test_img0.bmp</tt>.
 
 

@@ -57,7 +57,7 @@ TEST(TextureUtilsTest, TestGetSourceFormat) {
   std::unique_ptr<draco::Texture> new_texture(new draco::Texture());
   DRACO_ASSIGN_OR_ASSERT(
       std::unique_ptr<draco::Texture> png_texture,
-      draco::ReadTextureFromFile(draco::GetTestFileFullPath("test.png")));
+      draco::ReadTextureFromFile(draco::GetTestFileFullPath("tests.png")));
   DRACO_ASSIGN_OR_ASSERT(
       std::unique_ptr<draco::Texture> jpg_texture,
       draco::ReadTextureFromFile(draco::GetTestFileFullPath("fast.jpg")));
@@ -108,7 +108,7 @@ TEST(TextureUtilsTest, TestGetTargetMimeType) {
 
   // Test custom mime type from file name.
   draco::Texture unknown_format_file_name;
-  unknown_format_file_name.source_image().set_filename("test.extension");
+  unknown_format_file_name.source_image().set_filename("tests.extension");
   ASSERT_EQ(draco::TextureUtils::GetTargetMimeType(unknown_format_file_name),
             "image/extension");
 }
@@ -133,7 +133,7 @@ TEST(TextureUtilsTest, TestGetExtension) {
 
 TEST(TextureUtilsTest, TestComputeRequiredNumChannels) {
   // Tests that the number of texture channels can be computed. Material library
-  // under test is created programmatically.
+  // under tests is created programmatically.
 
   // Load textures.
   DRACO_ASSIGN_OR_ASSERT(

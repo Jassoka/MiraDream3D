@@ -27,5 +27,9 @@ target_link_libraries(Model PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::OpenGLWidgets
         assimp
-        Qt${QT_VERSION_MAJOR}::Gui
+
+)
+
+target_link_libraries(Model PUBLIC
+        Qt${QT_VERSION_MAJOR}::Gui # ça prend ptetre trop de place -> revoir le constructeur d'une texture qui prend un Qimage
 )

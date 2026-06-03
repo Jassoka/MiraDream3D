@@ -1653,7 +1653,7 @@ TEST(ByRefTest, IsCopyable) {
 TEST(ByRefTest, ConstValue) {
   const int n = 0;
   // int& ref = ByRef(n);  // This shouldn't compile - we have a
-  // negative compilation test to catch it.
+  // negative compilation tests to catch it.
   const int& const_ref = ByRef(n);
   EXPECT_EQ(&n, &const_ref);
 }
@@ -1678,7 +1678,7 @@ TEST(ByRefTest, ExplicitType) {
   EXPECT_EQ(&n, &r1);
 
   // ByRef<char>(n);  // This shouldn't compile - we have a negative
-  // compilation test to catch it.
+  // compilation tests to catch it.
 
   Derived d;
   Derived& r2 = ByRef<Derived>(d);
@@ -1694,7 +1694,7 @@ TEST(ByRefTest, ExplicitType) {
   EXPECT_EQ(&d, &r5);
 
   // The following shouldn't compile - we have a negative compilation
-  // test for it.
+  // tests for it.
   //
   // Base b;
   // ByRef<Derived>(b);

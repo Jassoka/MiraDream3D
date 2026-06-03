@@ -103,13 +103,13 @@ TEST(OutputFileHelpersTest, GetCurrentExecutableName) {
   const std::string exe_str = GetCurrentExecutableName().string();
 #ifdef GTEST_OS_WINDOWS
   const bool success =
-      _strcmpi("googletest-options-test", exe_str.c_str()) == 0 ||
+      _strcmpi("googletest-options-tests", exe_str.c_str()) == 0 ||
       _strcmpi("gtest-options-ex_test", exe_str.c_str()) == 0 ||
       _strcmpi("gtest_all_test", exe_str.c_str()) == 0 ||
       _strcmpi("gtest_dll_test", exe_str.c_str()) == 0;
 #elif defined(GTEST_OS_OS2)
   const bool success =
-      strcasecmp("googletest-options-test", exe_str.c_str()) == 0 ||
+      strcasecmp("googletest-options-tests", exe_str.c_str()) == 0 ||
       strcasecmp("gtest-options-ex_test", exe_str.c_str()) == 0 ||
       strcasecmp("gtest_all_test", exe_str.c_str()) == 0 ||
       strcasecmp("gtest_dll_test", exe_str.c_str()) == 0;
@@ -117,7 +117,7 @@ TEST(OutputFileHelpersTest, GetCurrentExecutableName) {
   const bool success = exe_str == "app";
 #else
   const bool success =
-      exe_str == "googletest-options-test" || exe_str == "gtest_all_test" ||
+      exe_str == "googletest-options-tests" || exe_str == "gtest_all_test" ||
       exe_str == "lt-gtest_all_test" || exe_str == "gtest_dll_test";
 #endif  // GTEST_OS_WINDOWS
   if (!success) FAIL() << "GetCurrentExecutableName() returns " << exe_str;
@@ -130,7 +130,7 @@ class XmlOutputChangeDirTest : public Test {
   void SetUp() override {
     original_working_dir_ = FilePath::GetCurrentDir();
     posix::ChDir("..");
-    // This will make the test fail if run from the root directory.
+    // This will make the tests fail if run from the root directory.
     EXPECT_NE(original_working_dir_.string(),
               FilePath::GetCurrentDir().string());
   }

@@ -38,7 +38,7 @@ build_fuzzer() {
 # 1. Generic Fuzzer
 build_fuzzer "assimp_fuzzer" "../fuzz/assimp_fuzzer.cc"
 # Corpus for generic fuzzer (all models)
-(cd ../test/models && zip -q -r $OUT/assimp_fuzzer_seed_corpus.zip .)
+(cd ../tests/models && zip -q -r $OUT/assimp_fuzzer_seed_corpus.zip .)
 # Dictionary
 cp ../fuzz/assimp_fuzzer.dict $OUT/assimp_fuzzer.dict || true
 
@@ -46,7 +46,7 @@ cp ../fuzz/assimp_fuzzer.dict $OUT/assimp_fuzzer.dict || true
 # 2. OBJ Fuzzer
 build_fuzzer "assimp_fuzzer_obj" "../fuzz/assimp_fuzzer_obj.cc"
 if [ -d "../test/models/OBJ" ]; then
-    (cd ../test/models/OBJ && zip -q -r $OUT/assimp_fuzzer_obj_seed_corpus.zip .)
+    (cd ../tests/models/OBJ && zip -q -r $OUT/assimp_fuzzer_obj_seed_corpus.zip .)
 fi
 cp ../fuzz/assimp_fuzzer.dict $OUT/assimp_fuzzer_obj.dict || true
 
@@ -54,8 +54,8 @@ cp ../fuzz/assimp_fuzzer.dict $OUT/assimp_fuzzer_obj.dict || true
 # 3. GLTF Fuzzer (text format only, glTF and glTF2 versions)
 build_fuzzer "assimp_fuzzer_gltf" "../fuzz/assimp_fuzzer_gltf.cc"
 mkdir -p gltf_corpus
-[ -d "../test/models/glTF" ] && cp -r ../test/models/glTF/* gltf_corpus/
-[ -d "../test/models/glTF2" ] && cp -r ../test/models/glTF2/* gltf_corpus/
+[ -d "../test/models/glTF" ] && cp -r ../tests/models/glTF/* gltf_corpus/
+[ -d "../test/models/glTF2" ] && cp -r ../tests/models/glTF2/* gltf_corpus/
 if [ -d "gltf_corpus" ] && [ "$(ls -A gltf_corpus)" ]; then
     (cd gltf_corpus && zip -q -r $OUT/assimp_fuzzer_gltf_seed_corpus.zip .)
 fi
@@ -67,8 +67,8 @@ cp ../fuzz/assimp_fuzzer.dict $OUT/assimp_fuzzer_gltf.dict || true
 build_fuzzer "assimp_fuzzer_glb" "../fuzz/assimp_fuzzer_glb.cc"
 mkdir -p glb_corpus
 # GLB files can be found in glTF and glTF2 directories
-[ -d "../test/models/glTF" ] && find ../test/models/glTF -name "*.glb" -exec cp {} glb_corpus/ \; 2>/dev/null || true
-[ -d "../test/models/glTF2" ] && find ../test/models/glTF2 -name "*.glb" -exec cp {} glb_corpus/ \; 2>/dev/null || true
+[ -d "../test/models/glTF" ] && find ../tests/models/glTF -name "*.glb" -exec cp {} glb_corpus/ \; 2>/dev/null || true
+[ -d "../test/models/glTF2" ] && find ../tests/models/glTF2 -name "*.glb" -exec cp {} glb_corpus/ \; 2>/dev/null || true
 if [ -d "glb_corpus" ] && [ "$(ls -A glb_corpus)" ]; then
     (cd glb_corpus && zip -q -r $OUT/assimp_fuzzer_glb_seed_corpus.zip .)
 fi
@@ -79,7 +79,7 @@ cp ../fuzz/assimp_fuzzer.dict $OUT/assimp_fuzzer_glb.dict || true
 # 5. FBX Fuzzer
 build_fuzzer "assimp_fuzzer_fbx" "../fuzz/assimp_fuzzer_fbx.cc"
 if [ -d "../test/models/FBX" ]; then
-    (cd ../test/models/FBX && zip -q -r $OUT/assimp_fuzzer_fbx_seed_corpus.zip .)
+    (cd ../tests/models/FBX && zip -q -r $OUT/assimp_fuzzer_fbx_seed_corpus.zip .)
 fi
 cp ../fuzz/assimp_fuzzer.dict $OUT/assimp_fuzzer_fbx.dict || true
 
@@ -87,7 +87,7 @@ cp ../fuzz/assimp_fuzzer.dict $OUT/assimp_fuzzer_fbx.dict || true
 # 6. Collada Fuzzer
 build_fuzzer "assimp_fuzzer_collada" "../fuzz/assimp_fuzzer_collada.cc"
 if [ -d "../test/models/Collada" ]; then
-    (cd ../test/models/Collada && zip -q -r $OUT/assimp_fuzzer_collada_seed_corpus.zip .)
+    (cd ../tests/models/Collada && zip -q -r $OUT/assimp_fuzzer_collada_seed_corpus.zip .)
 fi
 cp ../fuzz/assimp_fuzzer.dict $OUT/assimp_fuzzer_collada.dict || true
 
@@ -95,6 +95,6 @@ cp ../fuzz/assimp_fuzzer.dict $OUT/assimp_fuzzer_collada.dict || true
 # 7. STL Fuzzer
 build_fuzzer "assimp_fuzzer_stl" "../fuzz/assimp_fuzzer_stl.cc"
 if [ -d "../test/models/STL" ]; then
-    (cd ../test/models/STL && zip -q -r $OUT/assimp_fuzzer_stl_seed_corpus.zip .)
+    (cd ../tests/models/STL && zip -q -r $OUT/assimp_fuzzer_stl_seed_corpus.zip .)
 fi
 cp ../fuzz/assimp_fuzzer.dict $OUT/assimp_fuzzer_stl.dict || true

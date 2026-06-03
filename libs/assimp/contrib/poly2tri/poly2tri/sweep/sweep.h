@@ -134,7 +134,7 @@ private:
    * <b>Fact</b>: d has to be in area B to have a chance to be inside the circle formed by
    *  a,b and c<br>
    *  d is outside B if orient2d(a,b,d) or orient2d(c,a,d) is CW<br>
-   *  This preknowledge gives us a way to optimize the incircle test
+   *  This preknowledge gives us a way to optimize the incircle tests
    * @param a - triangle point, opposite d
    * @param b - triangle point
    * @param c - triangle point

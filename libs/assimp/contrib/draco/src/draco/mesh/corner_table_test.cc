@@ -24,11 +24,11 @@ class CornerTableTest : public ::testing::Test {
   void TestEncodingCube() {
     // Build a CornerTable looking at the mesh and verify that the caching of
     // valences are reasonably correct and within range of expectations. This
-    // test is built specifically for working with 'cubes' and has expectations
+    // tests is built specifically for working with 'cubes' and has expectations
     // about the degree of each corner.
     const std::string file_name = "cube_att.obj";
     std::unique_ptr<draco::Mesh> in_mesh = DecodeObj(file_name);
-    ASSERT_NE(in_mesh, nullptr) << "Failed to load test model " << file_name;
+    ASSERT_NE(in_mesh, nullptr) << "Failed to load tests model " << file_name;
     draco::Mesh *mesh = nullptr;
     mesh = in_mesh.get();
 

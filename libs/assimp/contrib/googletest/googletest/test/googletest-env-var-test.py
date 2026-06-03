@@ -85,10 +85,10 @@ class GTestEnvVarTest(gtest_test_utils.TestCase):
 
     TestFlag('break_on_failure', '1', '0')
     TestFlag('color', 'yes', 'auto')
-    SetEnvVar('TESTBRIDGE_TEST_RUNNER_FAIL_FAST', None)  # For 'fail_fast' test
+    SetEnvVar('TESTBRIDGE_TEST_RUNNER_FAIL_FAST', None)  # For 'fail_fast' tests
     TestFlag('fail_fast', '1', '0')
     TestFlag('filter', 'FooTest.Bar', '*')
-    SetEnvVar('XML_OUTPUT_FILE', None)  # For 'output' test
+    SetEnvVar('XML_OUTPUT_FILE', None)  # For 'output' tests
     TestFlag('output', 'xml:tmp/foo.xml', '')
     TestFlag('brief', '1', '0')
     TestFlag('print_time', '0', '1')

@@ -32,7 +32,7 @@ class SceneAreEquivalentTest : public ::testing::Test {};
 TEST_F(SceneAreEquivalentTest, TestOnIndenticalScenes) {
   const std::string file_name = "CesiumMilkTruck/glTF/CesiumMilkTruck.gltf";
   const std::unique_ptr<Scene> scene(ReadSceneFromTestFile(file_name));
-  ASSERT_NE(scene, nullptr) << "Failed to load test scene: " << file_name;
+  ASSERT_NE(scene, nullptr) << "Failed to load tests scene: " << file_name;
 
   // Add mesh feature ID set to a scene mesh.
   std::unique_ptr<MeshFeatures> mesh_features(new MeshFeatures());
@@ -47,8 +47,8 @@ TEST_F(SceneAreEquivalentTest, TestOnDifferentScenes) {
   const std::string file_name1 = "Lantern/glTF/Lantern.gltf";
   const std::unique_ptr<Scene> scene0(ReadSceneFromTestFile(file_name0));
   const std::unique_ptr<Scene> scene1(ReadSceneFromTestFile(file_name1));
-  ASSERT_NE(scene0, nullptr) << "Failed to load test scene: " << file_name0;
-  ASSERT_NE(scene1, nullptr) << "Failed to load test scene: " << file_name1;
+  ASSERT_NE(scene0, nullptr) << "Failed to load tests scene: " << file_name0;
+  ASSERT_NE(scene1, nullptr) << "Failed to load tests scene: " << file_name1;
   SceneAreEquivalent equiv;
   ASSERT_FALSE(equiv(*scene0, *scene1));
 }
