@@ -11,8 +11,13 @@ class Engine
 {
 public:
     const Scene *getScene() const;
+    Engine() = default;
+    ~Engine()
+    {
+        delete mSceneController;
+    }
 private:
-    SceneController *mSceneController = nullptr;
+    SceneController *mSceneController = new SceneController();
 
 };
 #endif //MIRADREAM3D_ENGINE_H

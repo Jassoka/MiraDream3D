@@ -4,8 +4,12 @@
 
 #include "controller/SceneController.h"
 
-SceneController::SceneController():
-    mScene(Scene())
+bool SceneController::loadScene(const std::string &path)
+{
+    return mAssetImporter.loadAssimpScene(const std::string &path)
+}
+
+SceneController::SceneController(): mAssetImporter(&mScene)
 {
 }
 

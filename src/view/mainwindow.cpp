@@ -13,8 +13,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     // When OpenGL funcs are ready, give scene to the RenderWidget
     connect(mRenderWidget, &RenderWidget::initRenderer,
-            this, [this](QOpenGLFunctions* glFuncs, float ratio) {
-        mRenderWidget->setRenderer(new Renderer(mEngine->getScene(), this->width()/this->height(), QOpenGLContext::currentContext()->functions()));
+            this, [this](QOpenGLFunctions* glFuncs, const float ratio) {
+        mRenderWidget->setRenderer(new Renderer(mEngine->getScene(), ratio, QOpenGLContext::currentContext()->functions()));
     });
 
     mRenderWidget->show();

@@ -18,8 +18,12 @@
  */
 Node* aiNodeToNode(aiNode* nodeAi,Mesh** sceneMeshes);
 
+AssetImporter::AssetImporter(Scene* scene)
+{
+    mScene = scene;
+}
 
-bool AssetImporter::loadAssimpScene(const std::string &path, Scene *scene) {
+bool AssetImporter::loadAssimpScene(const std::string &path) const {
     //Imporation
     Assimp::Importer importer;
 
@@ -38,11 +42,11 @@ bool AssetImporter::loadAssimpScene(const std::string &path, Scene *scene) {
 
     for (uint32_t i=0;i< aiScene->mNumMeshes;i++) {
         auto mesh = Mesh(*aiScene->mMeshes[i]);
-        scene->addMesh(mesh);
+        mScene->addMesh(mesh);
     }
 
     //On convertit recursivement les nodes et on les ajoute a la scene
-    scene->addNode(aiNodeToNode(aiScene->mRootNode,sceneMeshes));
+    mScene->addNode(aiNodeToNode(aiScene->mRootNode,sceneMeshes));
     return true;
 }
 

@@ -8,13 +8,15 @@
 class AssetImporter
 {
 public:
+    AssetImporter(Scene *scene);
     /**
-     * @brief Loads a scene of any supported extension using Assimp library
+     * @brief Loads a scene of any supported extension using Assimp library to the asset importer's scene
      * @param path Path of the source file
-     * @param scene Destination scene to which is appended the imported scene
      * @return Success of import
      */
-    static bool loadAssimpScene(const std::string &path, Scene *scene);
+    bool loadAssimpScene(const std::string &path) const;
+private:
+    Scene *mScene;
 };
 
 
