@@ -8,14 +8,14 @@
 #include <string>
 #include <unordered_map>
 #include <QtOpenGL>
-#include "Shader.h"
 
 class ShaderManager
 {
 private:
-    std::unordered_map<std::string, Shader*> mShaders;
+    std::unordered_map<std::string, uint32_t> mShaders;
 public:
-    void loadShader(const std::string &shaderCode, const std::string &name, const GLenum shaderType, QOpenGLFunctions *glFuncs);
+    void loadShader(const std::string &shaderCode, const std::string &name, GLenum shaderType, QOpenGLFunctions *glFuncs);
+    void execShader(std::string &name, QOpenGLFunctions *glFuncs);
 };
 
 #endif //MIRADREAM3D_SHADER_MANAGER_H

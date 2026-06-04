@@ -8,11 +8,9 @@ add_library(Model STATIC
 
         ../../include/model/Renderer.h
         ../../include/model/ShaderManager.h
-        ../../include/model/Shader.h
         ShaderManager.cpp
         Renderer.cpp
         Scene.cpp
-        Shader.cpp
         Node.cpp
         Mesh.cpp
 )

@@ -6,6 +6,11 @@
 #include <string>
 #include "util/file_funcs.hpp"
 
+void ShaderManager::execShader(std::string& name, QOpenGLFunctions *glFuncs)
+{
+    const GLuint shaderID = mShaders.at(name);
+    glFuncs->glUseProgram(shaderID);
+}
 
 void ShaderManager::loadShader(const std::string &shaderCode, const std::string &name, const GLenum shaderType, QOpenGLFunctions *glFuncs)
 {
@@ -30,6 +35,5 @@ void ShaderManager::loadShader(const std::string &shaderCode, const std::string 
         exit(1);
     }
 
-    auto *shader = new Shader(shaderID);
-    mShaders.insert(make_pair(name, shader));
+    mShaders.insert(make_pair(name, shaderID));
 }
