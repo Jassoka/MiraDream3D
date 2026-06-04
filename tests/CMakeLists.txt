@@ -14,7 +14,7 @@ target_link_libraries(TestUtils PRIVATE
 
 # Module for general testing
 add_executable(AllTests
-        ImporterTests/SmoothTangentsImportTest.cpp
+        ImporterTests/CubeBasicImports.cpp
 )
 
 target_include_directories(AllTests PRIVATE ${DIR_INC})
