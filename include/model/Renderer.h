@@ -47,6 +47,7 @@ private:
     QOpenGLFunctions *mGlFuncs = nullptr;
     QOpenGLVertexArrayObject mVAO;
     QOpenGLBuffer mVBO;
+    QOpenGLBuffer mEBO{QOpenGLBuffer::IndexBuffer};
 
     void VertexShader();
 };

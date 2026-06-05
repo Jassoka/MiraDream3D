@@ -21,12 +21,28 @@ mEngineCamera(Camera (
 
 void Renderer::render()
 {
-    const auto vertices = mScene->getMeshes()[0].getVertices();
+    mVBO.bind();
+
+    const auto firstMesh = mScene->getMeshes()[0]; //TODO faire une vraie boucle mdr
+    // Buffer de vertices
+    const auto vertices = firstMesh.getVertices();
     const Vertex *vertices_data = vertices.data(); // Pointeur vers les vertices
 
-    // Buffer de vertices
-    mVBO.bind();
     mVBO.allocate(vertices_data,vertices.size() * sizeof(Vertex));
+
+
+    // Buffer des faces //TODO rajouter algo de triangulation
+    const auto faces = firstMesh.getFaces();
+    std::vector<uint32_t> faceIndices;
+    for (const auto face: faces)
+    {
+        faceIndices.push_back(face[0]);
+        faceIndices.push_back(face[1]);
+        faceIndices.push_back(face[2]);
+    }
+    const uint32_t *faces_data = faceIndices.data();
+    mEBO.bind();
+    mEBO.allocate(faces_data,faceIndices.size() * sizeof(uint32_t));
 
     // On choisit le programme du vertex shader
     const std::string programName = "Standard";
@@ -37,7 +53,7 @@ void Renderer::render()
     const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
     mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera.computeViewMatrix()[0][0]);
 
-    glDrawElements(GL_TRIANGLES, 1, GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_TRIANGLES, faceIndices.size(), GL_UNSIGNED_INT, nullptr);
 }
 
 Renderer::~Renderer()
@@ -48,9 +64,9 @@ Renderer::~Renderer()
 void Renderer::initShaders()
 {
     std::string const VertexShaderCode = QTResourceManager::readEmbeddedRessource(":/assets/shaders/standard.vert");
-    GLuint vertexShader = ShaderManager::compileShader(VertexShaderCode, GL_VERTEX_SHADER, this->mGlFuncs);
+    const GLuint vertexShader = ShaderManager::compileShader(VertexShaderCode, GL_VERTEX_SHADER, this->mGlFuncs);
     std::string const FragmentShaderCode = QTResourceManager::readEmbeddedRessource(":/assets/shaders/standard.frag");
-    GLuint fragmentShader = ShaderManager::compileShader(FragmentShaderCode, GL_VERTEX_SHADER, this->mGlFuncs);
+    const GLuint fragmentShader = ShaderManager::compileShader(FragmentShaderCode, GL_FRAGMENT_SHADER, this->mGlFuncs);
     std::vector<GLuint> shaders;
     shaders.push_back(vertexShader);
     shaders.push_back(fragmentShader);
@@ -70,7 +86,7 @@ void Renderer::initialize(QOpenGLFunctions* glFuncs)
     mVAO.bind();
     // 0: position du vertex
     mGlFuncs->glEnableVertexAttribArray(0);
-    mGlFuncs->glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+    mGlFuncs->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
     mVAO.release();
 
     initShaders();
