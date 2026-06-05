@@ -1,9 +1,10 @@
-//uniform float couleurBleu = 0.0;
+#version 330 core
+//uniform float couleurBleu;
 
 
-//out vec4 fragColor;
+out vec4 fragColor;
 
 void main()
 {
-    //gl_FragColor= vec4(1.0,1.0,1.0,1.0);
+    fragColor= vec4(1.0,1.0,1.0,1.0);
 }

@@ -50,7 +50,7 @@ void Renderer::initShaders()
     std::string const VertexShaderCode = QTResourceManager::readEmbeddedRessource(":/assets/shaders/standard.vert");
     GLuint vertexShader = ShaderManager::compileShader(VertexShaderCode, GL_VERTEX_SHADER, this->mGlFuncs);
     std::string const FragmentShaderCode = QTResourceManager::readEmbeddedRessource(":/assets/shaders/standard.frag");
-    GLuint fragmentShader = ShaderManager::compileShader(FragmentShaderCode, GL_VERTEX_SHADER, this->mGlFuncs);
+    GLuint fragmentShader = ShaderManager::compileShader(FragmentShaderCode, GL_FRAGMENT_SHADER, this->mGlFuncs);
     std::vector<GLuint> shaders;
     shaders.push_back(vertexShader);
     shaders.push_back(fragmentShader);

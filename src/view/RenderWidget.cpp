@@ -37,7 +37,7 @@ void RenderWidget::resizeGL(int width, int height) {
     mRenderer->resize(this->width(), this->height());
 }
 void RenderWidget::paintGL() {
-
+    mRenderer->initShaders();
 }
 
 
