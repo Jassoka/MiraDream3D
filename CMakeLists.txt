@@ -49,6 +49,8 @@ add_subdirectory(libs/assimp)
 set(PROJECT_SOURCES
         src/main.cpp
         resources.qrc
+        include/RenderDocHelper.hpp
+        src/RenderDocHelper.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -74,9 +76,10 @@ else()
     endif()
 endif()
 
+add_library(EngineCore STATIC)
 
 # Liste des modules
-target_link_libraries(MiraDream3D PRIVATE
+target_link_libraries(EngineCore PUBLIC
         Model
         View
         Controller
@@ -84,7 +87,9 @@ target_link_libraries(MiraDream3D PRIVATE
         Qt6::OpenGLWidgets
 )
 
-target_link_libraries(MiraDream3D PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(MiraDream3D PRIVATE EngineCore)
+
+# target_link_libraries(MiraDream3D PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
@@ -110,6 +115,14 @@ install(TARGETS MiraDream3D
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(MiraDream3D)
 endif()
+
+
+# Mode debug avec RenderDoc
+add_executable(debugMain ${PROJECT_SOURCES})
+target_link_libraries(debugMain PRIVATE EngineCore)
+target_compile_definitions(debugMain PRIVATE ENABLE_RENDERDOC)
+
+
 
 # Google Test
 include(FetchContent)

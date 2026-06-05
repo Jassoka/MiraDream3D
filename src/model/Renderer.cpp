@@ -50,8 +50,8 @@ void Renderer::render()
     mGlFuncs->glUseProgram(programID);
 
     // Arguments de la caméra
-    const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
-    mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera.computeViewMatrix()[0][0]);
+    //const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
+    //mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera.computeViewMatrix()[0][0]);
 
     glDrawElements(GL_TRIANGLES, faceIndices.size(), GL_UNSIGNED_INT, nullptr);
 }

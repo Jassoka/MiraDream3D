@@ -16,6 +16,9 @@ public:
     {
         mRenderWidget->setScene(scene);
     }
+protected:
+    // Surcharge de la fonction d'événement clavier de Qt
+    void keyPressEvent(QKeyEvent *event) override;
 private:
     RenderWidget* mRenderWidget;
 };

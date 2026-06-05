@@ -7,8 +7,20 @@
 
 #include "controller/AssetImporter.h"
 
+#ifdef ENABLE_RENDERDOC
+    #include "renderdoc_app.h"
+    #include "RenderDocHelper.hpp"
+    #include <QLibrary>
+    #include <QDebug>
+#endif
+
 int main(int argc, char *argv[])
 {
+#ifdef ENABLE_RENDERDOC
+    qDebug() << "DEBUG mode";
+    initRenderDoc();
+#endif
+
     QSurfaceFormat format;
     format.setVersion(3, 3);
     format.setProfile(QSurfaceFormat::CoreProfile); // obligatoire sur macOS

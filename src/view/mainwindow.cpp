@@ -1,6 +1,11 @@
 #include "view/mainwindow.h"
+
+#include <iostream>
+
 #include "view/RenderWidget.h"
 #include <QOpenGLFunctions>
+
+#include "RenderDocHelper.hpp"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -16,3 +21,22 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 MainWindow::~MainWindow() = default;
+
+
+void MainWindow::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_P) {
+        std::cout << "TEST C++ PUR : Touche P pressee !" << std::endl;
+        qDebug() << "RenderDoc : Capture déclenchée depuis le RenderWidget !";
+
+        // 1. On arme RenderDoc. Il va capturer la TOUTE PROCHAINE image dessinée.
+        RDOC_TRIGGER_CAPTURE();
+
+        // 2. On ordonne à Qt de redessiner l'écran immédiatement.
+        // Cela va appeler ta fonction paintGL() et RenderDoc l'enregistrera !
+        update();
+
+    } else {
+        // Laisse le comportement normal pour les autres touches
+        MainWindow::keyPressEvent(event);
+    }
+}
