@@ -21,6 +21,19 @@ mEngineCamera(Camera (
 
 void Renderer::render()
 {
+
+    // On choisit le programme du vertex shader
+    const std::string programName = "Standard";
+    const GLuint programID = mShaderManager.getShaderProgram(programName);
+    mGlFuncs->glUseProgram(programID);
+
+    // Arguments de la caméra
+    const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
+    mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera.computeViewMatrix()[0][0]);
+
+
+    mVAO.bind();
+
     mVBO.bind();
 
     const auto firstMesh = mScene->getMeshes()[0]; //TODO faire une vraie boucle mdr
@@ -34,7 +47,7 @@ void Renderer::render()
     // Buffer des faces //TODO rajouter algo de triangulation
     const auto faces = firstMesh.getFaces();
     std::vector<uint32_t> faceIndices;
-    for (const auto face: faces)
+    for (const auto& face: faces)
     {
         faceIndices.push_back(face[0]);
         faceIndices.push_back(face[1]);
@@ -44,16 +57,9 @@ void Renderer::render()
     mEBO.bind();
     mEBO.allocate(faces_data,faceIndices.size() * sizeof(uint32_t));
 
-    // On choisit le programme du vertex shader
-    const std::string programName = "Standard";
-    const GLuint programID = mShaderManager.getShaderProgram(programName);
-    mGlFuncs->glUseProgram(programID);
-
-    // Arguments de la caméra
-    //const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
-    //mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera.computeViewMatrix()[0][0]);
-
     glDrawElements(GL_TRIANGLES, faceIndices.size(), GL_UNSIGNED_INT, nullptr);
+    mVAO.release();
+
 }
 
 Renderer::~Renderer()
@@ -79,14 +85,26 @@ void Renderer::initShaders()
 void Renderer::initialize(QOpenGLFunctions* glFuncs)
 {
     mGlFuncs = glFuncs;
+    mEBO = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
 
     if (!mVAO.create()) exit(1);
     if (!mVBO.create()) exit(1);
+    if (!mEBO.create()) exit(1);
+
 
     mVAO.bind();
+    mVBO.bind();
     // 0: position du vertex
     mGlFuncs->glEnableVertexAttribArray(0);
-    mGlFuncs->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+    mGlFuncs->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
+
+    mGlFuncs->glEnableVertexAttribArray(1);
+    mGlFuncs->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, nx));
+
+    mGlFuncs->glEnableVertexAttribArray(2);
+    mGlFuncs->glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
+
+    mEBO.bind();
     mVAO.release();
 
     initShaders();

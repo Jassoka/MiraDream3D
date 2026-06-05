@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // When OpenGL funcs are ready, give scene to the RenderWidget
     mRenderWidget->show();
-
+    mRenderWidget->resize(100,100);
 }
 
 MainWindow::~MainWindow() = default;
