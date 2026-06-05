@@ -6,10 +6,9 @@
 #include <string>
 #include "util/file_funcs.hpp"
 
-void ShaderManager::execShader(std::string& name, QOpenGLFunctions *glFuncs)
+GLuint ShaderManager::getShaderID(const std::string& name) const
 {
-    const GLuint shaderID = mShaders.at(name);
-    glFuncs->glUseProgram(shaderID);
+    return mShaders.at(name);
 }
 
 void ShaderManager::loadShader(const std::string &shaderCode, const std::string &name, const GLenum shaderType, QOpenGLFunctions *glFuncs)

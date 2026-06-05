@@ -4,7 +4,6 @@
 #include <QMainWindow>
 
 #include "RenderWidget.h"
-#include "controller/Engine.h"
 
 class MainWindow : public QMainWindow
 {
@@ -13,8 +12,11 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
+    void setScene(const Scene *scene)
+    {
+        mRenderWidget->setScene(scene);
+    }
 private:
     RenderWidget* mRenderWidget;
-    Engine *mEngine;
 };
 #endif // MAINWINDOW_H

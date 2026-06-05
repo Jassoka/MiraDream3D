@@ -13,6 +13,25 @@
 
 class Renderer
 {
+public:
+    Renderer();
+
+    void initialize(QOpenGLFunctions* glFuncs);
+
+    void resize(int width, int height);
+
+    ~Renderer();
+
+    void setScene(const Scene* scene)
+    {
+        mScene = scene;
+    }
+
+    void render();
+
+    void initShaders();
+
+
 private:
     static constexpr glm::vec3 defaultEngineCameraUp {1, 1, 1}; //TODO: mettre des vraies valeurs
     static constexpr glm::vec3 defaultEngineCameraRight {1, 1, 1};
@@ -26,10 +45,9 @@ private:
     ShaderManager mShaderManager;
     const Scene *mScene = nullptr;
     QOpenGLFunctions *mGlFuncs = nullptr;
-public:
-    Renderer(const Scene *scene, float initialAspectRatio, QOpenGLFunctions *glFuncs);
-    ~Renderer();
+    QOpenGLVertexArrayObject mVAO;
+    QOpenGLBuffer mVBO;
 
-    void initShaders();
+    void VertexShader();
 };
 #endif //MIRADREAM3D_RENDERER_H

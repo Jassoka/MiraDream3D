@@ -3,10 +3,12 @@
 //
 
 #include "controller/SceneController.h"
+#include "model/PrimitiveMeshes.hpp"
 
-SceneController::SceneController():
+SceneController::SceneController(QObject* parent) : QObject(parent),
     mScene(Scene())
 {
+    mScene.addMesh(PrimitiveMeshes::getCube());
 }
 
 const Scene* SceneController::getScene() const

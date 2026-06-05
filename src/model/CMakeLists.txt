@@ -13,6 +13,7 @@ add_library(Model STATIC
         Scene.cpp
         Node.cpp
         Mesh.cpp
+        PrimitiveMeshes.hpp
 )
 
 target_include_directories(Model PUBLIC

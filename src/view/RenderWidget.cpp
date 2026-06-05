@@ -1,7 +1,9 @@
 #include "view/RenderWidget.h"
 #include <QOpenGLFunctions>
 
-RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) : QOpenGLWidget(parent) {
+RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) :
+    QOpenGLWidget(parent), mRenderer(new Renderer())
+{
 
     if (framesPerSecond==0)
         mTimer=NULL;
@@ -14,11 +16,6 @@ RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) : QOpenGLWidget
     }
 }
 
-void RenderWidget::setRenderer(Renderer *renderer)
-{
-    this->mRenderer = renderer;
-}
-
 void RenderWidget::initializeGL() {
     initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST);
@@ -26,8 +23,7 @@ void RenderWidget::initializeGL() {
 
 
     auto* glFuncs = QOpenGLContext::currentContext()->functions();
-    float aspectRatio = static_cast<float>(this->width()) / static_cast<float>(this->height());
-    emit initRenderer(glFuncs, aspectRatio);
+    mRenderer->initialize(glFuncs);
 
     //setupShaders
     //setupBuffers
@@ -38,8 +34,7 @@ void RenderWidget::initializeGL() {
 }
 void RenderWidget::resizeGL(int width, int height) {
     glViewport(0, 0, width, height);
-
-
+    mRenderer->resize(this->width(), this->height());
 }
 void RenderWidget::paintGL() {
 

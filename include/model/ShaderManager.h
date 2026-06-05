@@ -15,7 +15,7 @@ private:
     std::unordered_map<std::string, uint32_t> mShaders;
 public:
     void loadShader(const std::string &shaderCode, const std::string &name, GLenum shaderType, QOpenGLFunctions *glFuncs);
-    void execShader(std::string &name, QOpenGLFunctions *glFuncs);
+    GLuint getShaderID(const std::string &name) const;
 };
 
 #endif //MIRADREAM3D_SHADER_MANAGER_H

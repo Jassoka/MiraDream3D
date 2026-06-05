@@ -3,7 +3,20 @@
 //
 #include "controller/Engine.h"
 
-const Scene *Engine::getScene() const
+
+Engine::Engine(QObject *parent) :
+QObject(parent),
+mSceneController(new SceneController(this))
 {
-    return mSceneController->getScene();
+}
+
+Engine::~Engine()
+{
+    delete mSceneController;
+}
+
+void Engine::start()
+{
+    mMainWindow.setScene(mSceneController->getScene());
+    mMainWindow.show();
 }

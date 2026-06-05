@@ -21,6 +21,10 @@ public:
     virtual void resizeGL(int width, int height);
     virtual void paintGL();
     void setRenderer(Renderer *renderer);
+    void setScene(const Scene *scene)
+    {
+        mRenderer->setScene(scene);
+    }
     ~RenderWidget();
 
 public slots:

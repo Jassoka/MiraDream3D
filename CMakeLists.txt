@@ -48,7 +48,7 @@ add_subdirectory(src/controller)
 add_subdirectory(libs/assimp)
 set(PROJECT_SOURCES
         src/main.cpp
-        include/util/QTResourceManager.hpp
+        resources.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
