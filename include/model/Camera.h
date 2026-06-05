@@ -41,6 +41,7 @@ public:
         mAspectRatio = aspect_ratio;
     }
 
+    glm::vec3 getPosition();
     /**
      * @brief
      * @param dPhi Horizontal translation

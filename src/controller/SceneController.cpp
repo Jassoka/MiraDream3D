@@ -3,11 +3,16 @@
 //
 
 #include "controller/SceneController.h"
+
+#include <filesystem>
+
+#include "controller/AssetImporter.h"
 #include "model/PrimitiveMeshes.hpp"
 
 SceneController::SceneController(QObject* parent) : QObject(parent),
     mScene(Scene())
 {
+
     mScene.addMesh(PrimitiveMeshes::getCube());
     //TODO: pour l'instant c'est un triangle de merde
 /*

@@ -18,6 +18,14 @@ void Renderer::draw()
     const int projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
     mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera.computePerspectiveMatrix()[0][0]);
 
+    const int cameraPos= mGlFuncs->glGetUniformLocation(programID, "cameraPos");
+    glm::vec3 cameraVec =  mEngineCamera.getPosition();
+    mGlFuncs->glUniform3f (cameraPos, cameraVec.x,cameraVec.y,cameraVec.z );
+
+    const int lightPos = mGlFuncs->glGetUniformLocation(programID, "lightPos");
+    glm::vec3 lightVec =  mEngineCamera.getPosition();
+    mGlFuncs->glUniform3f (lightPos,lightVec.x,lightVec.y,lightVec.z);
+
     mVAO.bind();
     mVBO.bind();
     mEBO.bind();
@@ -79,6 +87,7 @@ void Renderer::initialize(QOpenGLFunctions* glFuncs)
     if (!mVAO.create()) exit(1);
     if (!mVBO.create()) exit(1);
     if (!mEBO.create()) exit(1);
+
 
 
     mVAO.bind();
