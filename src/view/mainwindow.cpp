@@ -25,7 +25,6 @@ MainWindow::~MainWindow() = default;
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_P) {
-        std::cout << "TEST C++ PUR : Touche P pressee !" << std::endl;
         qDebug() << "RenderDoc : Capture déclenchée depuis le RenderWidget !";
 
         // 1. On arme RenderDoc. Il va capturer la TOUTE PROCHAINE image dessinée.

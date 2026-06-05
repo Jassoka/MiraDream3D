@@ -31,6 +31,9 @@ void Renderer::render()
     const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
     mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera.computeViewMatrix()[0][0]);
 
+    const int projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
+    mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera.computePerspectiveMatrix()[0][0]);
+
 
     mVAO.bind();
 

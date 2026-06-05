@@ -21,7 +21,7 @@ RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) :
 void RenderWidget::initializeGL() {
     initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 
     auto* glFuncs = QOpenGLContext::currentContext()->functions();

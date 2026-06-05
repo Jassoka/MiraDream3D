@@ -22,7 +22,7 @@ Camera::Camera(const glm::vec3 up,
         glm::vec4(0.0, 0.0, 0.0, 1.0)
         );
     mRotationMatrix = glm::transpose(translatedRotationMatrix);
-    mTranslationMatrix = glm::translate(glm::mat4(1.0), position);
+    mTranslationMatrix = glm::translate(glm::mat4(1.0), -position);
 }
 
 /**

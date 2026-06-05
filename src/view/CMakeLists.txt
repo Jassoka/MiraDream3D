@@ -12,7 +12,6 @@ target_include_directories(View PUBLIC
 target_link_libraries(View PRIVATE
         Model
         assimp
-
 )
 
 target_link_libraries(View PUBLIC

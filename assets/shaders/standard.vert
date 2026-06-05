@@ -5,10 +5,13 @@ layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 texCoords;
 
 uniform mat4 viewMatrix;
-//uniform mat4 projMatrix;
+uniform mat4 projMatrix;
 
 //uniform vect3 lightPosition;
 
 void main(){
-    gl_Position=  vec4(position,1.0);
+    vec4 extendedPos = vec4(position,1.0f);
+    vec4 viewPos = vec4(0.0f);
+    viewPos = viewMatrix * extendedPos;
+    gl_Position = projMatrix * viewPos;
 }
