@@ -2,5 +2,6 @@
 <RCC version="1.0">
     <qresource prefix="/">
         <file>assets/shaders/standard.vert</file>
+        <file>assets/shaders/standard.frag</file>
     </qresource>
 </RCC>
