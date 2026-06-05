@@ -39,13 +39,58 @@ void RenderWidget::resizeGL(int width, int height) {
 }
 void RenderWidget::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    mRenderer->render();
+    if (mRenderer->hasGeometryChange)
+    {
+        mRenderer->geometryRedraw();
+        mRenderer->hasGeometryChange = false;
+    }
+    else if (mRenderer->hasTopologyChange)
+    {
+        //TODO
+    }
+    else
+    {
+        mRenderer->draw();
+    }
+}
+
+
+void RenderWidget::mousePressEvent(QMouseEvent *event) {
+    if (event->button() == Qt::MiddleButton) {
+        mLastMousePosition = event->pos();
+        setCursor(Qt::ClosedHandCursor); // Nice UX touch: change cursor when dragging
+    }
+}
+void RenderWidget::mouseMoveEvent(QMouseEvent *event) {
+    if (event->buttons() & Qt::MiddleButton) {
+
+        // 1. Calculate how many pixels the mouse moved since the last frame
+        int deltaX = event->pos().x() - mLastMousePosition.x();
+        int deltaY = event->pos().y() - mLastMousePosition.y();
+
+        // 2. Convert pixels to radians using your sensitivity factor
+        float dPhi   = -deltaX * mMouseSensitivity; // Horizontal rotation
+        float dTheta = -deltaY * mMouseSensitivity; // Vertical rotation
+
+        // 3. Inject these deltas directly into your matrix rotation function!
+        mRenderer->getEngineCamera().rotateAroundAnchor(dPhi, dTheta);
+
+        // 4. Save the current position as the "last position" for the next move frame
+        mLastMousePosition = event->pos();
+
+        // 5. Force Qt to redraw the OpenGL canvas
+        this->update();
+    }
+}
+void RenderWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::MiddleButton) {
+        unsetCursor(); // Restore the normal arrow cursor
+    }
 }
 
 
 void RenderWidget::timeOutSlot() {
-    std::cout << "Nouvelle frame"<<std::endl;
-    paintGL();
 }
 
 RenderWidget::~RenderWidget()

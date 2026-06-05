@@ -5,28 +5,12 @@
 #include "model/Renderer.h"
 #include "util/QTResourceManager.hpp"
 
-Renderer::Renderer():
-mEngineCamera(Camera (
-        defaultEngineCameraUp,
-        defaultEngineCameraRight,
-        defaultEngineCameraLookAt,
-        defaultEngineCameraPosition,
-        defaultEngineCameraFOV,
-        defaultEngineCameraNearPlane,
-        defaultEngineCameraFarPlane,
-        1.0
-    ))
+void Renderer::draw()
 {
-}
-
-void Renderer::render()
-{
-
     // On choisit le programme du vertex shader
     const std::string programName = "Standard";
     const GLuint programID = mShaderManager.getShaderProgram(programName);
     mGlFuncs->glUseProgram(programID);
-
     // Arguments de la caméra
     const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
     mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera.computeViewMatrix()[0][0]);
@@ -34,9 +18,15 @@ void Renderer::render()
     const int projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
     mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera.computePerspectiveMatrix()[0][0]);
 
-
     mVAO.bind();
-
+    mVBO.bind();
+    mEBO.bind();
+    glDrawElements(GL_TRIANGLES, numTriangles, GL_UNSIGNED_INT, nullptr);
+    mVAO.release();
+}
+void Renderer::geometryRedraw()
+{
+    mVAO.bind();
     mVBO.bind();
 
     const auto firstMesh = mScene->getMeshes()[0]; //TODO faire une vraie boucle mdr
@@ -45,7 +35,6 @@ void Renderer::render()
     const Vertex *vertices_data = vertices.data(); // Pointeur vers les vertices
 
     mVBO.allocate(vertices_data,vertices.size() * sizeof(Vertex));
-
 
     // Buffer des faces //TODO rajouter algo de triangulation
     const auto faces = firstMesh.getFaces();
@@ -57,17 +46,14 @@ void Renderer::render()
         faceIndices.push_back(face[2]);
     }
     const uint32_t *faces_data = faceIndices.data();
-    mEBO.bind();
-    mEBO.allocate(faces_data,faceIndices.size() * sizeof(uint32_t));
+    numTriangles = faceIndices.size();
 
-    glDrawElements(GL_TRIANGLES, faceIndices.size(), GL_UNSIGNED_INT, nullptr);
+    mEBO.bind();
+    mEBO.allocate(faces_data,numTriangles * sizeof(uint32_t));
+
+    draw();
     mVAO.release();
 
-}
-
-Renderer::~Renderer()
-{
-    delete mScene;
 }
 
 void Renderer::initShaders()
@@ -101,9 +87,11 @@ void Renderer::initialize(QOpenGLFunctions* glFuncs)
     mGlFuncs->glEnableVertexAttribArray(0);
     mGlFuncs->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
 
+    // 1: normales du vertex
     mGlFuncs->glEnableVertexAttribArray(1);
     mGlFuncs->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, nx));
 
+    // 2: uv du vertex
     mGlFuncs->glEnableVertexAttribArray(2);
     mGlFuncs->glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
 

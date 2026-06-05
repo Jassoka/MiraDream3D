@@ -10,48 +10,76 @@
 #include "Scene.h"
 #include "ShaderManager.h"
 
-static constexpr float SQRT3_INV = 0.57735026919f;
-static constexpr float SQRT2_INV = 0.70710678118f;
-static constexpr float SQRT6_INV = 0.40824829046f;
-
 class Renderer
 {
 public:
-    Renderer();
-
     void initialize(QOpenGLFunctions* glFuncs);
 
     void resize(int width, int height);
-
-    ~Renderer();
 
     void setScene(const Scene* scene)
     {
         mScene = scene;
     }
 
-    void render();
+    Camera &getEngineCamera()
+    {
+        return mEngineCamera;
+    }
+
+    /**
+     * @brief Draw function for cases when vertices or faces are added/ deleted
+     */
+    void geometryRedraw();
+
+
+    /**
+     * @brief Draw function for cases when vertices are moved
+     */
+    void topologyRedraw();
+    /**
+     * @brief Draw function without calculating new topology
+     */
+    void draw();
+
 
     void initShaders();
 
-
+    bool hasGeometryChange = true;
+    bool hasTopologyChange = false; //TODO faire des vraies méthodes pour changer les flags
 private:
-    static constexpr glm::vec3 defaultEngineCameraLookAt {-SQRT3_INV, -SQRT3_INV, -SQRT3_INV};
-    static constexpr glm::vec3 defaultEngineCameraRight  { SQRT2_INV,  0.0f,      -SQRT2_INV};
-    static constexpr glm::vec3 defaultEngineCameraUp     {-SQRT6_INV,  2.0f*SQRT6_INV, -SQRT6_INV};
-    static constexpr glm::vec3 defaultEngineCameraPosition {5.0f, 5.0f, 5.0f};
+    static constexpr glm::vec3 worldOrigin {0.0f, 0.0f, 0.0f};
+    static constexpr glm::vec3 worldUp {0.0f, 0.0f, 1.0f};
+    static constexpr glm::vec3 defaultEngineCameraPosition {4.0f, 4.0f, 4.0f};
     static constexpr float defaultEngineCameraFOV = glm::radians(45.0f);
     static constexpr float defaultEngineCameraNearPlane = 0.1f;
     static constexpr float defaultEngineCameraFarPlane = 100.0f;
 
-    Camera mEngineCamera;
+    static Camera initEngineCamera()
+    {
+        const glm::vec3 lookAt = glm::normalize(worldOrigin - defaultEngineCameraPosition);
+        const glm::vec3 right = glm::normalize(glm::cross(lookAt, worldUp));
+        const glm::vec3 up = glm::normalize(glm::cross(right, lookAt));
+        return Camera (
+            up,
+            right,
+            lookAt,
+            defaultEngineCameraPosition,
+            defaultEngineCameraFOV,
+            defaultEngineCameraNearPlane,
+            defaultEngineCameraFarPlane,
+            1.0
+        );
+    }
+
+    Camera mEngineCamera = initEngineCamera();
     ShaderManager mShaderManager;
     const Scene *mScene = nullptr;
     QOpenGLFunctions *mGlFuncs = nullptr;
     QOpenGLVertexArrayObject mVAO;
     QOpenGLBuffer mVBO;
     QOpenGLBuffer mEBO{QOpenGLBuffer::IndexBuffer};
+    uint32_t numTriangles = 0;
 
-    void VertexShader();
 };
 #endif //MIRADREAM3D_RENDERER_H

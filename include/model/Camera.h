@@ -41,6 +41,13 @@ public:
         mAspectRatio = aspect_ratio;
     }
 
+    /**
+     * @brief
+     * @param dPhi Horizontal translation
+     * @param dTheta Vertical translation
+     */
+    void rotateAroundAnchor(const float dPhi, const float dTheta);
+
 private:
     glm::mat4 mRotationMatrix = glm::mat4();
     glm::mat4 mTranslationMatrix = glm::mat4();
@@ -50,6 +57,7 @@ private:
     double mNearPlane;
     double mFarPlane;
     double mAspectRatio;
+    glm::vec3 mAnchorPoint = glm::vec3(0.0);
 };
 
 

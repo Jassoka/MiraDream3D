@@ -32,9 +32,15 @@ public slots:
 
 signals:
     void initRenderer(QOpenGLFunctions* fonctionsGL, float aspectRatio);
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 private:
     Renderer *mRenderer;
     QTimer *mTimer;
+    QPoint mLastMousePosition;
+    float mMouseSensitivity = 0.005f;
 };
 
 
