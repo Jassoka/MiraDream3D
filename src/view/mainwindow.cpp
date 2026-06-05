@@ -6,7 +6,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) {
     setWindowTitle(QString::fromUtf8("MiraDream3D"));
-    int fps=60;//TODO enlever cette merde hardcodee
+    int fps=1;//TODO enlever cette merde hardcodee
 
     mRenderWidget = new RenderWidget(fps,this);
 

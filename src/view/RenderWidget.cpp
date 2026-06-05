@@ -1,4 +1,6 @@
 #include "view/RenderWidget.h"
+
+#include <iostream>
 #include <QOpenGLFunctions>
 
 RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) :
@@ -24,7 +26,6 @@ void RenderWidget::initializeGL() {
 
     auto* glFuncs = QOpenGLContext::currentContext()->functions();
     mRenderer->initialize(glFuncs);
-
     //setupShaders
     //setupBuffers
 
@@ -37,11 +38,13 @@ void RenderWidget::resizeGL(int width, int height) {
     mRenderer->resize(this->width(), this->height());
 }
 void RenderWidget::paintGL() {
-    mRenderer->initShaders();
+    mRenderer->render();
 }
 
 
 void RenderWidget::timeOutSlot() {
+    std::cout << "Nouvelle frame"<<std::endl;
+    paintGL();
 }
 
 RenderWidget::~RenderWidget()
