@@ -8,7 +8,6 @@
 #include "controller/AssetImporter.h"
 
 #ifdef ENABLE_RENDERDOC
-    #include "renderdoc_app.h"
     #include "RenderDocHelper.hpp"
     #include <QLibrary>
     #include <QDebug>
