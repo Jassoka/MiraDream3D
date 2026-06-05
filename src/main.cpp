@@ -7,13 +7,19 @@
 
 #include "controller/AssetImporter.h"
 
-namespace fs = std::filesystem;
-
 int main(int argc, char *argv[])
 {
+    QSurfaceFormat format;
+    format.setVersion(3, 3);
+    format.setProfile(QSurfaceFormat::CoreProfile); // obligatoire sur macOS
+    QSurfaceFormat::setDefaultFormat(format);
+
     QApplication a(argc, argv);
     Engine mainEngine;
     mainEngine.start();
+
+
+
 
     return QApplication::exec();
 }
