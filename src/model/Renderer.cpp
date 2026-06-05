@@ -21,16 +21,6 @@ mEngineCamera(Camera (
 
 void Renderer::render()
 {
-    VertexShader();
-}
-
-Renderer::~Renderer()
-{
-    delete mScene;
-}
-
-void Renderer::VertexShader()
-{
     const auto vertices = mScene->getMeshes()[0].getVertices();
     const Vertex *vertices_data = vertices.data(); // Pointeur vers les vertices
 
@@ -39,21 +29,35 @@ void Renderer::VertexShader()
     mVBO.allocate(vertices_data,vertices.size() * sizeof(Vertex));
 
     // On choisit le programme du vertex shader
-    const std::string shaderName = "Vertex Shader";
-    const GLuint shaderID = mShaderManager.getShaderID(shaderName);
-    mGlFuncs->glUseProgram(shaderID);
+    const std::string programName = "Standard";
+    const GLuint programID = mShaderManager.getShaderProgram(programName);
+    mGlFuncs->glUseProgram(programID);
 
     // Arguments de la caméra
-    const int viewMatrix= mGlFuncs->glGetUniformLocation(shaderID, "viewMatrix");
+    const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
     mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera.computeViewMatrix()[0][0]);
 
     glDrawElements(GL_TRIANGLES, 1, GL_UNSIGNED_INT, nullptr);
 }
 
+Renderer::~Renderer()
+{
+    delete mScene;
+}
+
 void Renderer::initShaders()
 {
-    std::string const VertexShader = QTResourceManager::readEmbeddedRessource(":/assets/shaders/standard.vert");
-    this->mShaderManager.loadShader(VertexShader, "Vertex Shader", GL_VERTEX_SHADER, this->mGlFuncs);
+    std::string const VertexShaderCode = QTResourceManager::readEmbeddedRessource(":/assets/shaders/standard.vert");
+    GLuint vertexShader = ShaderManager::compileShader(VertexShaderCode, GL_VERTEX_SHADER, this->mGlFuncs);
+    std::string const FragmentShaderCode = QTResourceManager::readEmbeddedRessource(":/assets/shaders/standard.frag");
+    GLuint fragmentShader = ShaderManager::compileShader(FragmentShaderCode, GL_VERTEX_SHADER, this->mGlFuncs);
+    std::vector<GLuint> shaders;
+    shaders.push_back(vertexShader);
+    shaders.push_back(fragmentShader);
+
+    std::string const programName = "Standard";
+    mShaderManager.createProgram(programName, shaders, this->mGlFuncs);
+
 }
 
 void Renderer::initialize(QOpenGLFunctions* glFuncs)

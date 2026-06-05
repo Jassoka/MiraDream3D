@@ -12,10 +12,11 @@
 class ShaderManager
 {
 private:
-    std::unordered_map<std::string, uint32_t> mShaders;
+    std::unordered_map<std::string, uint32_t> mShaderPrograms;
 public:
-    void loadShader(const std::string &shaderCode, const std::string &name, GLenum shaderType, QOpenGLFunctions *glFuncs);
-    GLuint getShaderID(const std::string &name) const;
+    static GLuint compileShader(const std::string &shaderCode, const GLenum shaderType, QOpenGLFunctions *glFuncs);
+    void createProgram(const std::string &name, const std::vector<GLuint>& shaders, QOpenGLFunctions *glFuncs);
+    GLuint getShaderProgram(const std::string &name) const;
 };
 
 #endif //MIRADREAM3D_SHADER_MANAGER_H
