@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <assimp/include/assimp/Importer.hpp>
 #include <assimp/include/assimp/scene.h>
@@ -18,18 +17,14 @@
  */
 Node* aiNodeToNode(aiNode* nodeAi,Mesh** sceneMeshes);
 
-AssetImporter::AssetImporter(Scene* scene)
-{
-    mScene = scene;
-}
 
-bool AssetImporter::loadAssimpScene(const std::string &path) const {
+bool AssetImporter::loadAssimpScene(const std::string &path, Scene *scene) {
     //Imporation
     Assimp::Importer importer;
 
-    const aiScene* aiScene = importer.ReadFile(path,
-        aiProcess_JoinIdenticalVertices|
-        aiProcess_GenSmoothNormals//aiProcess_Triangulate
+    const aiScene* aiScene = importer.ReadFile(path, 0
+        //aiProcess_JoinIdenticalVertices|
+        //aiProcess_GenSmoothNormals//aiProcess_Triangulate
     //TODO bah la on denature le fichier pardis, implementer la gestion de plusieurs nor;ales par point
     );
 
@@ -42,11 +37,12 @@ bool AssetImporter::loadAssimpScene(const std::string &path) const {
 
     for (uint32_t i=0;i< aiScene->mNumMeshes;i++) {
         auto mesh = Mesh(*aiScene->mMeshes[i]);
-        mScene->addMesh(mesh);
+        scene->addMesh(mesh);
     }
 
+
     //On convertit recursivement les nodes et on les ajoute a la scene
-    mScene->addNode(aiNodeToNode(aiScene->mRootNode,sceneMeshes));
+    //scene->addNode(aiNodeToNode(aiScene->mRootNode,sceneMeshes));
     return true;
 }
 
@@ -65,4 +61,3 @@ Node* aiNodeToNode(aiNode* nodeAi, Mesh** sceneMeshes){
 
     return(nodePtr);
 }
-

@@ -16,5 +16,4 @@ target_link_libraries(Controller PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::OpenGLWidgets
         Qt${QT_VERSION_MAJOR}::OpenGL
-
-target_link_libraries(Controller PUBLIC assimp::assimp)
+)

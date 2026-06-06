@@ -27,12 +27,13 @@ Mesh::Mesh(aiMesh &meshAi) {
         if (faceAi->mNumIndices > 4) exit(1); //TODO le handle pour de vrai
         if (faceAi->mNumIndices == 4)
         {
-            this->mFaces[i] = {faceAi->mIndices[0], faceAi->mIndices[1], faceAi->mIndices[2], faceAi->mIndices[3]};
+            this->mFaces.push_back({faceAi->mIndices[0], faceAi->mIndices[1], faceAi->mIndices[2], faceAi->mIndices[3]});
         }
         else if (faceAi->mNumIndices == 3)
         {
-            this->mFaces[i] = {faceAi->mIndices[0], faceAi->mIndices[1], faceAi->mIndices[2]};
+            this->mFaces.push_back({faceAi->mIndices[0], faceAi->mIndices[1], faceAi->mIndices[2], 0});
         }
+        this->mVertexCountPerFace.push_back(faceAi->mNumIndices);
     }
     triangulate();
 }
