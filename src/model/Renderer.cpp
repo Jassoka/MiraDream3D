@@ -111,8 +111,6 @@ void Renderer::geometryRedrawTemplate()
         {
             edgeIndices.push_back(origin);
             edgeIndices.push_back(end);
-            std::cout << origin << " " << end;
-            std::cout << '\n';
         }
         const uint32_t *edges_data = edgeIndices.data();
         numEdges = edgeIndices.size();
