@@ -48,6 +48,7 @@ public:
      * @param dTheta Vertical translation
      */
     void rotateAroundAnchor(const float dPhi, const float dTheta);
+    void zoom(float zoomFactor);
 
 private:
     glm::mat4 mRotationMatrix = glm::mat4();

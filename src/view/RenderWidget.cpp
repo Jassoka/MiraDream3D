@@ -57,28 +57,27 @@ void RenderWidget::paintGL() {
 
 void RenderWidget::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::MiddleButton) {
+        grabMouse();
         mLastMousePosition = event->pos();
-        setCursor(Qt::ClosedHandCursor); // Nice UX touch: change cursor when dragging
+        setCursor(Qt::BlankCursor); // Nice UX touch: change cursor when dragging
     }
 }
 void RenderWidget::mouseMoveEvent(QMouseEvent *event) {
     if (event->buttons() & Qt::MiddleButton) {
 
-        // 1. Calculate how many pixels the mouse moved since the last frame
+        // Ignorer les events générés par le recentrage
+        if (event->pos() == mLastMousePosition) return;
+
         int deltaX = event->pos().x() - mLastMousePosition.x();
         int deltaY = event->pos().y() - mLastMousePosition.y();
 
-        // 2. Convert pixels to radians using your sensitivity factor
-        float dPhi   = -deltaX * mMouseSensitivity; // Horizontal rotation
-        float dTheta = -deltaY * mMouseSensitivity; // Vertical rotation
+        float dPhi   = -deltaX * mMouseSensitivity;
+        float dTheta = -deltaY * mMouseSensitivity;
 
-        // 3. Inject these deltas directly into your matrix rotation function!
         mRenderer->getEngineCamera().rotateAroundAnchor(dPhi, dTheta);
 
-        // 4. Save the current position as the "last position" for the next move frame
-        mLastMousePosition = event->pos();
-
-        // 5. Force Qt to redraw the OpenGL canvas
+        // Toujours recentrer
+        QCursor::setPos(mapToGlobal(mLastMousePosition));
         this->update();
     }
 }
@@ -89,6 +88,33 @@ void RenderWidget::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
+void RenderWidget::wheelEvent(QWheelEvent *event) {
+    int delta = event->angleDelta().y();
+    if (delta==0) {
+        delta=event->angleDelta().x();
+    }
+    float zoomFactor;
+
+    if (delta>0) {
+
+        if (event->modifiers() & Qt::ShiftModifier) {
+            zoomFactor=1.2f;
+        }
+        else zoomFactor=1.1f;
+    }
+    else {
+        if (event->modifiers() & Qt::ShiftModifier) {
+            zoomFactor=0.8f;
+        }
+        else {
+            zoomFactor=0.9f;
+        }
+
+    }
+
+    mRenderer->getEngineCamera().zoom(zoomFactor);
+    this->update();
+}
 
 void RenderWidget::timeOutSlot() {
 }

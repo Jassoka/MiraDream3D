@@ -36,11 +36,13 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
 private:
     Renderer *mRenderer;
     QTimer *mTimer;
     QPoint mLastMousePosition;
-    float mMouseSensitivity = 0.005f;
+    float mMouseSensitivity = 0.0035f;
+    bool mWasTeleported = false;
 };
 
 

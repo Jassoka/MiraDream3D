@@ -55,7 +55,7 @@ const glm::mat4& Camera::computePerspectiveMatrix()
 }
 
 glm::vec3 Camera::getPosition() {
-    return(glm::vec3(mTranslationMatrix[3]));
+    return(glm::vec3(-mTranslationMatrix[3]));
 }
 
 
@@ -89,5 +89,11 @@ void Camera::rotateAroundAnchor(const float dPhi, const float dTheta)
 
     mTranslationMatrix[3] = glm::vec4(newTranslation, 1.0f);
     mRotationMatrix       = glm::mat4(R);
+
+}
+
+void Camera::zoom(float zoomFactor) {
+    glm::vec3 translation = (-glm::vec3(mTranslationMatrix[3]) - mAnchorPoint)* zoomFactor + mAnchorPoint;
+    mTranslationMatrix[3] = glm::vec4(-translation,1.0f);
 
 }

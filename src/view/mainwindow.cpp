@@ -36,6 +36,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 
     } else {
         // Laisse le comportement normal pour les autres touches
-        MainWindow::keyPressEvent(event);
+        //MainWindow::keyPressEvent(event);
     }
 }
