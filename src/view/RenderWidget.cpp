@@ -84,6 +84,7 @@ void RenderWidget::mouseMoveEvent(QMouseEvent *event) {
 void RenderWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::MiddleButton) {
+        releaseMouse();
         unsetCursor(); // Restore the normal arrow cursor
     }
 }
@@ -115,7 +116,9 @@ void RenderWidget::wheelEvent(QWheelEvent *event) {
     mRenderer->getEngineCamera().zoom(zoomFactor);
     this->update();
 }
-
+void RenderWidget::setHasChanged(bool b) {
+    mRenderer->hasGeometryChange=b;
+}
 void RenderWidget::timeOutSlot() {
 }
 

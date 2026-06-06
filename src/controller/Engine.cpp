@@ -3,11 +3,10 @@
 //
 #include "controller/Engine.h"
 
-
 Engine::Engine(QObject *parent) :
-QObject(parent),
-mSceneController(new SceneController(this))
+QObject(parent),mMainWindow(nullptr,this)
 {
+    mSceneController=new SceneController((QObject*)this);
 }
 
 Engine::~Engine()

@@ -2,15 +2,18 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QPushButton>
 
 #include "RenderWidget.h"
+class Engine;
+
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr,Engine* engine=nullptr);
     ~MainWindow() override;
     void setScene(const Scene *scene)
     {
@@ -21,5 +24,7 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;
 private:
     RenderWidget* mRenderWidget;
+    QPushButton* mImportButton;
+    Engine* mEngine;
 };
 #endif // MAINWINDOW_H

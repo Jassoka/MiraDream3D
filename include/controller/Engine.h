@@ -7,7 +7,6 @@
 #include "controller/SceneController.h"
 #include "view/mainwindow.h"
 
-
 class Engine : public QObject
 {
     Q_OBJECT
@@ -19,6 +18,9 @@ public:
     const Scene *getScene() const
     {
         return mSceneController->getScene();
+    }
+    SceneController* getSceneController()  {
+        return(mSceneController);
     }
 private:
     MainWindow mMainWindow;

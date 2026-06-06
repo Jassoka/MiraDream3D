@@ -5,7 +5,7 @@
 #include <QObject>
 #include <filesystem>
 
-#include "controller/AssetImporter.h"
+#include "model/AssetImporter.h"
 
 #ifdef ENABLE_RENDERDOC
     #include "RenderDocHelper.hpp"

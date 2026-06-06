@@ -1,7 +1,5 @@
 
 add_library(Controller STATIC
-        AssetImporter.cpp
-        ../../include/controller/AssetImporter.h
         ../../include/controller/SceneController.h
         ../../include/controller/Engine.h
         SceneController.cpp
@@ -18,4 +16,3 @@ target_link_libraries(Controller PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
 )
 
-target_link_libraries(Controller PUBLIC assimp::assimp)

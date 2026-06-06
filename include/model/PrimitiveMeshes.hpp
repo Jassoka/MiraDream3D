@@ -17,6 +17,12 @@ public:
     {
         return getInstance().mCube;
     };
+    /*
+    static void addCubeToNode(Node &node) {//TODO faire en sorte qu'on donne un ID pour chaque forme
+
+        node.addMesh();
+    }*/
+
 private:
     PrimitiveMeshes(): mCube(Mesh(DEFAULT_TEXTURE))
     {

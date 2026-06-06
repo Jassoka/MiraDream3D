@@ -14,6 +14,8 @@ add_library(Model STATIC
         Node.cpp
         Mesh.cpp
         ../../include/model/PrimitiveMeshes.hpp
+        AssetImporter.cpp
+        ../../include/model/AssetImporter.h
 )
 
 target_include_directories(Model PUBLIC
@@ -31,4 +33,5 @@ target_link_libraries(Model PRIVATE
 
 target_link_libraries(Model PUBLIC
         Qt${QT_VERSION_MAJOR}::Gui # ça prend ptetre trop de place -> revoir le constructeur d'une texture qui prend un Qimage
+        assimp::assimp
 )

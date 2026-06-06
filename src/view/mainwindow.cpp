@@ -4,20 +4,51 @@
 
 #include "view/RenderWidget.h"
 #include <QOpenGLFunctions>
-
+#include "controller/Engine.h"
 #include "RenderDocHelper.hpp"
+#include <QFileDialog>
+#include <QToolBar>
 
+#include "model/AssetImporter.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent) {
+MainWindow::MainWindow(QWidget *parent,Engine* engine)
+    : QMainWindow(parent),
+    mEngine(engine)
+    {
     setWindowTitle(QString::fromUtf8("MiraDream3D"));
     int fps=60;//TODO enlever cette merde hardcodee
 
+    mImportButton = new QPushButton("&Import",this);
+    QToolBar* toolbar = addToolBar("Outils");
+    toolbar->addWidget(mImportButton);
+
+
+
     mRenderWidget = new RenderWidget(fps,this);
+    setCentralWidget(mRenderWidget);
+
+
+
 
     // When OpenGL funcs are ready, give scene to the RenderWidget
     mRenderWidget->show();
-    setCentralWidget(mRenderWidget);
+    mImportButton->show();
+
+
+    connect(mImportButton, &QPushButton::clicked, this, [this]() {
+    QString path = QFileDialog::getOpenFileName(
+        this,
+        "Ouvrir un fichier",
+        "",
+        "Modèles 3D (*.obj *.fbx);;Tous les fichiers (*)"
+    );
+    if (!path.isEmpty()) {
+        mEngine->getSceneController()->loadBlankScene();
+        AssetImporter::loadAssimpScene(path.toStdString(),mEngine->getSceneController()->getScene());
+        mRenderWidget->setHasChanged(true);
+    }
+});
+
 }
 
 MainWindow::~MainWindow() = default;
