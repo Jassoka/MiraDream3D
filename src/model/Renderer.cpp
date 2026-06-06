@@ -29,7 +29,7 @@ void Renderer::draw()
     mVAO.bind();
     mVBO.bind();
     mEBO.bind();
-    glDrawElements(GL_TRIANGLES, numTriangles, GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_TRIANGLES, numTriangles*3, GL_UNSIGNED_INT, nullptr);
     mVAO.release();
 }
 void Renderer::geometryRedraw()
@@ -57,7 +57,7 @@ void Renderer::geometryRedraw()
     numTriangles = faceIndices.size();
 
     mEBO.bind();
-    mEBO.allocate(faces_data,numTriangles * sizeof(uint32_t));
+    mEBO.allocate(faces_data,numTriangles * 3 * sizeof(uint32_t));
 
     draw();
     mVAO.release();

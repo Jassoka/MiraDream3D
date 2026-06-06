@@ -55,7 +55,7 @@ const glm::mat4& Camera::computePerspectiveMatrix()
 }
 
 glm::vec3 Camera::getPosition() {
-    return(glm::vec3(mTranslationMatrix[3]));
+    return(-glm::vec3(mTranslationMatrix[3]));
 }
 
 
