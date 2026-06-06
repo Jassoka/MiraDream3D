@@ -3,14 +3,10 @@
 //
 
 #include "controller/SceneController.h"
-
-#include <filesystem>
-
-#include "controller/AssetImporter.h"
+#include "model/AssetImporter.h"
 #include "model/PrimitiveMeshes.hpp"
 
-SceneController::SceneController(QObject* parent) : QObject(parent),
-    mScene(Scene())
+SceneController::SceneController(QObject* parent) : QObject(parent)
 {
 
     mScene.addMesh(PrimitiveMeshes::getCube());
@@ -25,7 +21,11 @@ SceneController::SceneController(QObject* parent) : QObject(parent),
     mScene.addMesh(triangle);*/
 }
 
-const Scene* SceneController::getScene() const
+Scene *SceneController::getScene()
 {
     return &mScene;
+}
+
+void SceneController::loadBlankScene() {
+    mScene=Scene();
 }

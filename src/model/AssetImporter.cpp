@@ -7,7 +7,7 @@
 #include "model/geometry.hpp"
 #include "model/Mesh.h"
 #include "model/Node.h"
-#include "controller/AssetImporter.h"
+#include "model/AssetImporter.h"
 
 
 /**

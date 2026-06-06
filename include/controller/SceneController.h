@@ -12,13 +12,15 @@ class SceneController : public QObject
 {
     Q_OBJECT
 public:
-    SceneController(QObject* parent);
-    const Scene* getScene() const;
+    explicit SceneController(QObject* parent);
+
+    Scene *getScene() ;
 
     void setScene(const Scene& scene)
     {
         mScene = scene;
     }
+    void loadBlankScene();
 
 private:
     Scene mScene;

@@ -16,10 +16,12 @@ class RenderWidget : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
 public:
     explicit RenderWidget(int framesPerSecond=0, QWidget *parent = nullptr);
-    virtual void initializeGL();    
-    virtual void resizeGL(int width, int height);
-    virtual void paintGL();
+    virtual void initializeGL() override;
+    virtual void resizeGL(int width, int height) override;
+    virtual void paintGL() override;
+    void setHasChanged(bool b);
     void setRenderer(Renderer *renderer);
+    Renderer* getRenderer(){return mRenderer;};
     void setScene(const Scene *scene)
     {
         mRenderer->setScene(scene);
@@ -35,11 +37,13 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
 private:
     Renderer *mRenderer;
     QTimer *mTimer;
     QPoint mLastMousePosition;
-    float mMouseSensitivity = 0.005f;
+    float mMouseSensitivity = 0.0035f;
+    bool mWasTeleported = false;
 };
 
 

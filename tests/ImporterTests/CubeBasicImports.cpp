@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <filesystem>
 
-#include "controller/AssetImporter.h"
+#include "model/AssetImporter.h"
 #include "model/Scene.h"
 #include "testUtils/MeshComparison.h"
 

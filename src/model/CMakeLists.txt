@@ -13,6 +13,8 @@ add_library(Model STATIC
         Node.cpp
         Mesh.cpp
         ../../include/model/PrimitiveMeshes.hpp
+        AssetImporter.cpp
+        ../../include/model/AssetImporter.h
 )
 
 target_include_directories(Model PUBLIC

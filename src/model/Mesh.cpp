@@ -11,14 +11,13 @@ Mesh::Mesh(aiMesh &meshAi) {
 
     for (uint32_t i=0;i<meshAi.mNumVertices;i++) {
         aiVector3D pos = meshAi.mVertices[i];
-        //aiVector3D normale = meshAi.mNormals[i];
-        //aiVector3D uv = meshAi.mTextureCoords[0][i];
+        aiVector3D normale = meshAi.mNormals[i];
+        aiVector3D uv = meshAi.mTextureCoords[0][i];
         this->mVertices.push_back(
             Vertex {
                 pos[0],pos[1],pos[2],
-                //normale[0],normale[1],normale[2],
-                //uv[0],uv[1]
-                0,0,0,0,0
+                normale[0],normale[1],normale[2],
+                uv[0],uv[1],
             }
         );
     }
