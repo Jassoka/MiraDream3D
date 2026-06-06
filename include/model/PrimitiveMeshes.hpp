@@ -71,28 +71,28 @@ private:
     mCube.addVertex({-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f}); // 23 → face Arrière
 
     // Face Avant  (+Z) : sommets →2 (indices *2), 8, 14, 20
-    mCube.addFace({ 2, 14, 20});
-    mCube.addFace({ 2, 20,  8});
+    mCube.addTriangle({ 2, 14, 20});
+    mCube.addTriangle({ 2, 20,  8});
 
     // Face Arrière (-Z) : sommets → 17, 5, 11, 23
-    mCube.addFace({17,  5, 11});
-    mCube.addFace({17, 11, 23});
+    mCube.addTriangle({17,  5, 11});
+    mCube.addTriangle({17, 11, 23});
 
     // Face Haut   (+Y) : sommets → 13, 1, 4, 16
-    mCube.addFace({13,  1,  4});
-    mCube.addFace({13,  4, 16});
+    mCube.addTriangle({13,  1,  4});
+    mCube.addTriangle({13,  4, 16});
 
     // Face Bas    (-Y) : sommets → 19, 22, 10, 7
-    mCube.addFace({19, 22, 10});
-    mCube.addFace({19, 10,  7});
+    mCube.addTriangle({19, 22, 10});
+    mCube.addTriangle({19, 10,  7});
 
     // Face Droite (+X) : sommets → 0, 6, 9, 3
-    mCube.addFace({ 0,  6,  9});
-    mCube.addFace({ 0,  9,  3});
+    mCube.addTriangle({ 0,  6,  9});
+    mCube.addTriangle({ 0,  9,  3});
 
     // Face Gauche (-X) : sommets → 15, 21, 18, 12
-    mCube.addFace({15, 21, 18});
-    mCube.addFace({15, 18, 12});
+    mCube.addTriangle({15, 21, 18});
+    mCube.addTriangle({15, 18, 12});
     };
 
     static constexpr uint32_t DEFAULT_TEXTURE = 0;

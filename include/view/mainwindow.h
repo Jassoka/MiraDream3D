@@ -1,9 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-
 #include "RenderWidget.h"
+#include <QMainWindow>
 
 class MainWindow : public QMainWindow
 {

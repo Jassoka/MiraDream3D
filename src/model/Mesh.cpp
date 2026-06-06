@@ -1,6 +1,7 @@
 #include "model/Mesh.h"
 
 #include <iostream>
+#include <assimp/include/assimp/mesh.h>
 #include <assimp/vector3.h>
 
 Mesh::Mesh(uint32_t MaterialID):mMaterialID(MaterialID) {
@@ -23,10 +24,15 @@ Mesh::Mesh(aiMesh &meshAi) {
     }
 
     for (uint32_t i=0;i<meshAi.mNumFaces;i++) {
-        aiFace* faceAi = &meshAi.mFaces[i];
-        this->mFaces.push_back(std::vector<uint32_t>());
-        for (uint32_t k=0;k<faceAi->mNumIndices;k++) {
-            this->mFaces[i].push_back(faceAi->mIndices[k]);
+        const aiFace* faceAi = &meshAi.mFaces[i];
+        if (faceAi->mNumIndices > 4) exit(1); //TODO le handle pour de vrai
+        if (faceAi->mNumIndices == 4)
+        {
+            this->mFaces[i] = {faceAi->mIndices[0], faceAi->mIndices[1], faceAi->mIndices[2], faceAi->mIndices[3]};
+        }
+        else if (faceAi->mNumIndices == 3)
+        {
+            this->mFaces[i] = {faceAi->mIndices[0], faceAi->mIndices[1], faceAi->mIndices[2]};
         }
     }
 }
@@ -60,12 +66,57 @@ std::ostream& operator<<(std::ostream& os, const Mesh &mesh) {
 void Mesh::addVertex(const Vertex &vertex) {
     this->mVertices.push_back(vertex);
 }
+
 void Mesh::addEdge(const Edge &edge) {
     this->mEdges.push_back(edge);
 }
-void Mesh::addHalfEdge(const HalfEdge &halfEdge) {
+void Mesh::addHalfEdge(const HalfEdge &halfEdge)
+{
     this->mHalfEdges.push_back(halfEdge);
 }
-void Mesh::addFace(const Face &face) {
+void Mesh::addQuad(const Face &face) {
+    this->mVertexCountPerFace.push_back(4);
     this->mFaces.push_back(face);
+}
+
+void Mesh::addTriangle(const Face &face) {
+    this->mVertexCountPerFace.push_back(3);
+    this->mFaces.push_back(face);
+}
+
+void Mesh::generateEdges()
+{
+    for (int i = 0; i < mFaces.size(); i++)
+    {
+        Face &f = mFaces[i];
+        mEdges.push_back(Edge {f[0], f[1]});
+        mEdges.push_back(Edge {f[1], f[2]});
+        if (mVertexCountPerFace[i] == 3)
+        {
+            mEdges.push_back(Edge {f[2], f[0]});
+        }
+        if (mVertexCountPerFace[i] == 4)
+        {
+            mEdges.push_back(Edge {f[2], f[3]});
+            mEdges.push_back(Edge {f[3], f[0]});
+        }
+    }
+}
+
+void Mesh::triangulate()
+{
+    for (int i = 0; i < mFaces.size(); i++)
+    {
+        Face &f = mFaces[i];
+        if (mVertexCountPerFace[i] == 3)
+        {
+            mTriangles.push_back(Triangle {f[0], f[1], f[2]});
+        }
+        else
+        {
+            //TODO MARCHE QUE SI CONVEXE LA MEILLEURE PROPRIÉTÉ DU MONDE !!!!!!!1§§1§§
+            mTriangles.push_back(Triangle {f[0], f[1], f[2]});
+            mTriangles.push_back(Triangle {f[0], f[2], f[3]});
+        }
+    }
 }

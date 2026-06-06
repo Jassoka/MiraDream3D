@@ -74,13 +74,22 @@ endif()
 
 add_library(EngineCore STATIC)
 
+# Précompilation
+
+target_precompile_headers(EngineCore PRIVATE
+        <vector>
+        <string>
+        <assimp>
+        <unordered_map>
+        <glm/glm.hpp>
+        <QOpenGLFunctions>
+)
+
 # Liste des modules
 target_link_libraries(EngineCore PUBLIC
         Model
         View
         Controller
-        Qt6::Widgets
-        Qt6::OpenGLWidgets
 )
 
 target_link_libraries(MiraDream3D PRIVATE EngineCore)

@@ -3,13 +3,15 @@
 //
 
 #include "model/Renderer.h"
-#include "util/QTResourceManager.hpp"
+
+const std::string VIEWPORT_SOLID = "viewport_solid";
+const std::string VIEWPORT_WIREFRAME = "viewport_wireframe";
 
 void Renderer::draw()
 {
     // On choisit le programme du vertex shader
-    const std::string programName = "Standard";
-    const GLuint programID = mShaderManager.getShaderProgram(programName);
+    const std::string programName = VIEWPORT_SOLID;
+    const GLuint programID = ShaderManager::getShaderProgram(programName);
     mGlFuncs->glUseProgram(programID);
     // Arguments de la caméra
     const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
@@ -19,17 +21,17 @@ void Renderer::draw()
     mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera.computePerspectiveMatrix()[0][0]);
 
     const int cameraPos= mGlFuncs->glGetUniformLocation(programID, "cameraPos");
-    glm::vec3 cameraVec =  mEngineCamera.getPosition();
+    const glm::vec3 cameraVec =  mEngineCamera.getPosition();
     mGlFuncs->glUniform3f (cameraPos, cameraVec.x,cameraVec.y,cameraVec.z );
 
     const int lightPos = mGlFuncs->glGetUniformLocation(programID, "lightPos");
-    glm::vec3 lightVec =  mEngineCamera.getPosition();
+    const glm::vec3 lightVec =  mEngineCamera.getPosition();
     mGlFuncs->glUniform3f (lightPos,lightVec.x,lightVec.y,lightVec.z);
 
     mVAO.bind();
     mVBO.bind();
     mEBO.bind();
-    glDrawElements(GL_TRIANGLES, numTriangles*3, GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_LINES, numEdges*2, GL_UNSIGNED_INT, nullptr);
     mVAO.release();
 }
 void Renderer::geometryRedraw()
@@ -37,7 +39,7 @@ void Renderer::geometryRedraw()
     mVAO.bind();
     mVBO.bind();
 
-    const auto firstMesh = mScene->getMeshes()[0]; //TODO faire une vraie boucle mdr
+    auto firstMesh = mScene->getMeshes()[0]; //TODO faire une vraie boucle mdr
     // Buffer de vertices
     const auto vertices = firstMesh.getVertices();
     const Vertex *vertices_data = vertices.data(); // Pointeur vers les vertices
@@ -56,8 +58,23 @@ void Renderer::geometryRedraw()
     const uint32_t *faces_data = faceIndices.data();
     numTriangles = faceIndices.size();
 
+    //Buffer des edges
+    firstMesh.generateEdges();
+    const auto edges = firstMesh.getEdges();
+    std::vector<uint32_t> edgeIndices;
+    for (const auto& [origin, end]: edges)
+    {
+        edgeIndices.push_back(origin);
+        edgeIndices.push_back(end);
+        std::cout << origin << " " << end;
+        std::cout << '\n';
+    }
+    const uint32_t *edges_data = edgeIndices.data();
+    numEdges = edgeIndices.size();
+
     mEBO.bind();
-    mEBO.allocate(faces_data,numTriangles * 3 * sizeof(uint32_t));
+    mEBO.allocate(edges_data,numEdges * sizeof(uint32_t));
+
 
     draw();
     mVAO.release();
@@ -66,22 +83,22 @@ void Renderer::geometryRedraw()
 
 void Renderer::initShaders()
 {
-    std::string const VertexShaderCode = QTResourceManager::readEmbeddedRessource(":/assets/shaders/standard.vert");
-    const GLuint vertexShader = ShaderManager::compileShader(VertexShaderCode, GL_VERTEX_SHADER, this->mGlFuncs);
-    std::string const FragmentShaderCode = QTResourceManager::readEmbeddedRessource(":/assets/shaders/standard.frag");
-    const GLuint fragmentShader = ShaderManager::compileShader(FragmentShaderCode, GL_FRAGMENT_SHADER, this->mGlFuncs);
-    std::vector<GLuint> shaders;
-    shaders.push_back(vertexShader);
-    shaders.push_back(fragmentShader);
+    GLuint vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_solid.vert", GL_VERTEX_SHADER);
+    GLuint fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_solid.frag", GL_FRAGMENT_SHADER);
+    std::vector<GLuint> shaders = {vertexShader, fragmentShader};
+    ShaderManager::createProgram(VIEWPORT_SOLID, shaders);
 
-    std::string const programName = "Standard";
-    mShaderManager.createProgram(programName, shaders, this->mGlFuncs);
 
+    vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_wireframe.vert", GL_VERTEX_SHADER);
+    fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_wireframe.frag", GL_FRAGMENT_SHADER);
+    shaders = {vertexShader, fragmentShader};
+    ShaderManager::createProgram(VIEWPORT_WIREFRAME, shaders);
 }
 
 void Renderer::initialize(QOpenGLFunctions* glFuncs)
 {
     mGlFuncs = glFuncs;
+    ShaderManager::initialize(glFuncs);
     mEBO = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
 
     if (!mVAO.create()) exit(1);

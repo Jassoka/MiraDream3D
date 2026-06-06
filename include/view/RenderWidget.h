@@ -5,7 +5,6 @@
 #ifndef MIRADREAM3D_RENDERWIDGET_H
 #define MIRADREAM3D_RENDERWIDGET_H
 
-#include <QtOpenGL>
 #include <QOpenGLWidget>
 
 #include "model/Renderer.h"

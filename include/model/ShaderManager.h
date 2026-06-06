@@ -11,12 +11,23 @@
 
 class ShaderManager
 {
-private:
-    std::unordered_map<std::string, uint32_t> mShaderPrograms;
 public:
-    static GLuint compileShader(const std::string &shaderCode, const GLenum shaderType, QOpenGLFunctions *glFuncs);
-    void createProgram(const std::string &name, const std::vector<GLuint>& shaders, QOpenGLFunctions *glFuncs);
-    GLuint getShaderProgram(const std::string &name) const;
+    static void initialize(QOpenGLFunctions* glFuncs)
+    {
+        mGlFuncs = glFuncs;
+    }
+    static GLuint compileQTRessourceShader(const std::string &virtualPath, GLenum shaderType);
+    static GLuint compileShader(const std::string &shaderCode, GLenum shaderType);
+    /**
+     * @brief Clears all programs known by the current instance of ShaderManager
+     */
+    static void clearShaders();
+    static void createProgram(const std::string &name, const std::vector<GLuint>& shaders);
+    static GLuint getShaderProgram(const std::string &name);
+
+private:
+    inline static std::unordered_map<std::string, uint32_t> mShaderPrograms;
+    inline static QOpenGLFunctions *mGlFuncs = nullptr;
 };
 
 #endif //MIRADREAM3D_SHADER_MANAGER_H

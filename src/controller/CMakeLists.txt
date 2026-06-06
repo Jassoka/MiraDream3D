@@ -16,6 +16,8 @@ target_link_libraries(Controller PRIVATE
         Model
         View
         Qt${QT_VERSION_MAJOR}::Widgets
-)
+        Qt${QT_VERSION_MAJOR}::OpenGLWidgets
+        Qt${QT_VERSION_MAJOR}::OpenGL
+        assimp # <SUprimmer bientot
 
-target_link_libraries(Controller PUBLIC assimp::assimp)
+)

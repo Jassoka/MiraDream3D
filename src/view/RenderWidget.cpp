@@ -1,6 +1,5 @@
 #include "view/RenderWidget.h"
 
-#include <iostream>
 #include <QOpenGLFunctions>
 
 RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) :
@@ -21,7 +20,7 @@ RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) :
 void RenderWidget::initializeGL() {
     initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
 
 
     auto* glFuncs = QOpenGLContext::currentContext()->functions();
@@ -63,29 +62,23 @@ void RenderWidget::mousePressEvent(QMouseEvent *event) {
 }
 void RenderWidget::mouseMoveEvent(QMouseEvent *event) {
     if (event->buttons() & Qt::MiddleButton) {
-
-        // 1. Calculate how many pixels the mouse moved since the last frame
         int deltaX = event->pos().x() - mLastMousePosition.x();
         int deltaY = event->pos().y() - mLastMousePosition.y();
 
-        // 2. Convert pixels to radians using your sensitivity factor
-        float dPhi   = -deltaX * mMouseSensitivity; // Horizontal rotation
-        float dTheta = -deltaY * mMouseSensitivity; // Vertical rotation
+        float dPhi   = -deltaX * mMouseSensitivity;
+        float dTheta = -deltaY * mMouseSensitivity;
 
-        // 3. Inject these deltas directly into your matrix rotation function!
         mRenderer->getEngineCamera().rotateAroundAnchor(dPhi, dTheta);
 
-        // 4. Save the current position as the "last position" for the next move frame
         mLastMousePosition = event->pos();
 
-        // 5. Force Qt to redraw the OpenGL canvas
         this->update();
     }
 }
 void RenderWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::MiddleButton) {
-        unsetCursor(); // Restore the normal arrow cursor
+        unsetCursor();
     }
 }
 

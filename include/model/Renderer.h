@@ -13,6 +13,8 @@
 class Renderer
 {
 public:
+    Renderer() = default;
+
     void initialize(QOpenGLFunctions* glFuncs);
 
     void resize(int width, int height);
@@ -80,6 +82,7 @@ private:
     QOpenGLBuffer mVBO;
     QOpenGLBuffer mEBO{QOpenGLBuffer::IndexBuffer};
     uint32_t numTriangles = 0;
+    uint32_t numEdges = 0;
 
 };
 #endif //MIRADREAM3D_RENDERER_H
