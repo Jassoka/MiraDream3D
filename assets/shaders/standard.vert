@@ -7,21 +7,20 @@ layout(location = 2) in vec2 texCoords;
 uniform mat4 viewMatrix;
 uniform mat4 projMatrix;
 
-
-out vec3 fragNormal;
-out vec4 viewPos;
+out vec3 n, v, l;
 
 uniform vec3 lightPos;
 uniform vec3 cameraPos;
 
 void main(){
-    fragNormal  =  normal;
+    vec4 viewPos = viewMatrix * vec4(position, 1.0f);
 
+    mat3 normalMatrix = transpose(mat3(inverse(viewMatrix)));
+    n = normalMatrix * normal;
+    v = -viewPos.xyz;
+    vec3 lightPosViewSpace = vec3(viewMatrix * vec4(lightPos, 1.0f));
+    l = lightPosViewSpace - viewPos.xyz;
 
-
-
-    vec4 extendedPos = vec4(position,1.0f);
-    viewPos = vec4(0.0f);
-    viewPos = viewMatrix * extendedPos;
     gl_Position = projMatrix * viewPos;
+
 }
