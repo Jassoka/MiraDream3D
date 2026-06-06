@@ -31,6 +31,7 @@ class Texture {
 private:
      PixelBuffer mPixels;
 public:
+    /*
     explicit Texture(QImage &img) : mPixels{} {
         //TODO: supprimer, model n'a pas besoin de fonctions de qt,
         // c'est controller qui doit se charger de la traduction en char* ou autre structure convenable
@@ -39,6 +40,7 @@ public:
         img = img.mirrored();
         std::copy_n(img.constBits(), mPixels.size(), mPixels.begin());
     }
+    */
 
     //TODO: on pourra peut etre surcharger l'opérateur []
     /**

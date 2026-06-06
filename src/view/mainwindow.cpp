@@ -1,6 +1,11 @@
 #include "view/mainwindow.h"
+
+#include <iostream>
+
 #include "view/RenderWidget.h"
 #include <QOpenGLFunctions>
+
+#include "RenderDocHelper.hpp"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -8,17 +13,29 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle(QString::fromUtf8("MiraDream3D"));
     int fps=60;//TODO enlever cette merde hardcodee
 
-    mEngine = new Engine();
     mRenderWidget = new RenderWidget(fps,this);
 
     // When OpenGL funcs are ready, give scene to the RenderWidget
-    connect(mRenderWidget, &RenderWidget::initRenderer,
-            this, [this](QOpenGLFunctions* glFuncs, const float ratio) {
-        mRenderWidget->setRenderer(new Renderer(mEngine->getScene(), ratio, QOpenGLContext::currentContext()->functions()));
-    });
-
     mRenderWidget->show();
-
+    setCentralWidget(mRenderWidget);
 }
 
 MainWindow::~MainWindow() = default;
+
+
+void MainWindow::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_P) {
+        qDebug() << "RenderDoc : Capture déclenchée depuis le RenderWidget !";
+
+        // 1. On arme RenderDoc. Il va capturer la TOUTE PROCHAINE image dessinée.
+        RDOC_TRIGGER_CAPTURE();
+
+        // 2. On ordonne à Qt de redessiner l'écran immédiatement.
+        // Cela va appeler ta fonction paintGL() et RenderDoc l'enregistrera !
+        update();
+
+    } else {
+        // Laisse le comportement normal pour les autres touches
+        MainWindow::keyPressEvent(event);
+    }
+}

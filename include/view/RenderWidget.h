@@ -5,7 +5,6 @@
 #ifndef MIRADREAM3D_RENDERWIDGET_H
 #define MIRADREAM3D_RENDERWIDGET_H
 
-#include <QtOpenGL>
 #include <QOpenGLWidget>
 
 #include "model/Renderer.h"
@@ -21,6 +20,10 @@ public:
     virtual void resizeGL(int width, int height);
     virtual void paintGL();
     void setRenderer(Renderer *renderer);
+    void setScene(const Scene *scene)
+    {
+        mRenderer->setScene(scene);
+    }
     ~RenderWidget();
 
 public slots:
@@ -28,9 +31,15 @@ public slots:
 
 signals:
     void initRenderer(QOpenGLFunctions* fonctionsGL, float aspectRatio);
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 private:
     Renderer *mRenderer;
     QTimer *mTimer;
+    QPoint mLastMousePosition;
+    float mMouseSensitivity = 0.005f;
 };
 
 

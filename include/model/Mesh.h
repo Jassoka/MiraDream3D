@@ -5,8 +5,9 @@
 #ifndef MIRADREAM3D_MESH_H
 #define MIRADREAM3D_MESH_H
 #include "geometry.hpp"
-#include "assimp/include/assimp/mesh.h"
+#include <iostream>
 
+struct aiMesh;
 
 class Mesh
 {
@@ -46,6 +47,12 @@ public:
         return mFaces;
     }
 
+
+    const std::vector<Triangle>& getTriangles() const
+    {
+        return mTriangles;
+    }
+
     /**
      * @brief Prints mesh contents in the console
      */
@@ -54,17 +61,24 @@ public:
     void addVertex(const Vertex &vertex);
     void addEdge(const Edge &edge);
     void addHalfEdge(const HalfEdge &halfEdge);
-    void addFace(const Face &face);
+    void generateEdges();
+    void triangulate();
+    void addQuad(const Face &face);
+    void addTriangle(const Face &face);
+    /*
     /**
      * @brief Computes and returns a mesh sorted by hashing the vertices
      */
-    Mesh sortedMesh() const;
+    //Mesh sortedMesh() const; //TODO pue la merde
 private:
     uint32_t mMaterialID=0;
     std::vector<Vertex> mVertices;
     std::vector<Edge> mEdges;
     std::vector<HalfEdge> mHalfEdges;
     std::vector<Face> mFaces;
+    std::vector<Triangle> mTriangles;
+    std::vector<uint8_t> mVertexCountPerFace;
+    bool isTriangulated = false;
 };
 #endif //MIRADREAM3D_MESH_H
 

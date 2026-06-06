@@ -6,6 +6,7 @@
 #define MIRADREAM3D_GEOMETRY_HPP
 
 #include <cstdint>
+#include <array>
 #include <vector>
 #include <cfloat>
 #include <cmath>
@@ -52,7 +53,8 @@ struct Edge
     uint32_t end;
 };
 
-using Face = std::vector<uint32_t>;
+using Face = std::array<uint32_t, 4>;
+using Triangle = std::array<uint32_t, 3>;
 
 /**
  * @brief Oriented edge

@@ -17,16 +17,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 
 #ASSIMP
-set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
-set(ASSIMP_NO_EXPORT ON CACHE BOOL "" FORCE)
-
 set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+
 set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "" FORCE)
-
-set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
-
-set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
 
 #Qt
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
@@ -48,7 +44,9 @@ add_subdirectory(src/controller)
 add_subdirectory(libs/assimp)
 set(PROJECT_SOURCES
         src/main.cpp
-        include/util/QTResourceManager.hpp
+        resources.qrc
+        include/RenderDocHelper.hpp
+        src/RenderDocHelper.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -74,17 +72,29 @@ else()
     endif()
 endif()
 
+add_library(EngineCore STATIC)
+
+# Précompilation
+
+target_precompile_headers(EngineCore PRIVATE
+        <vector>
+        <string>
+        <assimp>
+        <unordered_map>
+        <glm/glm.hpp>
+        <QOpenGLFunctions>
+)
 
 # Liste des modules
-target_link_libraries(MiraDream3D PRIVATE
+target_link_libraries(EngineCore PUBLIC
         Model
         View
         Controller
-        Qt6::Widgets
-        Qt6::OpenGLWidgets
 )
 
-target_link_libraries(MiraDream3D PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(MiraDream3D PRIVATE EngineCore)
+
+# target_link_libraries(MiraDream3D PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
@@ -110,6 +120,14 @@ install(TARGETS MiraDream3D
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(MiraDream3D)
 endif()
+
+
+# Mode debug avec RenderDoc
+add_executable(debugMain ${PROJECT_SOURCES})
+target_link_libraries(debugMain PRIVATE EngineCore)
+target_compile_definitions(debugMain PRIVATE ENABLE_RENDERDOC)
+
+
 
 # Google Test
 include(FetchContent)

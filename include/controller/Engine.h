@@ -4,20 +4,25 @@
 
 #ifndef MIRADREAM3D_ENGINE_H
 #define MIRADREAM3D_ENGINE_H
-#include "SceneController.h"
+#include "controller/SceneController.h"
+#include "view/mainwindow.h"
 
 
-class Engine
+class Engine : public QObject
 {
+    Q_OBJECT
 public:
-    const Scene *getScene() const;
-    Engine() = default;
-    ~Engine()
+    explicit Engine(QObject *parent = nullptr);
+    ~Engine() override;
+    void start();
+
+    const Scene *getScene() const
     {
-        delete mSceneController;
+        return mSceneController->getScene();
     }
 private:
-    SceneController *mSceneController = new SceneController();
+    MainWindow mMainWindow;
+    SceneController *mSceneController = nullptr;
 
 };
 #endif //MIRADREAM3D_ENGINE_H

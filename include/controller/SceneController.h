@@ -4,18 +4,24 @@
 
 #ifndef MIRADREAM3D_SCENECONTROLLER_H
 #define MIRADREAM3D_SCENECONTROLLER_H
-#include "controller/AssetImporter.h"
+#include <QObject>
+
 #include "model/Scene.h"
 
-class SceneController
+class SceneController : public QObject
 {
+    Q_OBJECT
 public:
-    SceneController();
+    SceneController(QObject* parent);
     const Scene* getScene() const;
-    bool loadScene(const std::string &path);
+
+    void setScene(const Scene& scene)
+    {
+        mScene = scene;
+    }
+
 private:
-    Scene mScene = Scene();
-    AssetImporter mAssetImporter;
+    Scene mScene;
 };
 
 #endif //MIRADREAM3D_SCENECONTROLLER_H

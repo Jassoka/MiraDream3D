@@ -1,7 +1,10 @@
 #include "view/RenderWidget.h"
+
 #include <QOpenGLFunctions>
 
-RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) : QOpenGLWidget(parent) {
+RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) :
+    QOpenGLWidget(parent), mRenderer(new Renderer())
+{
 
     if (framesPerSecond==0)
         mTimer=NULL;
@@ -14,21 +17,14 @@ RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) : QOpenGLWidget
     }
 }
 
-void RenderWidget::setRenderer(Renderer *renderer)
-{
-    this->mRenderer = renderer;
-}
-
 void RenderWidget::initializeGL() {
     initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+    glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
 
 
     auto* glFuncs = QOpenGLContext::currentContext()->functions();
-    float aspectRatio = static_cast<float>(this->width()) / static_cast<float>(this->height());
-    emit initRenderer(glFuncs, aspectRatio);
-
+    mRenderer->initialize(glFuncs);
     //setupShaders
     //setupBuffers
 
@@ -38,11 +34,52 @@ void RenderWidget::initializeGL() {
 }
 void RenderWidget::resizeGL(int width, int height) {
     glViewport(0, 0, width, height);
-
-
+    mRenderer->resize(this->width(), this->height());
 }
 void RenderWidget::paintGL() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (mRenderer->hasGeometryChange)
+    {
+        mRenderer->geometryRedraw();
+        mRenderer->hasGeometryChange = false;
+    }
+    else if (mRenderer->hasTopologyChange)
+    {
+        //TODO
+    }
+    else
+    {
+        mRenderer->draw();
+    }
+}
 
+
+void RenderWidget::mousePressEvent(QMouseEvent *event) {
+    if (event->button() == Qt::MiddleButton) {
+        mLastMousePosition = event->pos();
+        setCursor(Qt::ClosedHandCursor); // Nice UX touch: change cursor when dragging
+    }
+}
+void RenderWidget::mouseMoveEvent(QMouseEvent *event) {
+    if (event->buttons() & Qt::MiddleButton) {
+        int deltaX = event->pos().x() - mLastMousePosition.x();
+        int deltaY = event->pos().y() - mLastMousePosition.y();
+
+        float dPhi   = -deltaX * mMouseSensitivity;
+        float dTheta = -deltaY * mMouseSensitivity;
+
+        mRenderer->getEngineCamera().rotateAroundAnchor(dPhi, dTheta);
+
+        mLastMousePosition = event->pos();
+
+        this->update();
+    }
+}
+void RenderWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::MiddleButton) {
+        unsetCursor();
+    }
 }
 
 
