@@ -22,6 +22,7 @@ public:
     virtual void paintGL() override;
     void setHasChanged(bool b);
     void setRenderer(Renderer *renderer);
+    Renderer* getRenderer(){return mRenderer;};
     void setScene(const Scene *scene)
     {
         mRenderer->setScene(scene);

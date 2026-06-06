@@ -55,18 +55,23 @@ MainWindow::~MainWindow() = default;
 
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
-    if (event->key() == Qt::Key_P) {
-        qDebug() << "RenderDoc : Capture déclenchée depuis le RenderWidget !";
 
-        // 1. On arme RenderDoc. Il va capturer la TOUTE PROCHAINE image dessinée.
-        RDOC_TRIGGER_CAPTURE();
+    switch (event->key()) {
+        case(Qt::Key_P):
+            qDebug() << "RenderDoc : Capture déclenchée depuis le RenderWidget !";
 
-        // 2. On ordonne à Qt de redessiner l'écran immédiatement.
-        // Cela va appeler ta fonction paintGL() et RenderDoc l'enregistrera !
-        update();
+            // 1. On arme RenderDoc. Il va capturer la TOUTE PROCHAINE image dessinée.
+            RDOC_TRIGGER_CAPTURE();
 
-    } else {
-        // Laisse le comportement normal pour les autres touches
-        //MainWindow::keyPressEvent(event);
+            // 2. On ordonne à Qt de redessiner l'écran immédiatement.
+            // Cela va appeler ta fonction paintGL() et RenderDoc l'enregistrera !
+            update();
+            break;
+        case(Qt::Key_1):
+            //mRenderWidget->getRenderer()->changeMode(VIEWPORT);
+            break;
+        case(Qt::Key_2):
+            //mRenderWidget->getRenderer()->changeMode(VIEWPORT);
+            break;
     }
 }
