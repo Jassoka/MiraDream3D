@@ -68,10 +68,13 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
             update();
             break;
         case(Qt::Key_1):
-            //mRenderWidget->getRenderer()->changeMode(VIEWPORT);
+            mRenderWidget->getRenderer()->changeMode(ViewportMode::SOLID);
+            mRenderWidget->update();
             break;
         case(Qt::Key_2):
-            //mRenderWidget->getRenderer()->changeMode(VIEWPORT);
+            mRenderWidget->getRenderer()->changeMode(ViewportMode::WIREFRAME);
+            mRenderWidget->update();
             break;
+
     }
 }

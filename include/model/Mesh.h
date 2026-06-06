@@ -65,11 +65,7 @@ public:
     void triangulate();
     void addQuad(const Face &face);
     void addTriangle(const Face &face);
-    /*
-    /**
-     * @brief Computes and returns a mesh sorted by hashing the vertices
-     */
-    //Mesh sortedMesh() const; //TODO pue la merde
+
 private:
     uint32_t mMaterialID=0;
     std::vector<Vertex> mVertices;

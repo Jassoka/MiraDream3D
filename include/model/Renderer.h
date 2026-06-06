@@ -51,7 +51,10 @@ public:
     void draw();
 
 
-
+    void changeMode(ViewportMode mode) {
+        this->mCurrViewportMode=mode;
+        hasGeometryChange=true;
+    }
 
     void initShaders();
 
@@ -96,7 +99,7 @@ private:
     QOpenGLBuffer mEBO{QOpenGLBuffer::IndexBuffer};
     uint32_t numTriangles = 0;
     uint32_t numEdges = 0;
-    ViewportMode mCurrViewportMode = ViewportMode::WIREFRAME;
+    ViewportMode mCurrViewportMode = ViewportMode::SOLID;
 
 };
 #endif //MIRADREAM3D_RENDERER_H
