@@ -10,6 +10,12 @@
 #include "Scene.h"
 #include "ShaderManager.h"
 
+enum ViewportMode
+{
+    SOLID,
+    WIREFRAME
+};
+
 class Renderer
 {
 public:
@@ -38,11 +44,13 @@ public:
     /**
      * @brief Draw function for cases when vertices are moved
      */
-    void topologyRedraw();
+    //void topologyRedraw();
     /**
      * @brief Draw function without calculating new topology
      */
     void draw();
+
+
 
 
     void initShaders();
@@ -73,6 +81,11 @@ private:
             1.0
         );
     }
+    template <ViewportMode m>
+    void drawTemplate();
+
+    template <ViewportMode m>
+    void geometryRedrawTemplate();
 
     Camera mEngineCamera = initEngineCamera();
     ShaderManager mShaderManager;
@@ -83,6 +96,7 @@ private:
     QOpenGLBuffer mEBO{QOpenGLBuffer::IndexBuffer};
     uint32_t numTriangles = 0;
     uint32_t numEdges = 0;
+    ViewportMode mCurrViewportMode = ViewportMode::WIREFRAME;
 
 };
 #endif //MIRADREAM3D_RENDERER_H

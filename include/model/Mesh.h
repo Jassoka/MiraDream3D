@@ -47,6 +47,12 @@ public:
         return mFaces;
     }
 
+
+    const std::vector<Triangle>& getTriangles() const
+    {
+        return mTriangles;
+    }
+
     /**
      * @brief Prints mesh contents in the console
      */

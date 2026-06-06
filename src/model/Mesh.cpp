@@ -35,6 +35,7 @@ Mesh::Mesh(aiMesh &meshAi) {
             this->mFaces[i] = {faceAi->mIndices[0], faceAi->mIndices[1], faceAi->mIndices[2]};
         }
     }
+    triangulate();
 }
 
 bool Mesh::operator==(const Mesh& other) const
