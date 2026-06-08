@@ -63,6 +63,10 @@ struct HalfEdge {
     uint32_t next;
     uint32_t prev;
     /**
+ * @brief Face of the half edge
+ */
+    uint32_t face;
+    /**
  * @brief Index of oppposite HalfEdge
  */
     uint32_t twin;
@@ -70,6 +74,10 @@ struct HalfEdge {
  * @brief Index of origin Vertex
  */
     uint32_t origin;
+    /**
+ * @brief Index of origin Vertex
+ */
+    uint32_t end;
 };
 
 #endif //MIRADREAM3D_GEOMETRY_HPP
