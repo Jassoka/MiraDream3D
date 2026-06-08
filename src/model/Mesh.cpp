@@ -1,6 +1,7 @@
 #include "model/Mesh.h"
 
 #include <iostream>
+#include <unordered_map>
 #include <assimp/include/assimp/mesh.h>
 #include <assimp/vector3.h>
 
@@ -14,12 +15,12 @@ Mesh::Mesh(aiMesh &meshAi) {
     for (uint32_t i=0;i<meshAi.mNumVertices;i++) {
         aiVector3D pos = meshAi.mVertices[i];
         aiVector3D normale = meshAi.mNormals[i];
-        aiVector3D uv = meshAi.mTextureCoords[0][i];
+        //aiVector3D uv = meshAi.mTextureCoords[0][i];
         this->mVertices.push_back(
             Vertex {
                 pos[0],pos[1],pos[2],
                 normale[0],normale[1],normale[2],
-                uv[0],uv[1],
+                //uv[0],uv[1],
             }
         );
     }
@@ -38,6 +39,7 @@ Mesh::Mesh(aiMesh &meshAi) {
         this->mVertexCountPerFace.push_back(faceAi->mNumIndices);
     }
     triangulate();
+    generateEdges();
 }
 
 bool Mesh::operator==(const Mesh& other) const
@@ -89,6 +91,7 @@ void Mesh::addTriangle(const Face &face) {
 
 void Mesh::generateEdges()
 {
+    mEdges.clear(); //TODO pue la merde
     for (int i = 0; i < mFaces.size(); i++)
     {
         Face &f = mFaces[i];
@@ -104,6 +107,79 @@ void Mesh::generateEdges()
             mEdges.push_back(Edge {f[3], f[0]});
         }
     }
+}
+
+
+void Mesh::generateHalfEdges()
+{
+    generateEdges();
+    // On suppose le mesh un manifold
+    // Trouver la liste des extremums en x
+    float xMax = mVertices[0].x;
+    for (uint32_t idxV = 1; idxV < mVertices.size(); idxV ++)
+    {
+        if (mVertices[idxV].x > xMax) xMax = mVertices[idxV].x;
+    }
+    std::unordered_set<uint32_t> extremums;
+    for (uint32_t idxV = 0; idxV < mVertices.size(); idxV ++)
+    {
+        if (xMax - mVertices[idxV].x < FLT_EPSILON) extremums.insert(idxV);
+    }
+    // On cherche un point Vx tq il existe un voisin non extremum
+    uint32_t Vx = -1;
+    for (auto [origin, end] : mEdges)
+    {
+        if (extremums.find(origin) == extremums.end() && extremums.find(end) != extremums.end())
+        {
+            Vx = end;
+            break;
+        }
+        if (extremums.find(origin) != extremums.end() && extremums.find(end) == extremums.end())
+        {
+            Vx = origin;
+            break;
+        }
+    }
+    // Si il n'existe pas: alors c'est plat sur x, on prend n'importe quelle premiere normale
+    // Sinon: soit Vx ce point, on nomme E la moyenne des points adjacents
+    // On prend n'importe quelle face, et on a EE' (E' proj ortho de E sur la face) sa normale
+    // Si E==E' alors n'importe quelle normale
+
+    // Prendre la face en question: A, B, C ...
+    // Alors si AB^AC de même sens à n, c'est ABC, sinon CBA
+
+    // Propagation des half edges, jusqu'a que chaque face soit touchée
+    /*
+    std::vector<HalfEdge> tmpHalfEdges;
+    uint32_t halfEdgeCount = 0;
+    for (uint32_t fID = 0; fID < mFaces.size(); fID++)
+    {
+        Face &f = mFaces[fID];
+        for (uint32_t vID = 0; vID < getNbVertex(fID); vID++)
+        {
+            tmpHalfEdges[halfEdgeCount++ ] = HalfEdge{};
+        }
+        mHalfEdgeIndexPerVertex[vID] = halfEdgeIdx;
+        for (auto faces : facesPerVertex[vID])
+        {
+
+        }*/
+    }
+    /*
+    auto facesPerVertex = std::vector<std::vector<uint32_t>>(mVertices.size());
+    for (uint32_t fID = 0; fID < mFaces.size(); fID++)
+    {
+        Face &f = mFaces[fID];
+        facesPerVertex[f[0]].push_back(fID);
+        facesPerVertex[f[1]].push_back(fID);
+        facesPerVertex[f[2]].push_back(fID);
+        if (isQuad(fID))
+        {
+            facesPerVertex[f[3]].push_back(fID);
+        }
+    }
+    mHalfEdgeIndexPerVertex.resize(mVertices.size());
+    */
 }
 
 void Mesh::triangulate()

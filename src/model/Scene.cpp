@@ -35,7 +35,7 @@ void Scene::addMaterial(Material &material) {
     this->mMaterialList.push_back(material);
 }
 
-const std::vector<Mesh>& Scene::getMeshes() const
+const std::vector<Mesh> &Scene::getMeshes() const
 {
     return mMeshList;
 }

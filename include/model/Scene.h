@@ -31,7 +31,7 @@ public:
     void addMesh(Mesh &mesh);
     void addTexture(Texture &texture);
     void addMaterial(Material &material);
-    const std::vector<Mesh>& getMeshes() const;
+    const std::vector<Mesh> &getMeshes() const;
     Scene();
     ~Scene();
 };

@@ -76,47 +76,49 @@ void Renderer::geometryRedrawTemplate()
     mVAO.bind();
     mVBO.bind();
 
-    auto firstMesh = mScene->getMeshes()[0]; //TODO faire une vraie boucle mdr
-    // Buffer de vertices
-    const auto vertices = firstMesh.getVertices();
-    const Vertex *vertices_data = vertices.data(); // Pointeur vers les vertices
-
-    mVBO.allocate(vertices_data,vertices.size() * sizeof(Vertex));
-
-    if (m == ViewportMode::SOLID)
+    for (const Mesh &mesh : mScene->getMeshes() )
     {
-        // Buffer des faces //TODO rajouter algo de triangulation
-        firstMesh.triangulate();
-        const auto triangles = firstMesh.getTriangles();
-        std::vector<uint32_t> triangleIndices;
-        for (const auto& t: triangles)
-        {
-            triangleIndices.push_back(t[0]);
-            triangleIndices.push_back(t[1]);
-            triangleIndices.push_back(t[2]);
-        }
-        const uint32_t *trig_data = triangleIndices.data();
-        numTriangles = triangleIndices.size();
+        // Buffer de vertices
+        const auto vertices = mesh.getVertices();
+        const Vertex *vertices_data = vertices.data(); // Pointeur vers les vertices
 
-        mEBO.bind();
-        mEBO.allocate(trig_data,numTriangles * sizeof(uint32_t));
-    }
-    else if (m == ViewportMode::WIREFRAME)
-    {
-        //Buffer des edges
-        firstMesh.generateEdges();
-        const auto edges = firstMesh.getEdges();
-        std::vector<uint32_t> edgeIndices;
-        for (const auto& [origin, end]: edges)
-        {
-            edgeIndices.push_back(origin);
-            edgeIndices.push_back(end);
-        }
-        const uint32_t *edges_data = edgeIndices.data();
-        numEdges = edgeIndices.size();
+        mVBO.allocate(vertices_data,vertices.size() * sizeof(Vertex));
 
-        mEBO.bind();
-        mEBO.allocate(edges_data,numEdges * sizeof(uint32_t));
+        if (m == ViewportMode::SOLID)
+        {
+            // Buffer des faces //TODO rajouter algo de triangulation
+            //mesh.triangulate(); //TODO le faire ailleurs mais pas dans le draw
+            const auto triangles = mesh.getTriangles();
+            std::vector<uint32_t> triangleIndices;
+            for (const auto& t: triangles)
+            {
+                triangleIndices.push_back(t[0]);
+                triangleIndices.push_back(t[1]);
+                triangleIndices.push_back(t[2]);
+            }
+            const uint32_t *trig_data = triangleIndices.data();
+            numTriangles = triangleIndices.size();
+
+            mEBO.bind();
+            mEBO.allocate(trig_data,numTriangles * sizeof(uint32_t));
+        }
+        else if (m == ViewportMode::WIREFRAME)
+        {
+            //Buffer des edges
+            //mesh.generateEdges(); //TODO ça aussi
+            const auto& edges = mesh.getEdges();
+            std::vector<uint32_t> edgeIndices;
+            for (const auto& [origin, end]: edges)
+            {
+                edgeIndices.push_back(origin);
+                edgeIndices.push_back(end);
+            }
+            const uint32_t *edges_data = edgeIndices.data();
+            numEdges = edgeIndices.size();
+
+            mEBO.bind();
+            mEBO.allocate(edges_data,numEdges * sizeof(uint32_t));
+        }
     }
     draw();
     mVAO.release();
