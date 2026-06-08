@@ -58,15 +58,47 @@ public:
      */
     bool operator==(const Mesh &other) const;
 
+    bool isTriangle(const uint32_t faceID) const
+    {
+        return getNbVertex(faceID) == 3;
+    }
+    bool isQuad(const uint32_t faceID) const {
+        return getNbVertex(faceID) == 4;
+    }
+
     void addVertex(const Vertex &vertex);
-    void addEdge(const Edge &edge);
-    void addHalfEdge(const HalfEdge &halfEdge);
     void generateEdges();
+    void generateHalfEdges();
     void triangulate();
     void addQuad(const Face &face);
     void addTriangle(const Face &face);
 
 private:
+    void addEdge(const Edge &edge);
+    void addHalfEdge(const HalfEdge &halfEdge);
+    uint8_t getNbVertex(const uint32_t faceID) const
+    {
+        return mVertexCountPerFace[faceID];
+    }
+
+    /**
+     * @brief Returns the index which comes after vertexID in a face
+     */
+    int getNextIndice(const uint32_t faceID, const uint32_t vertexID) const
+    {
+        const int n = getNbVertex(faceID);
+        for (int i = 0; i < n; i++)
+        {
+            if (mFaces[faceID][i] == vertexID)
+            {
+                if (i+1 == n) return 0;
+                return i+1;
+            }
+        }
+        return -1;
+    }
+
+
     uint32_t mMaterialID=0;
     std::vector<Vertex> mVertices;
     std::vector<Edge> mEdges;
@@ -74,6 +106,11 @@ private:
     std::vector<Face> mFaces;
     std::vector<Triangle> mTriangles;
     std::vector<uint8_t> mVertexCountPerFace;
+    /**
+     * @brief List of the first half edge index linked a certain vertex
+     * @note Is size of mVertices
+     */
+    std::vector<uint32_t> mHalfEdgeIndexPerVertex;
     bool isTriangulated = false;
 };
 #endif //MIRADREAM3D_MESH_H
