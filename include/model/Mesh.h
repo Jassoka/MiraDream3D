@@ -7,7 +7,13 @@
 #include "geometry.hpp"
 #include <iostream>
 
+#include "../../../../../../../../../Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers/gltypes.h"
+#include "glm/vec3.hpp"
+
 struct aiMesh;
+
+enum halfEdgeDirection {ABC,ACB};
+
 
 class Mesh
 {
@@ -75,6 +81,9 @@ private:
     std::vector<Triangle> mTriangles;
     std::vector<uint8_t> mVertexCountPerFace;
     bool isTriangulated = false;
+
+    void findNormalAndOrientation(uint32_t A,std::vector<uint32_t> adjacentFaces,glm::vec3* normalPtr,halfEdgeDirection* directionPtr);
+    glm::vec3 getNormal(Face &face,halfEdgeDirection orientation);
 };
 #endif //MIRADREAM3D_MESH_H
 

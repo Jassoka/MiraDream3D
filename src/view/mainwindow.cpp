@@ -48,14 +48,14 @@ MainWindow::MainWindow(QWidget *parent,Engine* engine)
         mRenderWidget->setHasChanged(true);
     }
 });
-
+    //connect(mRenderWidget->getTimer,SIGNAL(timeout()),this,timeoutControl());
 }
 
 MainWindow::~MainWindow() = default;
 
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
-
+    mPressedKeys.insert(event->key());
     switch (event->key()) {
         case(Qt::Key_P):
             qDebug() << "RenderDoc : Capture déclenchée depuis le RenderWidget !";
@@ -75,6 +75,39 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
             mRenderWidget->getRenderer()->changeMode(ViewportMode::WIREFRAME);
             mRenderWidget->update();
             break;
-
+            /*
+        case(Qt::Key_Z):
+            mRenderWidget->getRenderer()->getEngineCamera().strafeCamera(0.0,-1.0);
+            mRenderWidget->update();
+            break;
+        case(Qt::Key_Q):
+            mRenderWidget->getRenderer()->getEngineCamera().strafeCamera(1.0,0.0);
+            mRenderWidget->update();
+            break;
+        case(Qt::Key_S):
+            mRenderWidget->getRenderer()->getEngineCamera().strafeCamera(0.0,1.0);
+            mRenderWidget->update();
+            break;
+        case(Qt::Key_D):
+            mRenderWidget->getRenderer()->getEngineCamera().strafeCamera(-1.0,0.0);
+            mRenderWidget->update();
+            break;*/
     }
+}
+void MainWindow::keyReleaseEvent(QKeyEvent* event) {
+    mPressedKeys.remove(event->key());
+}
+void MainWindow::timeoutControl(){
+    float speed = 0.05f;
+
+    if (mPressedKeys.contains(Qt::Key_Q))
+        mRenderWidget->getRenderer()->getEngineCamera().strafeCamera(-speed, 0.0f);
+    if (mPressedKeys.contains(Qt::Key_D))
+        mRenderWidget->getRenderer()->getEngineCamera().strafeCamera( speed, 0.0f);
+    if (mPressedKeys.contains(Qt::Key_Z))
+        mRenderWidget->getRenderer()->getEngineCamera().strafeCamera(0.0f,  speed);
+    if (mPressedKeys.contains(Qt::Key_S))
+        mRenderWidget->getRenderer()->getEngineCamera().strafeCamera(0.0f, -speed);
+
+    mRenderWidget->update();
 }

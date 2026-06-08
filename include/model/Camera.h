@@ -49,6 +49,7 @@ public:
      */
     void rotateAroundAnchor(const float dPhi, const float dTheta);
     void zoom(float zoomFactor);
+    void strafeCamera(float dx,float dy);
 
 private:
     glm::mat4 mRotationMatrix = glm::mat4();

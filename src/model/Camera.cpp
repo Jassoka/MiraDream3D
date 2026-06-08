@@ -5,6 +5,8 @@
 #include "model/Camera.h"
 
 #include <cstdio>
+#include <iostream>
+#include <qlogging.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 Camera::Camera(const glm::vec3 up,
@@ -63,7 +65,6 @@ glm::vec3 Camera::getPosition() {
 void Camera::rotateAroundAnchor(const float dPhi, const float dTheta)
 {
     const float rho = glm::length(glm::vec3(mTranslationMatrix[3]) - mAnchorPoint);
-
     const float cP = std::cos(dPhi);
     const float sP = std::sin(dPhi);
     const float cT = std::cos(dTheta);
@@ -87,13 +88,24 @@ void Camera::rotateAroundAnchor(const float dPhi, const float dTheta)
 
     const glm::vec3 newTranslation = rho * glm::normalize( glm::vec3(R[0][2], R[1][2], R[2][2])) + mAnchorPoint;
 
+
     mTranslationMatrix[3] = glm::vec4(newTranslation, 1.0f);
     mRotationMatrix       = glm::mat4(R);
 
 }
 
 void Camera::zoom(float zoomFactor) {
-    glm::vec3 translation = (-glm::vec3(mTranslationMatrix[3]) - mAnchorPoint)* zoomFactor + mAnchorPoint;
-    mTranslationMatrix[3] = glm::vec4(-translation,1.0f);
+    glm::vec3 translation = (glm::vec3(mTranslationMatrix[3]) - mAnchorPoint)* zoomFactor + mAnchorPoint;
+    mTranslationMatrix[3] = glm::vec4(translation,1.0f);
+
+}
+
+void Camera::strafeCamera(float dx,float dy) {
+    glm::vec3 right = glm::vec3(mRotationMatrix[0][0], mRotationMatrix[1][0], mRotationMatrix[2][0]);
+    glm::vec3 up    = glm::vec3(mRotationMatrix[0][1], mRotationMatrix[1][1], mRotationMatrix[2][1]);
+
+    glm::vec3 translation=dx*right+dy*up;
+    mAnchorPoint += translation;
+    mTranslationMatrix[3]+=glm::vec4(translation,0.0);
 
 }

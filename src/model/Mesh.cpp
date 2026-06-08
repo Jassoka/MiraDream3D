@@ -4,6 +4,8 @@
 #include <assimp/include/assimp/mesh.h>
 #include <assimp/vector3.h>
 
+#include "glm/geometric.hpp"
+
 Mesh::Mesh(uint32_t MaterialID):mMaterialID(MaterialID) {
 }
 Mesh::Mesh(aiMesh &meshAi) {
@@ -120,4 +122,69 @@ void Mesh::triangulate()
             mTriangles.push_back(Triangle {f[0], f[2], f[3]});
         }
     }
+}
+
+/**
+ *
+ * A :
+ * E : mean of points adjacents to A
+ **/
+void Mesh::findNormalAndOrientation(uint32_t AId,std::vector<uint32_t> adjacentFaces,glm::vec3* normalPtr,halfEdgeDirection* directionPtr) {
+
+
+    //Si point isolé
+    if  (adjacentFaces.size()==0) {
+        *normalPtr=glm::vec3(0.0,0.0,1.0);
+        *directionPtr=ABC;
+    }
+    //Calcul de E
+    glm::vec3 E=glm::vec3(0.0);
+    std::vector<bool> visitedVertices(mVertices.size(),false);
+    visitedVertices[AId]=true;
+    uint32_t nAdjacentVertices=0;
+    for (auto faceId : adjacentFaces) {
+        auto face=mFaces[faceId];
+        for (uint32_t i=0;i<mVertexCountPerFace[faceId];i++) {
+            auto vertexId=face[i];
+            //on regarde si le sommet a deja ete ajoute a la somme, si non, on le fait et on l'ajoute a la liste des points visites
+            if (!visitedVertices[vertexId]){
+                auto vertex=mVertices[vertexId];
+                E+=glm::vec3(vertex.x,vertex.y,vertex.z);
+                visitedVertices[vertexId]=true;
+                nAdjacentVertices+=1;
+            }
+        }
+    }
+
+    E/=nAdjacentVertices;
+    //E est à présent calculé
+    Vertex AVertex=mVertices[AId];
+    glm::vec3 A=glm::vec3(AVertex.x,AVertex.y,AVertex.z);
+    glm::vec3 EA=A-E;
+    glm::vec3 normal=getNormal(mFaces[adjacentFaces[0]],halfEdgeDirection::ABC);
+    if (glm::dot(EA,normal)>0) {
+        *normalPtr=normal;
+        *directionPtr=ABC;
+    }
+    else {
+        *normalPtr=-normal;
+        *directionPtr=ACB;
+    }
+}
+
+
+
+glm::vec3 Mesh::getNormal(Face &face,halfEdgeDirection orientation){
+    Vertex AVertex=mVertices[face[0]];
+    Vertex BVertex=mVertices[face[1]];
+    Vertex CVertex=mVertices[face[2]];
+    if (orientation==ACB) {
+        std::swap(BVertex,CVertex);
+    }
+
+    glm::vec3 A=glm::vec3(AVertex.x,AVertex.y,AVertex.z);
+    glm::vec3 B=glm::vec3(BVertex.x,BVertex.y,BVertex.z);
+    glm::vec3 C=glm::vec3(CVertex.x,CVertex.y,CVertex.z);
+        //AB^AC normalisé
+    return(glm::normalize(glm::cross(B-A,C-A)));
 }
