@@ -131,6 +131,7 @@ void Mesh::generateHalfEdges()
                 const uint32_t next_j = (i + 1)%faceSize;
                 const uint32_t origin = std::min(f[i], f[next_j]);
                 const uint32_t end = std::max(f[i], f[next_j]);
+                std::cout << "Face " << fID << " Edge ID pair: (" << origin << ", " << end << ")\n";
                 uint64_t key = static_cast<uint64_t>(origin) << 32 | end;
                 if (auto it = edgeMap.find(key); it == edgeMap.end()) // not in map
                 {
