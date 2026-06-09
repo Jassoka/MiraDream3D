@@ -9,6 +9,8 @@
 #include <array>
 #include <vector>
 #include <cfloat>
+#include <ostream>
+
 #include "glm/vec3.hpp"
 #include "glm/common.hpp"
 struct Vertex
@@ -73,5 +75,8 @@ struct HalfEdge {
     uint32_t end;
 
 };
-
+inline std::ostream& operator<<(std::ostream& os, const HalfEdge &he) {
+    os << he.origin << " -> " << he.end << std::endl;
+    return os;
+}
 #endif //MIRADREAM3D_GEOMETRY_HPP
