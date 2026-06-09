@@ -342,6 +342,7 @@ void Mesh::triangulate()
             //DONE MARCHE meme SI pas CONVEXE pourtant c'est LA MEILLEURE PROPRIÉTÉ DU MONDE !!!!!!!1§§1§§
         }
     }
+    std::cout << *this << std::endl;
 }
 
 void Mesh::findNormalAndOrientation(uint32_t AId,std::vector<uint32_t> &adjacentFaces, glm::vec3 &normal, halfEdgeDirection &direction)

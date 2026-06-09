@@ -76,7 +76,7 @@ struct HalfEdge {
 
 };
 inline std::ostream& operator<<(std::ostream& os, const HalfEdge &he) {
-    os << he.origin << " -> " << he.end << std::endl;
+    os << he.origin << " -> " << he.end << " next "<< he.next << " twin " << he.twin << std::endl;
     return os;
 }
 #endif //MIRADREAM3D_GEOMETRY_HPP
