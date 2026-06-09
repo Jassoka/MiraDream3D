@@ -1,0 +1,78 @@
+# Cube avec normales moyennes (smooth shading)
+# 8 vertices, 8 normales, 6 faces (12 triangles)
+# Chaque normale = moyenne normalisée des 3 faces adjacentes au sommet
+# 1/sqrt(3) ≈ 0.5774
+
+o Cube
+
+# Vertices
+v -1.0 -1.0 -1.0
+v  1.0 -1.0 -1.0
+v  1.0  1.0 -1.0
+v -1.0  1.0 -1.0
+v -1.0 -1.0  1.0
+v  1.0 -1.0  1.0
+v  1.0  1.0  1.0
+v -1.0  1.0  1.0
+
+
+v  2.0  2.0  2.0
+v  4.0  2.0  2.0
+v  4.0  4.0  2.0
+v  2.0  4.0  2.0
+v  2.0  2.0  4.0
+v  4.0  2.0  4.0
+v  4.0  4.0  4.0
+v  2.0  4.0  4.0
+
+
+# Normales moyennes par sommet (normalisées)
+vn -0.5774 -0.5774 -0.5774
+vn  0.5774 -0.5774 -0.5774
+vn  0.5774  0.5774 -0.5774
+vn -0.5774  0.5774 -0.5774
+vn -0.5774 -0.5774  0.5774
+vn  0.5774 -0.5774  0.5774
+vn  0.5774  0.5774  0.5774
+vn -0.5774  0.5774  0.5774
+
+# Faces (format: vertex//normal)
+# Face -Z (arrière)
+f 1//1 3//3 2//2
+f 1//1 4//4 3//3
+# Face +Z (avant)
+f 5//5 6//6 7//7
+f 5//5 7//7 8//8
+# Face -X (gauche)
+f 1//1 8//8 4//4
+f 1//1 5//5 8//8
+# Face +X (droite)
+f 2//2 3//3 7//7
+f 2//2 7//7 6//6
+# Face -Y (bas)
+f 1//1 2//2 6//6
+f 1//1 6//6 5//5
+# Face +Y (haut)
+f 4//4 7//7 3//3
+f 4//4 8//8 7//7
+
+
+
+#2e cube
+f 9//1  11//3 10//2
+f 9//1  12//4 11//3
+# Face +Z (avant)
+f 13//5 14//6 14//7
+f 13//5 15//7 15//8
+# Face -X (gauche)
+f 9//1 16//8 12//4
+f 9//1 13//5 16//8
+# Face +X (droite)
+f 10//2 11//3 15//7
+f 10//2 15//7 14//6
+# Face -Y (bas)
+f 9//1 10//2 14//6
+f 9//1 14//6 13//5
+# Face +Y (haut)
+f 12//4 15//7 11//3
+f 12//4 16//8 14//7
