@@ -34,6 +34,11 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets OpenGLWidgets)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Gui )
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Gui)
 
+option(TEST_HALFEDGES "Active les tests halfedges" OFF)
+
+if(TEST_HALFEDGES)
+    add_compile_definitions(TEST_HALFEDGES)
+endif()
 
 # Chemin vers les modules
 add_subdirectory(src/model)
@@ -42,6 +47,11 @@ add_subdirectory(src/controller)
 
 
 add_subdirectory(libs/assimp)
+
+target_compile_options(assimp PRIVATE
+        -Wno-error
+        -Wno-unknown-warning-option
+)
 set(PROJECT_SOURCES
         src/main.cpp
         resources.qrc
@@ -126,6 +136,9 @@ endif()
 add_executable(debugMain ${PROJECT_SOURCES})
 target_link_libraries(debugMain PRIVATE EngineCore)
 target_compile_definitions(debugMain PRIVATE ENABLE_RENDERDOC)
+
+
+
 
 
 

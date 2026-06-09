@@ -18,6 +18,7 @@ enum ViewportMode
 
 class Renderer
 {
+
 public:
     Renderer() = default;
 

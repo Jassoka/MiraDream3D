@@ -10,7 +10,7 @@ SceneController::SceneController(QObject* parent) : QObject(parent)
 {
 
     mScene.addMesh(PrimitiveMeshes::getCube());
-    //TODO: pour l'instant c'est un triangle de merde
+
 /*
     Mesh triangle = Mesh(0);
     triangle.addVertex({-0.5f, -0.5f, 0.0f, 0.0, 0.0, 0.0, 0.0, 0.0});

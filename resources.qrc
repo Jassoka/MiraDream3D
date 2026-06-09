@@ -5,5 +5,7 @@
         <file>assets/shaders/viewport_solid.frag</file>
         <file>assets/shaders/viewport_wireframe.vert</file>
         <file>assets/shaders/viewport_wireframe.frag</file>
+        <file>assets/shaders/viewport_test_halfedges.vert</file>
+        <file>assets/shaders/viewport_test_halfedges.frag</file>
     </qresource>
 </RCC>

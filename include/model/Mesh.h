@@ -5,9 +5,7 @@
 #ifndef MIRADREAM3D_MESH_H
 #define MIRADREAM3D_MESH_H
 #include "geometry.hpp"
-#include <iostream>
 
-#include "../../../../../../../../../Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers/gltypes.h"
 #include "glm/vec3.hpp"
 
 struct aiMesh;
@@ -17,7 +15,11 @@ enum halfEdgeDirection {ABC,ACB};
 
 class Mesh
 {
+#ifdef TEST_HALFEDGES
+    friend class PrimitiveMeshes;
+#endif
 public:
+
     /**
      * @brief Default constructor for Mesh
      */
