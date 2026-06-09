@@ -89,6 +89,7 @@ void Mesh::addTriangle(const Face &face) {
     this->mFaces.push_back(face);
 }
 
+/*
 void Mesh::generateEdges()
 {
     mEdges.clear(); //TODO pue la merde
@@ -108,11 +109,46 @@ void Mesh::generateEdges()
         }
     }
 }
-
+*/
 
 void Mesh::generateHalfEdges()
 {
-    generateEdges();
+    //TODO FUSIONNER LES VERTEX DE MEME POINT (vertex géometriques) (ça implique des faces géométriques distinctes aussi)
+    //TODO ITERER SUR CHAQUE COMPOSANTE CONNEXE
+    std::vector<std::array<int32_t, 2>> adjacentFacesToEdge;
+    std::unordered_map<uint64_t, uint32_t> edgeMap;
+    [this, &adjacentFacesToEdge, &edgeMap]
+    {
+        mEdges.clear();
+        // On génère les edges normales également
+        uint32_t edgeID = mEdges.size();
+        for (int32_t fID = 0; fID < mFaces.size(); fID++)
+        {
+            Face &f = mFaces[fID];
+            const uint32_t faceSize = f.size();
+            for (uint32_t j = 0; j < faceSize; j++)
+            {
+                const uint32_t next_j = (j + 1)%faceSize;
+                const uint32_t origin = std::min(f[j], f[next_j]);
+                const uint32_t end = std::max(f[j], f[next_j]);
+                uint64_t key = static_cast<uint64_t>(origin) << 32 | end;
+                if (auto it = edgeMap.find(key); it == edgeMap.end()) // not in map
+                {
+                    mEdges.push_back(Edge{origin, end});
+                    adjacentFacesToEdge.push_back(std::array<int32_t, 2>());
+                    adjacentFacesToEdge[edgeID] = {fID, -1};
+                    edgeMap.insert(std::make_pair(key, edgeID++));
+                }
+                else // in map
+                {
+                    adjacentFacesToEdge[it->second][1] = fID;
+                }
+            }
+        }
+    }();
+
+
+    mHalfEdges.clear();
     // On suppose le mesh un manifold
     // Trouver la liste des extremums en x
     float xMax = mVertices[0].x;
@@ -140,46 +176,121 @@ void Mesh::generateHalfEdges()
             break;
         }
     }
-    // Si il n'existe pas: alors c'est plat sur x, on prend n'importe quelle premiere normale
-    // Sinon: soit Vx ce point, on nomme E la moyenne des points adjacents
-    // On prend n'importe quelle face, et on a EE' (E' proj ortho de E sur la face) sa normale
-    // Si E==E' alors n'importe quelle normale
-
-    // Prendre la face en question: A, B, C ...
-    // Alors si AB^AC de même sens à n, c'est ABC, sinon CBA
-
-    // Propagation des half edges, jusqu'a que chaque face soit touchée
-    /*
-    std::vector<HalfEdge> tmpHalfEdges;
-    uint32_t halfEdgeCount = 0;
-    for (uint32_t fID = 0; fID < mFaces.size(); fID++)
-    {
-        Face &f = mFaces[fID];
-        for (uint32_t vID = 0; vID < getNbVertex(fID); vID++)
-        {
-            tmpHalfEdges[halfEdgeCount++ ] = HalfEdge{};
-        }
-        mHalfEdgeIndexPerVertex[vID] = halfEdgeIdx;
-        for (auto faces : facesPerVertex[vID])
-        {
-
-        }*/
-    }
-    /*
     auto facesPerVertex = std::vector<std::vector<uint32_t>>(mVertices.size());
     for (uint32_t fID = 0; fID < mFaces.size(); fID++)
     {
         Face &f = mFaces[fID];
-        facesPerVertex[f[0]].push_back(fID);
-        facesPerVertex[f[1]].push_back(fID);
-        facesPerVertex[f[2]].push_back(fID);
-        if (isQuad(fID))
-        {
-            facesPerVertex[f[3]].push_back(fID);
+        for (uint32_t i = 0; i < getNbVertex(fID); i++) {
+            facesPerVertex[f[i]].push_back(fID);
         }
     }
-    mHalfEdgeIndexPerVertex.resize(mVertices.size());
-    */
+
+    std::vector<glm::vec3> normalPerFace(mFaces.size());
+    uint32_t faceID;
+
+    // Si il n'existe pas: alors c'est plat sur x, on prend n'importe quelle premiere normale
+    halfEdgeDirection firstOrientation = ABC;
+    if (Vx == -1)
+    {
+        faceID = 0;
+        normalPerFace[faceID] = getNormal(mFaces[faceID], firstOrientation);
+    }
+    // Sinon: soit Vx ce point, on nomme E la moyenne des points adjacents
+    // On prend n'importe quelle face (0), et on a EE' (E' proj ortho de E sur la face) sa normale
+    // Si E==E' alors n'importe quelle normale
+
+    // Prendre la face en question: A, B, C ...
+    // Alors si AB^AC de même sens à n, c'est ABC, sinon CBA
+    else
+    {
+        faceID = facesPerVertex[Vx][0];
+        findNormalAndOrientation(Vx, facesPerVertex[Vx], normalPerFace[faceID], firstOrientation);
+    }
+    // 1ere face
+    Face &currFace = mFaces[faceID];
+    uint32_t faceSize = getNbVertex(faceID);
+    uint32_t halfEdgeIdx = mHalfEdges.size();
+
+    std::vector<uint32_t> halfEdgesToIterate(faceSize);
+    uint32_t halfEdgeIterationIndex = 0; // attention tres different de halfEdgeIdx ,c'est l'indice de la liste ci-haut, et non pas l'indice courant de mHalfEdges
+
+    for (uint32_t i = 0; i < faceSize; i++)
+    {
+        halfEdgesToIterate.push_back(i);
+        const uint32_t next_i = (i+1)%faceSize;
+        const uint32_t prev_i = (i-1)%faceSize;
+        const uint32_t endVertex = currFace[(firstOrientation == ABC) ? next_i : prev_i];
+        mHalfEdges.push_back(HalfEdge{halfEdgeIdx + next_i, halfEdgeIdx + prev_i, faceID, -1, currFace[i], endVertex});
+    }
+    halfEdgeIdx += faceSize;
+
+    // Propagation des half edges, jusqu'a que chaque face soit touchée
+
+    while (halfEdgeIterationIndex < halfEdgesToIterate.size()) // tant qu'on a des aretes à parcourir
+    {
+        const uint32_t currHalfEdgeIdx = halfEdgesToIterate[halfEdgeIterationIndex];
+        HalfEdge &currHalfEdge = mHalfEdges[currHalfEdgeIdx];
+        // Trouver la face voisine (il y en a au plus 1 par la propriété du mesh 2-manifold //TODO verifier que c'est bien 2-manifold à un moment
+        const uint32_t neighbouringFace = [&adjacentFacesToEdge, &edgeMap](const uint32_t a, const uint32_t b, const uint32_t face)
+        {
+            const uint32_t origin = std::min(a, b);
+            const uint32_t end = std::max(a, b);
+            const auto it = edgeMap.find(static_cast<uint64_t>(origin) << 32 | end);
+            const uint32_t edgeID = it->second;
+            if (adjacentFacesToEdge[edgeID][0] == face) return adjacentFacesToEdge[edgeID][1];
+            return adjacentFacesToEdge[edgeID][0];
+        }(currHalfEdge.origin, currHalfEdge.end, currHalfEdge.face);
+        if (neighbouringFace == -1)
+        {
+            halfEdgeIterationIndex++;
+            continue;
+        }
+        // On propage sur la nouvelle face
+        Face &f = mFaces[neighbouringFace];
+        halfEdgeDirection faceOrientation = ABC;
+        // la nouvelle half edge commence dans l'autre sens
+        uint32_t start = currHalfEdge.end;
+        uint32_t end = currHalfEdge.origin;
+
+
+        uint32_t nVertex = getNbVertex(neighbouringFace);
+
+        uint32_t startIndice = 0;
+        const Face& face = mFaces[neighbouringFace];
+
+        for (uint32_t j = 0; j < nVertex; j++)
+        {
+            if (f[j] == start)
+            {
+                if (f[(j+1) % nVertex] == end) faceOrientation = ABC;
+                else faceOrientation = ACB;
+                startIndice = j;
+            }
+        }
+
+
+        const uint32_t halfEdgeLast = mHalfEdges.size();
+        currHalfEdge.twin = halfEdgeLast; // prochain indice en anticipation
+
+        if (faceOrientation == ABC)
+        {
+            for (uint32_t i = 0; i < nVertex; i++)
+            {
+                const uint32_t next_i = (i+1)%faceSize;
+                const uint32_t prev_i = (i-1)%faceSize;
+                mHalfEdges.push_back(HalfEdge{halfEdgeLast+next_i, halfEdgeLast+prev_i, neighbouringFace, (i==0)?static_cast<int32_t>(halfEdgeIdx):-1, startIndice+i, startIndice+next_i});
+            }
+        }
+        else
+        {
+            for (uint32_t i = 0; i < nVertex; i++)
+            {
+                const uint32_t next_i = (i+1)%faceSize;
+                const uint32_t prev_i = (i-1)%faceSize;
+                mHalfEdges.push_back(HalfEdge{halfEdgeLast+next_i, halfEdgeLast+prev_i, neighbouringFace, (i==0)?static_cast<int32_t>(halfEdgeIdx):-1, startIndice+i, startIndice+prev_i});
+            }
+        }
+    }
 }
 
 void Mesh::triangulate()
@@ -200,18 +311,12 @@ void Mesh::triangulate()
     }
 }
 
-/**
- *
- * A :
- * E : mean of points adjacents to A
- **/
-void Mesh::findNormalAndOrientation(uint32_t AId,std::vector<uint32_t> adjacentFaces,glm::vec3* normalPtr,halfEdgeDirection* directionPtr) {
-
-
+void Mesh::findNormalAndOrientation(uint32_t AId,std::vector<uint32_t> &adjacentFaces, glm::vec3 &normal, halfEdgeDirection &direction)
+{
     //Si point isolé
     if  (adjacentFaces.size()==0) {
-        *normalPtr=glm::vec3(0.0,0.0,1.0);
-        *directionPtr=ABC;
+        normal=glm::vec3(0.0,0.0,1.0);
+        direction=ABC;
     }
     //Calcul de E
     glm::vec3 E=glm::vec3(0.0);
@@ -237,14 +342,13 @@ void Mesh::findNormalAndOrientation(uint32_t AId,std::vector<uint32_t> adjacentF
     Vertex AVertex=mVertices[AId];
     glm::vec3 A=glm::vec3(AVertex.x,AVertex.y,AVertex.z);
     glm::vec3 EA=A-E;
-    glm::vec3 normal=getNormal(mFaces[adjacentFaces[0]],halfEdgeDirection::ABC);
+    normal=getNormal(mFaces[adjacentFaces[0]],halfEdgeDirection::ABC);
     if (glm::dot(EA,normal)>0) {
-        *normalPtr=normal;
-        *directionPtr=ABC;
+        direction=ABC;
     }
     else {
-        *normalPtr=-normal;
-        *directionPtr=ACB;
+        normal=-normal;
+        direction=ACB;
     }
 }
 

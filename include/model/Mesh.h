@@ -119,7 +119,12 @@ private:
     std::vector<uint32_t> mHalfEdgeIndexPerVertex;
     bool isTriangulated = false;
 
-    void findNormalAndOrientation(uint32_t A,std::vector<uint32_t> adjacentFaces,glm::vec3* normalPtr,halfEdgeDirection* directionPtr);
+    /**
+     *
+     * A :
+     * E : mean of points adjacents to A
+     **/
+    void findNormalAndOrientation(uint32_t AId ,std::vector<uint32_t> &adjacentFaces, glm::vec3 &normal, halfEdgeDirection &direction);
     glm::vec3 getNormal(Face &face,halfEdgeDirection orientation);
 };
 #endif //MIRADREAM3D_MESH_H
