@@ -62,7 +62,7 @@ struct HalfEdge {
     /**
  * @brief Index of oppposite HalfEdge
  */
-    uint32_t twin;
+    int32_t twin;
     /**
  * @brief Index of origin Vertex
  */
