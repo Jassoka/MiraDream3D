@@ -125,7 +125,7 @@ void Mesh::generateHalfEdges()
         for (int32_t fID = 0; fID < mFaces.size(); fID++)
         {
             Face &f = mFaces[fID];
-            const uint32_t faceSize = f.size();
+            const uint32_t faceSize = getNbVertex(fID);
             for (uint32_t i = 0; i < faceSize; i++)
             {
                 const uint32_t next_j = (i + 1)%faceSize;
@@ -268,7 +268,7 @@ void Mesh::generateHalfEdges()
 
 
         const uint32_t halfEdgeLast = mHalfEdges.size();
-        currHalfEdge.twin = halfEdgeLast; // prochain indice en anticipation
+        mHalfEdges[currHalfEdgeIdx].twin = halfEdgeLast; // prochain indice en anticipation
 
         if (faceOrientation == ABC)
         {
