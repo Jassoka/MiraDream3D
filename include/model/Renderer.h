@@ -61,6 +61,13 @@ public:
 
     bool hasGeometryChange = true;
     bool hasTopologyChange = false; //TODO faire des vraies méthodes pour changer les flags
+#ifdef TEST_HALFEDGES
+    void addTestHalfEdge(int32_t i) {
+        mTestHalfEdge+=i;
+    };
+#endif
+
+
 private:
     static constexpr glm::vec3 worldOrigin {0.0f, 0.0f, 0.0f};
     static constexpr glm::vec3 worldUp {0.0f, 0.0f, 1.0f};
@@ -101,6 +108,8 @@ private:
     uint32_t numTriangles = 0;
     uint32_t numEdges = 0;
     ViewportMode mCurrViewportMode = ViewportMode::SOLID;
-
+#ifdef TEST_HALFEDGES
+    uint32_t mTestHalfEdge=0;
+#endif
 };
 #endif //MIRADREAM3D_RENDERER_H
