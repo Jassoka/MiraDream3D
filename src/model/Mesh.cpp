@@ -210,7 +210,7 @@ void Mesh::generateHalfEdges()
     Face &currFace = mFaces[faceID];
     uint32_t faceSize = getNbVertex(faceID);
 
-    std::vector<uint32_t> halfEdgesToIterate(faceSize);
+    std::vector<uint32_t> halfEdgesToIterate;
     uint32_t halfEdgeIterationIndex = 0; // attention tres different de halfEdgeIdx ,c'est l'indice de la liste ci-haut, et non pas l'indice courant de mHalfEdges
 
     const uint32_t halfEdgeIdx = mHalfEdges.size();
