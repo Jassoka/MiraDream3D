@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <assimp/include/assimp/mesh.h>
 #include <assimp/vector3.h>
+#include <sys/stat.h>
 
 #include "glm/geometric.hpp"
 
@@ -122,7 +123,20 @@ void Mesh::generateHalfEdges()
     //TODO ITERER SUR CHAQUE COMPOSANTE CONNEXE
     std::vector<std::array<int32_t, 2>> adjacentFacesToEdge;
     std::unordered_map<uint64_t, uint32_t> edgeMap;
-    [this, &adjacentFacesToEdge, &edgeMap]
+
+    auto getEdgeMapKey = [](const uint32_t firstVertex, const uint32_t secondVertex) -> uint64_t {
+        const uint32_t origin = std::min(firstVertex, secondVertex);
+        const uint32_t end = std::max(firstVertex, secondVertex);
+        return static_cast<uint64_t>(origin) << 32 | end;
+    };
+    
+    auto getEdgeMapValue = [&edgeMap, &getEdgeMapKey](const uint32_t firstVertex, const uint32_t secondVertex) -> uint32_t {
+        auto it = edgeMap.find(getEdgeMapKey(firstVertex, secondVertex));
+        if (it == edgeMap.end()) return -1;
+        return it->second;
+    };
+
+    [this, &adjacentFacesToEdge, &edgeMap, &getEdgeMapKey]
     {
         mEdges.clear();
         // On génère les edges normales également
@@ -134,10 +148,9 @@ void Mesh::generateHalfEdges()
             for (uint32_t i = 0; i < faceSize; i++)
             {
                 const uint32_t next_j = (i + 1)%faceSize;
-                const uint32_t origin = std::min(f[i], f[next_j]);
-                const uint32_t end = std::max(f[i], f[next_j]);
-                std::cout << "Face " << fID << " Edge ID pair: (" << origin << ", " << end << ")\n";
-                uint64_t key = static_cast<uint64_t>(origin) << 32 | end;
+                const uint32_t origin = f[i];
+                const uint32_t end = f[next_j];
+                uint64_t key = getEdgeMapKey(origin, end);
                 if (auto it = edgeMap.find(key); it == edgeMap.end()) // not in map
                 {
                     mEdges.push_back(Edge{origin, end});
@@ -152,7 +165,6 @@ void Mesh::generateHalfEdges()
             }
         }
     }();
-
 
     mHalfEdges.clear();
     // On suppose le mesh un manifold
@@ -191,7 +203,7 @@ void Mesh::generateHalfEdges()
         }
     }
 
-    std::vector<glm::vec3> normalPerFace(mFaces.size());
+    std::vector<glm::vec3> normalPerFace(mFaces.size()); //TODO envoyer les normales dans ce vecteur
     uint32_t faceID;
 
     // Si il n'existe pas: alors c'est plat sur x, on prend n'importe quelle premiere normale
@@ -219,14 +231,18 @@ void Mesh::generateHalfEdges()
     std::vector<uint32_t> halfEdgesToIterate;
     uint32_t halfEdgeIterationIndex = 0; // attention tres different de halfEdgeIdx ,c'est l'indice de la liste ci-haut, et non pas l'indice courant de mHalfEdges
 
-    const uint32_t halfEdgeIdx = mHalfEdges.size();
+    const uint32_t halfEdgeMax = mHalfEdges.size();
+    auto edgeIdToHalfEdges = std::vector<std::array<int32_t, 2>>(mEdges.size(), {-1, -1}); // Map reliant les edges à ses 2 half edges, -1 si pas encore trouvée
+
     for (uint32_t i = 0; i < faceSize; i++)
     {
         halfEdgesToIterate.push_back(i);
         const uint32_t next_i = (i+1)%faceSize;
         const uint32_t prev_i = (i + faceSize -1)%faceSize;
-        const uint32_t endVertex = currFace[(firstOrientation == ABC) ? next_i : prev_i];
-        mHalfEdges.push_back(HalfEdge{halfEdgeIdx + next_i, halfEdgeIdx + prev_i, faceID, -1, currFace[i], endVertex});
+        const uint32_t origin = currFace[i];
+        const uint32_t end = currFace[(firstOrientation == ABC) ? next_i : prev_i];
+
+        mHalfEdges.push_back(HalfEdge{halfEdgeMax + next_i, halfEdgeMax + prev_i, faceID, -1, origin, end});
     }
     // Propagation des half edges, jusqu'a que chaque face soit touchée
 
@@ -237,13 +253,15 @@ void Mesh::generateHalfEdges()
     {
         const uint32_t currHalfEdgeIdx = halfEdgesToIterate[halfEdgeIterationIndex];
         HalfEdge currHalfEdge = mHalfEdges[currHalfEdgeIdx];
-        // Trouver la face voisine (il y en a au plus 1 par la propriété du mesh 2-manifold //TODO verifier que c'est bien 2-manifold à un moment
-        const uint32_t neighbouringFace = [&adjacentFacesToEdge, &edgeMap, &visitedFace](const uint32_t a, const uint32_t b, const uint32_t face)
+
+        const uint32_t edgeID = [&getEdgeMapValue](const uint32_t a, const uint32_t b)
         {
-            const uint32_t origin = std::min(a, b);
-            const uint32_t end = std::max(a, b);
-            const auto it = edgeMap.find(static_cast<uint64_t>(origin) << 32 | end);
-            const uint32_t edgeID = it->second;
+            return getEdgeMapValue(a, b);
+        }(currHalfEdge.origin, currHalfEdge.end);
+
+        // Trouver la face voisine (il y en a au plus 1 par la propriété du mesh 2-manifold //TODO verifier que c'est bien 2-manifold à un moment
+        const uint32_t neighbouringFace = [&adjacentFacesToEdge, edgeID, &visitedFace](const uint32_t face)
+        {
             if (adjacentFacesToEdge[edgeID][0] == face)
             {
                 if (visitedFace[adjacentFacesToEdge[edgeID][1]]) return -1;;
@@ -251,7 +269,8 @@ void Mesh::generateHalfEdges()
             }
             if (visitedFace[adjacentFacesToEdge[edgeID][0]]) return -1;;
             return adjacentFacesToEdge[edgeID][0];
-        }(currHalfEdge.origin, currHalfEdge.end, currHalfEdge.face);
+        }(currHalfEdge.face);
+
         if (neighbouringFace == -1)
         {
             halfEdgeIterationIndex++;
@@ -259,23 +278,33 @@ void Mesh::generateHalfEdges()
         }
         visitedFace[neighbouringFace] = 1;
         // On propage sur la nouvelle face
-        Face &f = mFaces[neighbouringFace];
+        currFace = mFaces[neighbouringFace];
         halfEdgeDirection faceOrientation = ABC;
         // la nouvelle half edge commence dans l'autre sens
-        uint32_t start = currHalfEdge.end;
+        uint32_t origin = currHalfEdge.end;
         uint32_t end = currHalfEdge.origin;
 
+        // On le rajoute dans la map pour trouver son twin si jamais il vient/ est venu
+        auto currHalfEdgePair = edgeIdToHalfEdges[getEdgeMapValue(origin, end)];
+        if (currHalfEdgePair[0] == -1) // Cas: cette arête n'a jamais été vue
+        {
+            currHalfEdgePair[0] = currHalfEdgeIdx;
+        }
+        else // On l'a déjà vue: twins se forment
+        {
+            mHalfEdges[currHalfEdgePair[0]].twin = currHalfEdgeIdx;
+            mHalfEdges[currHalfEdgeIdx].twin = currHalfEdgePair[0];
+        }
 
-        uint32_t nVertex = getNbVertex(neighbouringFace);
+        uint32_t faceSize = getNbVertex(neighbouringFace);
 
         uint32_t startIndice = 0;
-        const Face& face = mFaces[neighbouringFace];
 
-        for (uint32_t j = 0; j < nVertex; j++)
+        for (uint32_t j = 0; j < faceSize; j++)
         {
-            if (f[j] == start)
+            if (currFace[j] == origin)
             {
-                if (f[(j+1) % nVertex] == end) faceOrientation = ABC;
+                if (currFace[(j+1) % faceSize] == end) faceOrientation = ABC;
                 else faceOrientation = ACB;
                 startIndice = j;
             }
@@ -283,31 +312,26 @@ void Mesh::generateHalfEdges()
 
 
         const uint32_t halfEdgeLast = mHalfEdges.size();
-        mHalfEdges[currHalfEdgeIdx].twin = halfEdgeLast; // prochain indice en anticipation
 
-        if (faceOrientation == ABC)
+        for (uint32_t i = 0; i < faceSize; i++)
         {
-            for (uint32_t i = 0; i < nVertex; i++)
-            {
-                const uint32_t next_i = (i+1)%nVertex;
-                const uint32_t prev_i = ((i + nVertex - 1))%nVertex;
-                halfEdgesToIterate.push_back(mHalfEdges.size());
-                mHalfEdges.push_back(HalfEdge{halfEdgeLast+next_i, halfEdgeLast+prev_i, neighbouringFace, (i==0)?static_cast<int32_t>(currHalfEdgeIdx):-1, f[(startIndice+i)%nVertex], f[(startIndice+next_i)%nVertex]});
-            }
-        }
-        else
-        {
-            for (uint32_t i = 0; i < nVertex; i++)
-            {
-                const uint32_t next_i = (i+1)%nVertex;
-                const uint32_t prev_i = ((i + nVertex - 1))%nVertex;
-                halfEdgesToIterate.push_back(mHalfEdges.size());
-                mHalfEdges.push_back(HalfEdge{halfEdgeLast+next_i, halfEdgeLast+prev_i, neighbouringFace, (i==0)?static_cast<int32_t>(currHalfEdgeIdx):-1, f[(startIndice+i)%nVertex], f[(startIndice+prev_i)%nVertex]});
-            }
+            const uint32_t next_i = (i+1)%faceSize;
+            const uint32_t prev_i = ((i + faceSize - 1))%faceSize;
+            halfEdgesToIterate.push_back(mHalfEdges.size());
+
+            const uint32_t origin = currFace[(startIndice + i) % faceSize];
+            const uint32_t end = currFace[(startIndice + (faceOrientation==ABC?next_i:prev_i)) % faceSize];
+
+            mHalfEdges.push_back(HalfEdge{halfEdgeLast+next_i,
+                halfEdgeLast+prev_i,
+                neighbouringFace,
+                -1,
+                origin,
+                end
+            });
         }
         halfEdgeIterationIndex++;
     }
-    std::cout << mEdges.size()<<std::endl;
 }
 
 void Mesh::triangulate()
