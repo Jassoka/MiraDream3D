@@ -4,6 +4,8 @@
 
 #ifndef MIRADREAM3D_MESH_H
 #define MIRADREAM3D_MESH_H
+#include <iosfwd>
+
 #include "geometry.hpp"
 
 #include "glm/vec3.hpp"

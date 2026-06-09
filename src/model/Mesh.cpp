@@ -230,18 +230,26 @@ void Mesh::generateHalfEdges()
     }
     // Propagation des half edges, jusqu'a que chaque face soit touchée
 
+    std::vector<uint8_t> visitedFace(mFaces.size(), 0);
+    visitedFace[faceID] = 1;
+
     while (halfEdgeIterationIndex < halfEdgesToIterate.size()) // tant qu'on a des aretes à parcourir
     {
         const uint32_t currHalfEdgeIdx = halfEdgesToIterate[halfEdgeIterationIndex];
         HalfEdge currHalfEdge = mHalfEdges[currHalfEdgeIdx];
         // Trouver la face voisine (il y en a au plus 1 par la propriété du mesh 2-manifold //TODO verifier que c'est bien 2-manifold à un moment
-        const uint32_t neighbouringFace = [&adjacentFacesToEdge, &edgeMap](const uint32_t a, const uint32_t b, const uint32_t face)
+        const uint32_t neighbouringFace = [&adjacentFacesToEdge, &edgeMap, &visitedFace](const uint32_t a, const uint32_t b, const uint32_t face)
         {
             const uint32_t origin = std::min(a, b);
             const uint32_t end = std::max(a, b);
             const auto it = edgeMap.find(static_cast<uint64_t>(origin) << 32 | end);
             const uint32_t edgeID = it->second;
-            if (adjacentFacesToEdge[edgeID][0] == face) return adjacentFacesToEdge[edgeID][1];
+            if (adjacentFacesToEdge[edgeID][0] == face)
+            {
+                if (visitedFace[adjacentFacesToEdge[edgeID][1]]) return -1;;
+                return adjacentFacesToEdge[edgeID][1];
+            }
+            if (visitedFace[adjacentFacesToEdge[edgeID][0]]) return -1;;
             return adjacentFacesToEdge[edgeID][0];
         }(currHalfEdge.origin, currHalfEdge.end, currHalfEdge.face);
         if (neighbouringFace == -1)
@@ -249,6 +257,7 @@ void Mesh::generateHalfEdges()
             halfEdgeIterationIndex++;
             continue;
         }
+        visitedFace[neighbouringFace] = 1;
         // On propage sur la nouvelle face
         Face &f = mFaces[neighbouringFace];
         halfEdgeDirection faceOrientation = ABC;
