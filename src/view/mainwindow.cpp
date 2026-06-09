@@ -75,6 +75,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
             mRenderWidget->getRenderer()->changeMode(ViewportMode::WIREFRAME);
             mRenderWidget->update();
             break;
+        case(Qt::Key_R):
+            mRenderWidget->update();
+            break;
             /*
         case(Qt::Key_Z):
             mRenderWidget->getRenderer()->getEngineCamera().strafeCamera(0.0,-1.0);

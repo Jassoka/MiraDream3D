@@ -96,6 +96,14 @@ private:
 
         // Face Gauche (-X)
         mCube.addQuad({ 15, 21, 18, 12 });
+        mCube.triangulate() ;
+        mCube.generateEdges();
+        #ifdef TEST_HALFEDGES
+        //mCube.mHalfEdges.push_back((HalfEdge){0,0,0,0,0,6});
+        //mCube.mHalfEdges.push_back((HalfEdge){0,0,0,0,6,9});
+        //mCube.mHalfEdges.push_back((HalfEdge){0,0,0,0,9,3});
+        //mCube.mHalfEdges.push_back((HalfEdge){0,0,0,0,3,0});
+        #endif
     };
 
     static constexpr uint32_t DEFAULT_TEXTURE = 0;

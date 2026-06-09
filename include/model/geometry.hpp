@@ -9,8 +9,8 @@
 #include <array>
 #include <vector>
 #include <cfloat>
-#include <cmath>
-
+#include "glm/vec3.hpp"
+#include "glm/common.hpp"
 struct Vertex
 {
     float x, y, z;
@@ -24,28 +24,21 @@ struct Vertex
         return reinterpret_cast<const float*>(this)[i];
     }
 
-    bool operator==(const Vertex& other) const;
+    bool operator==(const Vertex& other) const {
+        return( glm::abs(x-other.x) < FLT_EPSILON    &&
+                glm::abs(y-other.y) < FLT_EPSILON &&
+                glm::abs(z-other.z) < FLT_EPSILON);
+    }
 
-    //TODO check si 2 vertices sont à la même position
+    glm::vec3 toVec3() {
+        return(glm::vec3(x,y,z));
+    }
+
 };
 
 
 constexpr uint32_t VERTEX_NB_ELEMENTS = sizeof(Vertex)/sizeof(float);
 
-
-inline bool Vertex::operator==(const Vertex& other) const
-{
-    return (this->x == other.x && this->y == other.y && this->z == other.z);
-    /*
-    for (size_t i = 0; i < VERTEX_NB_ELEMENTS; ++i)
-    {
-        if (std::abs((*this)[i] - other[i]) > FLT_EPSILON)
-        {
-            return false;
-        }
-    }
-    return true;*/
-}
 
 struct Edge
 {
@@ -78,6 +71,7 @@ struct HalfEdge {
  * @brief Index of origin Vertex
  */
     uint32_t end;
+
 };
 
 #endif //MIRADREAM3D_GEOMETRY_HPP

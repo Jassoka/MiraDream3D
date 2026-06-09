@@ -4,9 +4,13 @@
 
 #include "model/Renderer.h"
 
+#include <iostream>
+
 const std::string VIEWPORT_SOLID = "viewport_solid";
 const std::string VIEWPORT_WIREFRAME = "viewport_wireframe";
-
+#ifdef TEST_HALFEDGES
+static uint32_t frame=0;
+#endif
 
 template <ViewportMode m>
 void Renderer::drawTemplate()
@@ -19,7 +23,11 @@ void Renderer::drawTemplate()
             programID = ShaderManager::getShaderProgram(VIEWPORT_SOLID);
             break;
     case ViewportMode::WIREFRAME:
+
             programID = ShaderManager::getShaderProgram(VIEWPORT_WIREFRAME);
+            #ifdef TEST_HALFEDGES
+            programID = ShaderManager::getShaderProgram("viewport_test_halfedges");
+            #endif
             break;
     default:
         programID = 0;
@@ -53,6 +61,20 @@ void Renderer::drawTemplate()
         }
     case ViewportMode::WIREFRAME:
         {
+
+            #ifdef TEST_HALFEDGES
+        std::cout <<frame<<std::endl;
+            auto halfEdgesVect=mScene->getMeshes()[0].getHalfEdges();
+
+            auto origin = mScene->getMeshes()[0].getVertices()[halfEdgesVect[frame].origin] ;
+            auto end = mScene->getMeshes()[0].getVertices()[halfEdgesVect[frame].end];
+            const int halfEdgeOrigin = mGlFuncs->glGetUniformLocation(programID, "halfEdgeOrigin");
+            const int halfEdgeEnd = mGlFuncs->glGetUniformLocation(programID, "halfEdgeEnd");
+            mGlFuncs->glUniform3f(halfEdgeOrigin,origin.x,origin.y,origin.z);
+            mGlFuncs->glUniform3f(halfEdgeEnd,end.x,end.y,end.z);
+                frame+=1;
+            frame%=halfEdgesVect.size();
+            #endif
             glDrawElements(GL_LINES, numEdges, GL_UNSIGNED_INT, nullptr);
             break;
         }
@@ -102,7 +124,7 @@ void Renderer::geometryRedrawTemplate()
             mEBO.bind();
             mEBO.allocate(trig_data,numTriangles * sizeof(uint32_t));
         }
-        else if (m == ViewportMode::WIREFRAME)
+        else if (m == ViewportMode::WIREFRAME )
         {
             //Buffer des edges
             //mesh.generateEdges(); //TODO ça aussi
@@ -146,6 +168,14 @@ void Renderer::initShaders()
     fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_wireframe.frag", GL_FRAGMENT_SHADER);
     shaders = {vertexShader, fragmentShader};
     ShaderManager::createProgram(VIEWPORT_WIREFRAME, shaders);
+
+    #ifdef TEST_HALFEDGES
+    vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_test_halfedges.vert", GL_VERTEX_SHADER);
+    fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_test_halfedges.frag", GL_FRAGMENT_SHADER);
+    shaders = {vertexShader, fragmentShader};
+    ShaderManager::createProgram("viewport_test_halfedges", shaders);
+    #endif
+
 }
 
 void Renderer::initialize(QOpenGLFunctions* glFuncs)
