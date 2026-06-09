@@ -8,9 +8,6 @@
 
 const std::string VIEWPORT_SOLID = "viewport_solid";
 const std::string VIEWPORT_WIREFRAME = "viewport_wireframe";
-#ifdef TEST_HALFEDGES
-static uint32_t frame=0;
-#endif
 
 template <ViewportMode m>
 void Renderer::drawTemplate()
@@ -63,17 +60,19 @@ void Renderer::drawTemplate()
         {
 
             #ifdef TEST_HALFEDGES
-        std::cout <<frame<<std::endl;
-            auto halfEdgesVect=mScene->getMeshes()[0].getHalfEdges();
 
-            auto origin = mScene->getMeshes()[0].getVertices()[halfEdgesVect[frame].origin] ;
-            auto end = mScene->getMeshes()[0].getVertices()[halfEdgesVect[frame].end];
+            auto halfEdgesVect=mScene->getMeshes()[0].getHalfEdges();
+            mTestHalfEdge%=halfEdgesVect.size();
+            auto origin = mScene->getMeshes()[0].getVertices()[halfEdgesVect[mTestHalfEdge].origin] ;
+            auto end = mScene->getMeshes()[0].getVertices()[halfEdgesVect[mTestHalfEdge].end];
+
+        std::cout << "num:"<<mTestHalfEdge << "halfedge " << halfEdgesVect[mTestHalfEdge] <<std::endl;
             const int halfEdgeOrigin = mGlFuncs->glGetUniformLocation(programID, "halfEdgeOrigin");
             const int halfEdgeEnd = mGlFuncs->glGetUniformLocation(programID, "halfEdgeEnd");
             mGlFuncs->glUniform3f(halfEdgeOrigin,origin.x,origin.y,origin.z);
             mGlFuncs->glUniform3f(halfEdgeEnd,end.x,end.y,end.z);
-                frame+=1;
-            frame%=halfEdgesVect.size();
+
+
             #endif
             glDrawElements(GL_LINES, numEdges, GL_UNSIGNED_INT, nullptr);
             break;

@@ -10,7 +10,7 @@
 #include <QToolBar>
 
 #include "model/AssetImporter.h"
-
+extern uint32_t frame;
 MainWindow::MainWindow(QWidget *parent,Engine* engine)
     : QMainWindow(parent),
     mEngine(engine)
@@ -78,6 +78,17 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
         case(Qt::Key_R):
             mRenderWidget->update();
             break;
+#ifdef TEST_HALFEDGES
+        case(Qt::Key_N):
+            mRenderWidget->getRenderer()->addTestHalfEdge(1);
+            mRenderWidget->update();
+            break;
+        case(Qt::Key_B):
+            mRenderWidget->getRenderer()->addTestHalfEdge(-1);
+            mRenderWidget->update();
+            break;
+#endif
+
             /*
         case(Qt::Key_Z):
             mRenderWidget->getRenderer()->getEngineCamera().strafeCamera(0.0,-1.0);
