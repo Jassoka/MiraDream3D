@@ -121,6 +121,10 @@ private:
      * @note Is size of mVertices
      */
     std::vector<uint32_t> mHalfEdgeIndexPerVertex;
+    /**
+     * @brief List of the first half-edge index for all components of the mesh
+     */
+    std::vector<uint32_t> mComponents;
     bool isTriangulated = false;
 
     /**
@@ -128,7 +132,7 @@ private:
      * A :
      * E : mean of points adjacents to A
      **/
-    void findNormalAndOrientation(uint32_t AId ,std::vector<uint32_t> &adjacentFaces, glm::vec3 &normal, halfEdgeDirection &direction);
+    void findNormalAndOrientation(uint32_t AId ,const std::vector<uint32_t> &adjacentFaces, glm::vec3 &normal, halfEdgeDirection &direction);
     glm::vec3 getNormal(Face &face,halfEdgeDirection orientation);
 };
 #endif //MIRADREAM3D_MESH_H
