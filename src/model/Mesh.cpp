@@ -255,41 +255,59 @@ void Mesh::generateHalfEdges()
         }(currHalfEdge.origin, currHalfEdge.end);
 
         // Trouver la face voisine (il y en a au plus 1 par la propriété du mesh 2-manifold //TODO verifier que c'est bien 2-manifold à un moment
-        const uint32_t neighbouringFace = [&adjacentFacesToEdge, edgeID, &visitedFace](const uint32_t face)
+        const int32_t neighbouringFace = [&adjacentFacesToEdge, edgeID, &visitedFace](const uint32_t face)
         {
+            int32_t neighbour;
             if (adjacentFacesToEdge[edgeID][0] == face)
             {
-                if (visitedFace[adjacentFacesToEdge[edgeID][1]]) return -1;;
-                return adjacentFacesToEdge[edgeID][1];
+                neighbour = adjacentFacesToEdge[edgeID][1];
             }
-            if (visitedFace[adjacentFacesToEdge[edgeID][0]]) return -1;;
-            return adjacentFacesToEdge[edgeID][0];
+            else
+            {
+                neighbour = adjacentFacesToEdge[edgeID][0];
+            }
+            if (neighbour == -1) return -1;
+            if (visitedFace[neighbour]) return -2;
+            return neighbour;
+
+
         }(currHalfEdge.face);
 
-        if (neighbouringFace == -1)
+        if (neighbouringFace == -1) // is a boundary edge
         {
             halfEdgeIterationIndex++;
             continue;
         }
-        visitedFace[neighbouringFace] = 1;
-        // On propage sur la nouvelle face
-        currFace = mFaces[neighbouringFace];
+
         halfEdgeDirection faceOrientation = ABC;
         // la nouvelle half edge commence dans l'autre sens
         uint32_t origin = currHalfEdge.end;
         uint32_t end = currHalfEdge.origin;
 
         // On le rajoute dans la map pour trouver son twin si jamais il vient/ est venu
-        auto currHalfEdgePair = edgeIdToHalfEdges[getEdgeMapValue(origin, end)];
-        if (currHalfEdgePair[0] == -1) // Cas: cette arête n'a jamais été vue
+        auto currHalfEdgePair = &edgeIdToHalfEdges[getEdgeMapValue(origin, end)];
+        if ((*currHalfEdgePair)[0] == -1) // Cas: cette arête n'a jamais été vue
         {
-            currHalfEdgePair[0] = currHalfEdgeIdx;
+            (*currHalfEdgePair)[0] = currHalfEdgeIdx;
         }
         else // On l'a déjà vue: twins se forment
         {
-            mHalfEdges[currHalfEdgePair[0]].twin = currHalfEdgeIdx;
-            mHalfEdges[currHalfEdgeIdx].twin = currHalfEdgePair[0];
+            mHalfEdges[(*currHalfEdgePair)[0]].twin = currHalfEdgeIdx;
+            mHalfEdges[currHalfEdgeIdx].twin = (*currHalfEdgePair)[0];
         }
+
+        if (neighbouringFace == -2) // si déjà visité, on tente quand meme de former des twins
+        {
+            halfEdgeIterationIndex++;
+            continue;
+        }
+
+
+        // On propage sur la nouvelle face
+        currFace = mFaces[neighbouringFace];
+
+        visitedFace[neighbouringFace] = 1;
+
 
         uint32_t faceSize = getNbVertex(neighbouringFace);
 
@@ -319,7 +337,7 @@ void Mesh::generateHalfEdges()
 
             mHalfEdges.push_back(HalfEdge{halfEdgeLast+next_i,
                 halfEdgeLast+prev_i,
-                neighbouringFace,
+                 static_cast<uint32_t>(neighbouringFace),
                 -1,
                 origin,
                 end
