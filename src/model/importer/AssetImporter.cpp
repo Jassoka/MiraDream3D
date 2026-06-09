@@ -3,8 +3,6 @@
 #include <assimp/include/assimp/scene.h>
 #include <assimp/include/assimp/postprocess.h>
 #include "model/Scene.h"
-#include "model/geometry.hpp"
-#include "model/Mesh.h"
 #include "model/Node.h"
 #include "model/AssetImporter.h"
 
@@ -22,8 +20,8 @@ bool AssetImporter::loadAssimpScene(const std::string &path, Scene *scene) {
     //Imporation
     Assimp::Importer importer;
 
-    const aiScene* aiScene = importer.ReadFile(path,
-        aiProcess_JoinIdenticalVertices
+    const aiScene* aiScene = importer.ReadFile(path, //0
+        aiProcess_JoinIdenticalVertices//|
         //aiProcess_GenSmoothNormals//aiProcess_Triangulate
     //TODO bah la on denature le fichier pardis, implementer la gestion de plusieurs nor;ales par point
     );
@@ -61,3 +59,6 @@ Node* aiNodeToNode(aiNode* nodeAi, Mesh** sceneMeshes){
 
     return(nodePtr);
 }
+
+
+
