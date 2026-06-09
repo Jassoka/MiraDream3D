@@ -80,6 +80,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
             break;
 #ifdef TEST_HALFEDGES
         case(Qt::Key_N):
+
             mRenderWidget->getRenderer()->addTestHalfEdge(1);
             mRenderWidget->update();
             break;

@@ -321,6 +321,7 @@ void Mesh::triangulate()
             mTriangles.push_back(Triangle {f[0], f[2], f[3]});
         }
     }
+    std::cout << *this << std::endl;
 }
 
 void Mesh::findNormalAndOrientation(uint32_t AId,std::vector<uint32_t> &adjacentFaces, glm::vec3 &normal, halfEdgeDirection &direction)
