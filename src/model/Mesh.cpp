@@ -44,7 +44,7 @@ Mesh::Mesh(aiMesh &meshAi) {
         this->mVertexCountPerFace.push_back(faceAi->mNumIndices);
     }
     triangulate();
-    generateEdges();
+    generateHalfEdges();
 }
 
 bool Mesh::operator==(const Mesh& other) const
@@ -297,6 +297,7 @@ void Mesh::generateHalfEdges()
         }
         halfEdgeIterationIndex++;
     }
+    std::cout << mEdges.size()<<std::endl;
 }
 
 void Mesh::triangulate()

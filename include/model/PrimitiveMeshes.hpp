@@ -97,7 +97,7 @@ private:
         // Face Gauche (-X)
         mCube.addQuad({ 15, 21, 18, 12 });
         mCube.triangulate() ;
-        mCube.generateEdges();
+        mCube.generateHalfEdges();
         #ifdef TEST_HALFEDGES
         //mCube.mHalfEdges.push_back((HalfEdge){0,0,0,0,0,6});
         //mCube.mHalfEdges.push_back((HalfEdge){0,0,0,0,6,9});
