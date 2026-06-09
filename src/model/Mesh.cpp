@@ -131,11 +131,11 @@ void Mesh::generateHalfEdges()
         {
             Face &f = mFaces[fID];
             const uint32_t faceSize = f.size();
-            for (uint32_t j = 0; j < faceSize; j++)
+            for (uint32_t i = 0; i < faceSize; i++)
             {
-                const uint32_t next_j = (j + 1)%faceSize;
-                const uint32_t origin = std::min(f[j], f[next_j]);
-                const uint32_t end = std::max(f[j], f[next_j]);
+                const uint32_t next_j = (i + 1)%faceSize;
+                const uint32_t origin = std::min(f[i], f[next_j]);
+                const uint32_t end = std::max(f[i], f[next_j]);
                 uint64_t key = static_cast<uint64_t>(origin) << 32 | end;
                 if (auto it = edgeMap.find(key); it == edgeMap.end()) // not in map
                 {
@@ -223,13 +223,13 @@ void Mesh::generateHalfEdges()
     {
         halfEdgesToIterate.push_back(i);
         const uint32_t next_i = (i+1)%faceSize;
-        const uint32_t prev_i = (i-1)%faceSize;
+        const uint32_t prev_i = (i + faceSize -1)%faceSize;
         const uint32_t endVertex = currFace[(firstOrientation == ABC) ? next_i : prev_i];
         mHalfEdges.push_back(HalfEdge{halfEdgeIdx + next_i, halfEdgeIdx + prev_i, faceID, -1, currFace[i], endVertex});
     }
     // Propagation des half edges, jusqu'a que chaque face soit touchée
 
-    while (halfEdgeIterationIndex++ < halfEdgesToIterate.size()) // tant qu'on a des aretes à parcourir
+    while (halfEdgeIterationIndex < halfEdgesToIterate.size()) // tant qu'on a des aretes à parcourir
     {
         const uint32_t currHalfEdgeIdx = halfEdgesToIterate[halfEdgeIterationIndex];
         HalfEdge &currHalfEdge = mHalfEdges[currHalfEdgeIdx];
@@ -279,22 +279,23 @@ void Mesh::generateHalfEdges()
         {
             for (uint32_t i = 0; i < nVertex; i++)
             {
-                const uint32_t next_i = (i+1)%faceSize;
-                const uint32_t prev_i = (i-1)%faceSize;
+                const uint32_t next_i = (i+1)%nVertex;
+                const uint32_t prev_i = ((i + nVertex - 1))%nVertex;
                 halfEdgesToIterate.push_back(mHalfEdges.size());
-                mHalfEdges.push_back(HalfEdge{halfEdgeLast+next_i, halfEdgeLast+prev_i, neighbouringFace, (i==0)?static_cast<int32_t>(currHalfEdgeIdx):-1, f[startIndice+i], f[startIndice+next_i]});
+                mHalfEdges.push_back(HalfEdge{halfEdgeLast+next_i, halfEdgeLast+prev_i, neighbouringFace, (i==0)?static_cast<int32_t>(currHalfEdgeIdx):-1, f[(startIndice+i)%nVertex], f[(startIndice+next_i)%nVertex]});
             }
         }
         else
         {
             for (uint32_t i = 0; i < nVertex; i++)
             {
-                const uint32_t next_i = (i+1)%faceSize;
-                const uint32_t prev_i = (i-1)%faceSize;
+                const uint32_t next_i = (i+1)%nVertex;
+                const uint32_t prev_i = ((i + nVertex - 1))%nVertex;
                 halfEdgesToIterate.push_back(mHalfEdges.size());
-                mHalfEdges.push_back(HalfEdge{halfEdgeLast+next_i, halfEdgeLast+prev_i, neighbouringFace, (i==0)?static_cast<int32_t>(currHalfEdgeIdx):-1, f[startIndice+i], f[startIndice+prev_i]});
+                mHalfEdges.push_back(HalfEdge{halfEdgeLast+next_i, halfEdgeLast+prev_i, neighbouringFace, (i==0)?static_cast<int32_t>(currHalfEdgeIdx):-1, f[(startIndice+i)%nVertex], f[(startIndice+prev_i)%nVertex]});
             }
         }
+        halfEdgeIterationIndex++;
     }
 }
 
