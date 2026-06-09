@@ -75,7 +75,7 @@ public:
     }
 
     void addVertex(const Vertex &vertex);
-    void generateEdges();
+    //void generateEdges();
     void generateHalfEdges();
     void triangulate();
     void addQuad(const Face &face);

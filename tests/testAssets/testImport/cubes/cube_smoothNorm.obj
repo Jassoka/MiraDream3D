@@ -25,7 +25,7 @@ vn -0.577350 -0.577350  0.577350
 vn -0.577350 -0.577350 -0.577350
 
 # 3. Activation du groupe de lissage (Optionnel mais recommandé pour les obj)
-s 1
+
 
 # 4. Les 12 faces triangulées (Format : indice_sommet//indice_normale)
 # Face Avant
