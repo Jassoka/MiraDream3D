@@ -6,24 +6,23 @@
 #define MIRADREAM3D_SCENECONTROLLER_H
 #include <QObject>
 
-#include "model/Scene.h"
+class RenderController;
+class Scene;
 
 class SceneController : public QObject
 {
     Q_OBJECT
 public:
-    explicit SceneController(QObject* parent);
-
-    Scene *getScene() ;
-
-    void setScene(const Scene& scene)
-    {
-        mScene = scene;
-    }
+    explicit SceneController(QObject* parent, RenderController *renderController);
+    Scene *getScene() const;
     void loadBlankScene();
 
+public slots:
+    void importScene(const std::string &path);
+
 private:
-    Scene mScene;
+    RenderController *mRenderController;
+    Scene *mScene;
 };
 
 #endif //MIRADREAM3D_SCENECONTROLLER_H

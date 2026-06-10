@@ -9,10 +9,13 @@
 #include <array>
 #include <vector>
 #include <cfloat>
+#ifdef DEBUG
 #include <ostream>
+#endif
 
 #include "glm/vec3.hpp"
 #include "glm/common.hpp"
+
 struct Vertex
 {
     float x, y, z;
@@ -32,7 +35,8 @@ struct Vertex
                 glm::abs(z-other.z) < FLT_EPSILON);
     }
 
-    glm::vec3 toVec3() {
+    glm::vec3 toVec3() const
+    {
         return(glm::vec3(x,y,z));
     }
 
@@ -75,8 +79,16 @@ struct HalfEdge {
     uint32_t end;
 
 };
+
+struct geometricVertex
+{
+    std::vector<uint32_t> vertices;
+    uint32_t halfEdge;
+};
+#ifdef DEBUG
 inline std::ostream& operator<<(std::ostream& os, const HalfEdge &he) {
     os << he.origin << " -> " << he.end << " next "<< he.next << " twin " << he.twin << std::endl;
     return os;
 }
+#endif
 #endif //MIRADREAM3D_GEOMETRY_HPP

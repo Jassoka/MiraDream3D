@@ -21,6 +21,7 @@ set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
 
 set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "" FORCE)
 
@@ -35,6 +36,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Gui )
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Gui)
 
 option(TEST_HALFEDGES "Active les tests halfedges" OFF)
+set(TEST_HALFEDGES OFF CACHE BOOL "" FORCE)
 
 if(TEST_HALFEDGES)
     add_compile_definitions(TEST_HALFEDGES)
@@ -135,6 +137,7 @@ endif()
 # Mode debug avec RenderDoc
 add_executable(debugMain ${PROJECT_SOURCES})
 target_link_libraries(debugMain PRIVATE EngineCore)
+target_compile_definitions(debugMain PRIVATE DEBUG)
 target_compile_definitions(debugMain PRIVATE ENABLE_RENDERDOC)
 
 

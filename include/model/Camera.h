@@ -5,7 +5,8 @@
 #ifndef MIRADREAM3D_CAMERA_HPP
 #define MIRADREAM3D_CAMERA_HPP
 
-#include <glm/glm.hpp>
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
 
 class Camera {
 public:
@@ -52,15 +53,15 @@ public:
     void strafeCamera(float dx,float dy);
 
 private:
-    glm::mat4 mRotationMatrix = glm::mat4();
-    glm::mat4 mTranslationMatrix = glm::mat4();
-    glm::mat4 mViewMatrix = glm::mat4();
-    glm::mat4 mPerspectiveMatrix = glm::mat4();
+    glm::mat4 mRotationMatrix;
+    glm::mat4 mTranslationMatrix;
+    glm::mat4 mViewMatrix;
+    glm::mat4 mPerspectiveMatrix;
     double mFOV;
     double mNearPlane;
     double mFarPlane;
     double mAspectRatio;
-    glm::vec3 mAnchorPoint = glm::vec3(0.0);
+    glm::vec3 mAnchorPoint;
 };
 
 

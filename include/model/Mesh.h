@@ -5,10 +5,7 @@
 #ifndef MIRADREAM3D_MESH_H
 #define MIRADREAM3D_MESH_H
 #include <iosfwd>
-
 #include "geometry.hpp"
-
-#include "glm/vec3.hpp"
 
 struct aiMesh;
 
@@ -111,6 +108,7 @@ private:
 
     uint32_t mMaterialID=0;
     std::vector<Vertex> mVertices;
+    std::vector<geometricVertex> mGeometricVertices;
     std::vector<Edge> mEdges;
     std::vector<HalfEdge> mHalfEdges;
     std::vector<Face> mFaces;

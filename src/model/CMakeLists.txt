@@ -12,20 +12,21 @@ add_library(Model STATIC
         Scene.cpp
         Node.cpp
         Mesh.cpp
-        ../../include/model/PrimitiveMeshes.hpp
         AssetImporter.cpp
         ../../include/model/AssetImporter.h
+        ../../include/model/PrimitiveMeshes.h
+        PrimitiveMeshes.cpp
 )
 
 target_include_directories(Model PUBLIC
         ${DIR_INC}
         ${CMAKE_SOURCE_DIR}/libs
         PRIVATE
-        ${CMAKE_SOURCE_DIR}/include/util
 
 )
 
-target_link_libraries(Model PRIVATE
-        assimp
+target_link_libraries(Model PUBLIC
         Qt${QT_VERSION_MAJOR}::OpenGL
+        PRIVATE
+        assimp
 )
