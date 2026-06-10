@@ -1,4 +1,5 @@
 #include "model/Node.h"
+#include "model/Mesh.h"
 #include <cassert>
 
 void Node::addChild(Node* nodePtr) {

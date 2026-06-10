@@ -4,7 +4,6 @@
 
 #include "model/ShaderManager.h"
 #include "util/QTResourceManager.hpp"
-#include <string>
 #include "util/file_funcs.hpp"
 
 

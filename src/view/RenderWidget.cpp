@@ -1,10 +1,12 @@
 #include "view/RenderWidget.h"
+#include "types.h"
 
+#include <QTimer>
 #include <iostream>
-#include <QOpenGLFunctions>
+#include <QMouseEvent>
 
 RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) :
-    QOpenGLWidget(parent), mRenderer(new Renderer())
+    QOpenGLWidget(parent)
 {
 
     if (framesPerSecond==0)
@@ -23,107 +25,127 @@ void RenderWidget::initializeGL() {
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-
     auto* glFuncs = QOpenGLContext::currentContext()->functions();
-    mRenderer->initialize(glFuncs);
-    //setupShaders
-    //setupBuffers
-
-    //vao.create(); vao.bind();
-    //vbo.create(); vbo.bind();
-
+    emit initialize(glFuncs);
 }
 void RenderWidget::resizeGL(int width, int height) {
     glViewport(0, 0, width, height);
-    mRenderer->resize(this->width(), this->height());
+    emit resize(width, height);
 }
 void RenderWidget::paintGL() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    if (mRenderer->hasGeometryChange)
-    {
-        mRenderer->geometryRedraw();
-        mRenderer->hasGeometryChange = false;
-    }
-    else if (mRenderer->hasTopologyChange)
-    {
-        //TODO
-    }
-    else
-    {
-        mRenderer->draw();
-    }
+    emit paint();
 }
 
 
 void RenderWidget::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::MiddleButton) {
+    if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton) {
         grabMouse();
-        mLastMousePosition = event->pos();
+        mMouseAnchor = QCursor::pos();
+        mMouseLastPosition = mMouseAnchor;
         setCursor(Qt::BlankCursor); // Nice UX touch: change cursor when dragging
+        if (event->button() == Qt::LeftButton)
+            mMouseDragRotateX = mMouseDragRotateY = 0;
+        else
+            mMouseDragTranslateX = mMouseDragTranslateY = 0;
     }
 }
 void RenderWidget::mouseMoveEvent(QMouseEvent *event) {
-    if (event->buttons() & Qt::MiddleButton) {
 
-        // Ignorer les events générés par le recentrage
-        if (event->pos() == mLastMousePosition) return;
+    auto teleport = [this]()
+    {
+        mIsTeleportingCursor = true;
+        const QPoint screenCenter = mapToGlobal(rect().center());
+        QCursor::setPos(screenCenter);
+        mMouseLastPosition = screenCenter;
+    };
 
-        int deltaX = event->pos().x() - mLastMousePosition.x();
-        int deltaY = event->pos().y() - mLastMousePosition.y();
+    auto hasTeleported = [this]() -> bool
+    {
+        if (mIsTeleportingCursor) {
+            mIsTeleportingCursor = false;
+        }
+        return mIsTeleportingCursor;
+    };
+    if (event->buttons() & Qt::LeftButton ) {
 
-        float dPhi   = -deltaX * mMouseSensitivity;
-        float dTheta = -deltaY * mMouseSensitivity;
+        if (hasTeleported()) return;
+        QPoint currPos = QCursor::pos();
 
-        mRenderer->getEngineCamera().rotateAroundAnchor(dPhi, dTheta);
+        mMouseDragRotateX += currPos.x() - mMouseLastPosition.x();
+        mMouseDragRotateY += currPos.y() - mMouseLastPosition.y();
+        teleport();
+    }
+    if (event->buttons() & Qt::RightButton) {
 
-        // Toujours recentrer
-        QCursor::setPos(mapToGlobal(mLastMousePosition));
-        this->update();
+        if (hasTeleported()) return;
+        QPoint currPos = QCursor::pos();
+
+        mMouseDragTranslateX += currPos.x() - mMouseLastPosition.x();
+        mMouseDragTranslateY += currPos.y() - mMouseLastPosition.y();
+        teleport();
     }
 }
 void RenderWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::MiddleButton) {
+    if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton) {
+        QCursor::setPos(mMouseAnchor); //TODO faire une méthode centerCursor
         releaseMouse();
         unsetCursor(); // Restore the normal arrow cursor
     }
 }
 
 void RenderWidget::wheelEvent(QWheelEvent *event) {
-    int delta = event->angleDelta().y();
-    if (delta==0) {
-        delta=event->angleDelta().x();
-    }
-    float zoomFactor;
-
-    if (delta>0) {
-
-        if (event->modifiers() & Qt::ShiftModifier) {
-            zoomFactor=1.2f;
-        }
-        else zoomFactor=1.1f;
-    }
-    else {
-        if (event->modifiers() & Qt::ShiftModifier) {
-            zoomFactor=0.8f;
-        }
-        else {
-            zoomFactor=0.9f;
-        }
-
-    }
-
-    mRenderer->getEngineCamera().zoom(zoomFactor);
-    this->update();
+    int deltaY = event->angleDelta().y();
+    int deltaX = event->angleDelta().x();
+    if (event->modifiers() & Qt::ShiftModifier) deltaX*=2;
+    mMouseScroll += deltaX + 2*deltaY;
 }
-void RenderWidget::setHasChanged(bool b) {
-    mRenderer->hasGeometryChange=b;
+
+
+void RenderWidget::keyPressEvent(QKeyEvent *event) {
+    mPressedKeys.insert(event->key());
+    switch (event->key()) {
+    case(Qt::Key_1):
+        emit setViewportMode(ViewportMode::SOLID);
+        break;
+    case(Qt::Key_2):
+        emit setViewportMode(ViewportMode::WIREFRAME);
+        break;
+    }
 }
+
+
+void RenderWidget::keyReleaseEvent(QKeyEvent* event) {
+    mPressedKeys.remove(event->key());
+}
+
 void RenderWidget::timeOutSlot() {
+    if (mMouseDragRotateX != 0 || mMouseDragRotateY != 0) // Engager rotation de la caméra
+    {
+        float dPhi   = -mMouseDragRotateX * mMouseSensitivity;
+        float dTheta = -mMouseDragRotateY * mMouseSensitivity;
+        mMouseDragRotateX = mMouseDragRotateY = 0;
+
+        emit rotateAroundAnchor(dPhi, dTheta);
+    }
+
+    if (mMouseDragTranslateX != 0 || mMouseDragTranslateY != 0) // Engager rotation de la caméra
+    {
+        float dx = mMouseDragTranslateX * mMouseSensitivity;
+        float dy = -mMouseDragTranslateY * mMouseSensitivity;
+        mMouseDragTranslateX = mMouseDragTranslateY = 0;
+
+        emit strafeCamera(dx, dy);
+    }
+    if (mMouseScroll != 0)
+    {
+        emit zoom(exp(-mMouseScroll*mScrollSensitivity));
+        mMouseScroll = 0;
+    }
+    this->update();
 }
 
 RenderWidget::~RenderWidget()
 {
-    delete mRenderer;
     delete mTimer;
 }

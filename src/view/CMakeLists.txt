@@ -1,8 +1,8 @@
 add_library(View STATIC
-        mainwindow.cpp
-        ${DIR_INC}/view/mainwindow.h
-        ../../include/view/RenderWidget.h
+        MainWindow.cpp
         RenderWidget.cpp
+        ../../include/view/MainWindow.h
+        ../../include/view/RenderWidget.h
 )
 
 target_include_directories(View PUBLIC
@@ -12,9 +12,5 @@ target_include_directories(View PUBLIC
 target_link_libraries(View PUBLIC
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::OpenGLWidgets
-        PRIVATE
-        Model
-        Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::OpenGL
-
 )

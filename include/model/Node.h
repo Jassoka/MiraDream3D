@@ -5,8 +5,7 @@
 #ifndef MIRADREAM3D_NODE_H
 #define MIRADREAM3D_NODE_H
 #include <vector>
-
-#include "Mesh.h"
+#include <cstdint>
 
 /**
  * @brief Represents a node in the object hierarchy tree
@@ -17,11 +16,11 @@ public:
 
     void addChild(Node* nodePtr);
     size_t getChildrenSize() const;
-    Node* getChild(const uint32_t n) const;
+    Node* getChild(uint32_t n) const;
 
     void addMesh(uint32_t meshId);
     size_t getMeshesSize() const;
-    uint32_t getMesh(const uint32_t n) const ;
+    uint32_t getMesh(uint32_t n) const;
 
 
 
