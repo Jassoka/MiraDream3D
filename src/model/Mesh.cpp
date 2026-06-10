@@ -9,19 +9,24 @@
 #include "glm/geometric.hpp"
 
 Mesh::Mesh(uint32_t MaterialID):mMaterialID(MaterialID) {
+
 }
 Mesh::Mesh(aiMesh &meshAi) {
     this->mMaterialID=meshAi.mMaterialIndex;
 
+
+    bool hasNormales =meshAi.HasNormals();
+    bool hasUV =meshAi.HasTextureCoords(0);
+
     for (uint32_t i=0;i<meshAi.mNumVertices;i++) {
         aiVector3D pos = meshAi.mVertices[i];
-        aiVector3D normale = meshAi.mNormals[i];
-        //aiVector3D uv = meshAi.mTextureCoords[0][i];
+        aiVector3D normale = hasNormales ? meshAi.mNormals[i]:aiVector3D(0.0,0.0,0.0);//TODO ca explose certainement si pas de normales
+        aiVector3D uv = hasUV ? meshAi.mTextureCoords[0][i]:aiVector3D(0.0,0.0,0.0);
         this->mVertices.push_back(
             Vertex {
                 pos[0],pos[1],pos[2],
                 normale[0],normale[1],normale[2],
-                //uv[0],uv[1],
+                uv[0],uv[1]
             }
         );
     }
@@ -358,9 +363,25 @@ void Mesh::triangulate()
         }
         else
         {
-            //TODO MARCHE QUE SI CONVEXE LA MEILLEURE PROPRIÉTÉ DU MONDE !!!!!!!1§§1§§
-            mTriangles.push_back(Triangle {f[0], f[1], f[2]});
-            mTriangles.push_back(Triangle {f[0], f[2], f[3]});
+
+            glm::vec3 A=mVertices[f[0]].toVec3();
+            glm::vec3 B=mVertices[f[1]].toVec3();
+            glm::vec3 C=mVertices[f[2]].toVec3();
+            glm::vec3 D=mVertices[f[3]].toVec3();
+            glm::vec3 mid = A+C;
+            mid/=2;
+            //la diagonale AC sort du quad, on divise donc selon BD
+            //Car si mid etait dans le carre, B et D seraient dans la meme direction et sens opposés
+            if (glm::dot(mid-B,mid-D)>0) {
+                mTriangles.push_back(Triangle {f[0], f[1], f[3]});
+                mTriangles.push_back(Triangle {f[1], f[2], f[3]});
+            }
+            else {
+                mTriangles.push_back(Triangle {f[0], f[1], f[2]});
+                mTriangles.push_back(Triangle {f[0], f[2], f[3]});
+            }
+
+            //DONE MARCHE meme SI pas CONVEXE pourtant c'est LA MEILLEURE PROPRIÉTÉ DU MONDE !!!!!!!1§§1§§
         }
     }
 }
@@ -416,9 +437,9 @@ glm::vec3 Mesh::getNormal(Face &face,halfEdgeDirection orientation){
         std::swap(BVertex,CVertex);
     }
 
-    glm::vec3 A=glm::vec3(AVertex.x,AVertex.y,AVertex.z);
-    glm::vec3 B=glm::vec3(BVertex.x,BVertex.y,BVertex.z);
-    glm::vec3 C=glm::vec3(CVertex.x,CVertex.y,CVertex.z);
+    const glm::vec3 A=glm::vec3(AVertex.x,AVertex.y,AVertex.z);
+    const glm::vec3 B=glm::vec3(BVertex.x,BVertex.y,BVertex.z);
+    const glm::vec3 C=glm::vec3(CVertex.x,CVertex.y,CVertex.z);
         //AB^AC normalisé
     return(glm::normalize(glm::cross(B-A,C-A)));
 }
