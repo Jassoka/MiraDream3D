@@ -256,10 +256,11 @@ void ObjParser::parseF(Mesh &parentMesh) {
     uint nVertex=0;
     uint nComposante=0;
     next();
-    int v=-1;
+    uint32_t v=0;
     int vn=-1;
     int vt=-1;
 
+    auto verticesMeshTab=;
 
     while (mCurrent.type != NEWLINE && mCurrent.type != END ) {
 
@@ -269,15 +270,27 @@ void ObjParser::parseF(Mesh &parentMesh) {
 
         next();
 
-        mCurrentMesh->addVertex();
+        mCurrentMesh->addVertex(Vertex(mVector));
+        mCurrentMesh->getGeometricVertices()[v].vertices.push_back(v);
     }
 
+
+    auto sizeVerticesMeshTab= mCurrentMesh->getVertices().size();
+    Face face;
     switch (nVertex) {
         case(3):
-            parentMesh.addTriangle( );
+            face[0]=sizeVerticesMeshTab-3;
+            face[0]=sizeVerticesMeshTab-2;
+            face[0]=sizeVerticesMeshTab-1;
+            parentMesh.addTriangle(face);
             break;
         case(4):
-            parentMesh.addQuad();
+
+            face[0]=sizeVerticesMeshTab-4;
+            face[0]=sizeVerticesMeshTab-3;
+            face[0]=sizeVerticesMeshTab-2;
+            face[0]=sizeVerticesMeshTab-1;
+            parentMesh.addQuad(face);
             break;
         default:
             return;//TODO explosion

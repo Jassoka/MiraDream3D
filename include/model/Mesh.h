@@ -63,7 +63,7 @@ public:
     {
         return mTriangles;
     }
-    const std::vector<Triangle>& getGeometricVertices() const
+    const std::vector<GeometricVertex>& getGeometricVertices() const
     {
         return mGeometricVertices;
     }

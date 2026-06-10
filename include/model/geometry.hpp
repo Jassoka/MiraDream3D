@@ -35,7 +35,16 @@ struct Vertex
     glm::vec3 toVec3() {
         return(glm::vec3(x,y,z));
     }
-
+    Vertex(glm::vec3 vpos,glm::vec3 vn,glm::vec2 vt) {
+        x=vpos[0];
+        y=vpos[0];
+        z=vpos[0];
+        nx=vn[0];
+        ny=vn[1];
+        nz=vn[2];
+        u=vt[0];
+        v=vt[1];
+    }
 };
 
 
