@@ -18,6 +18,7 @@ RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) :
         connect(mTimer,SIGNAL(timeout()),this,SLOT(timeOutSlot()));
         mTimer->start(timerInterval);
     }
+    setFocusPolicy(Qt::ClickFocus);
     setUpdateBehavior(QOpenGLWidget::PartialUpdate);//TODO ca explose si pas ca sur mac (clignotements). Probleme de buffer
 }
 
