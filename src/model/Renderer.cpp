@@ -74,6 +74,7 @@ void Renderer::drawTemplate()
     mVBO.bind();
     mEBO.bind();
 
+    GLuint drawMode;
     switch (m)
     {
     case ViewportMode::SOLID:
@@ -85,13 +86,12 @@ void Renderer::drawTemplate()
             const int lightPos = mGlFuncs->glGetUniformLocation(programID, "lightPos");
             const glm::vec3 lightVec =  mEngineCamera->getPosition();
             mGlFuncs->glUniform3f (lightPos,lightVec.x,lightVec.y,lightVec.z);
-
-            glDrawElements(GL_TRIANGLES, numTriangles, GL_UNSIGNED_INT, nullptr);
+            drawMode = GL_TRIANGLES;
             break;
         }
     case ViewportMode::WIREFRAME:
         {
-
+            drawMode = GL_LINES;
             #ifdef TEST_HALFEDGES
 
             auto halfEdgesVect=mScene->getMeshes()[0].getHalfEdges();
@@ -106,10 +106,11 @@ void Renderer::drawTemplate()
 
 
             #endif
-            glDrawElements(GL_LINES, numEdges, GL_UNSIGNED_INT, nullptr);
+
             break;
         }
     }
+    glDrawElements(drawMode, nIndices, GL_UNSIGNED_INT, nullptr);
     mVAO.release();
 }
 
@@ -129,53 +130,53 @@ void Renderer::geometryRedrawTemplate()
     mVAO.bind();
     mVBO.bind();
 
+    // Buffer de vertices
+    std::vector<Vertex> vertices;
+    std::vector<uint32_t> indices;
+    uint32_t indexOffset = 0;
+
     for (const Mesh &mesh : mScene->getMeshes() )
     {
-        // Buffer de vertices
-        const auto vertices = mesh.getVertices();
-        const Vertex *vertices_data = vertices.data(); // Pointeur vers les vertices
-
-        mVBO.allocate(vertices_data,vertices.size() * sizeof(Vertex));
+        const auto meshVertices = mesh.getVertices();
+        vertices.reserve(vertices.size() + meshVertices.size());
+        vertices.insert(vertices.end(), meshVertices.begin(), meshVertices.end());
 
         if (m == ViewportMode::SOLID)
         {
-            // Buffer des faces //TODO rajouter algo de triangulation
-            //mesh.triangulate(); //TODO le faire ailleurs mais pas dans le draw
+            // Buffer des faces
             const auto triangles = mesh.getTriangles();
-            std::vector<uint32_t> triangleIndices;
+            indices.resize(indices.size() + triangles.size()*3);
             for (const auto& t: triangles)
             {
-                triangleIndices.push_back(t[0]);
-                triangleIndices.push_back(t[1]);
-                triangleIndices.push_back(t[2]);
+                indices.push_back(t[0] + indexOffset);
+                indices.push_back(t[1] + indexOffset);
+                indices.push_back(t[2] + indexOffset);
             }
-            const uint32_t *trig_data = triangleIndices.data();
-            numTriangles = triangleIndices.size();
-
-            mEBO.bind();
-            mEBO.allocate(trig_data,numTriangles * sizeof(uint32_t));
         }
-        else if (m == ViewportMode::WIREFRAME )
+        else if (m == ViewportMode::WIREFRAME)
         {
             //Buffer des edges
-            //mesh.generateEdges(); //TODO ça aussi
-            const auto& edges = mesh.getEdges();
-            std::vector<uint32_t> edgeIndices;
+            const auto edges = mesh.getEdges();
+            indices.resize(indices.size() + edges.size()*2);
             for (const auto& [origin, end]: edges)
             {
-                edgeIndices.push_back(origin);
-                edgeIndices.push_back(end);
+                indices.push_back(origin + indexOffset);
+                indices.push_back(end + indexOffset);
             }
-            const uint32_t *edges_data = edgeIndices.data();
-            numEdges = edgeIndices.size();
-
-            mEBO.bind();
-            mEBO.allocate(edges_data,numEdges * sizeof(uint32_t));
         }
+        indexOffset += meshVertices.size();
     }
+
+    const Vertex *vertices_data = vertices.data(); // Pointeur vers les vertices
+    mVBO.allocate(vertices_data,vertices.size() * sizeof(Vertex));
+
+    const uint32_t *data = indices.data();
+    nIndices = indices.size();
+
+    mEBO.bind();
+    mEBO.allocate(data,nIndices * sizeof(uint32_t));
     drawTemplate<m>();
     mVAO.release();
-
 }
 
 void Renderer::geometryRedraw(const ViewportMode mode)

@@ -124,8 +124,8 @@ void RenderWidget::keyReleaseEvent(QKeyEvent* event) {
 void RenderWidget::timeOutSlot() {
     if (mMouseDragRotateX != 0 || mMouseDragRotateY != 0) // Engager rotation de la caméra
     {
-        float dPhi   = -mMouseDragRotateX * mMouseSensitivity;
-        float dTheta = -mMouseDragRotateY * mMouseSensitivity;
+        float dPhi   = -mMouseDragRotateX * mMouseRotateSensitivity;
+        float dTheta = -mMouseDragRotateY * mMouseRotateSensitivity;
         mMouseDragRotateX = mMouseDragRotateY = 0;
 
         emit rotateAroundAnchor(dPhi, dTheta);
@@ -133,8 +133,8 @@ void RenderWidget::timeOutSlot() {
 
     if (mMouseDragTranslateX != 0 || mMouseDragTranslateY != 0) // Engager rotation de la caméra
     {
-        float dx = mMouseDragTranslateX * mMouseSensitivity;
-        float dy = -mMouseDragTranslateY * mMouseSensitivity;
+        float dx = mMouseDragTranslateX * mMouseTranslateSensitivity;
+        float dy = -mMouseDragTranslateY * mMouseTranslateSensitivity;
         mMouseDragTranslateX = mMouseDragTranslateY = 0;
 
         emit strafeCamera(dx, dy);

@@ -140,11 +140,6 @@ target_link_libraries(debugMain PRIVATE EngineCore)
 target_compile_definitions(debugMain PRIVATE DEBUG)
 target_compile_definitions(debugMain PRIVATE ENABLE_RENDERDOC)
 
-
-
-
-
-
 # Google Test
 include(FetchContent)
 FetchContent_Declare(

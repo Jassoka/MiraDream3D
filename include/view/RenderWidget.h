@@ -55,7 +55,8 @@ private:
     int mMouseScroll = 0;
 
     QSet<int> mPressedKeys;
-    float mMouseSensitivity = 0.0035f;
+    float mMouseRotateSensitivity = 0.0035f;
+    float mMouseTranslateSensitivity = 0.0035f;
     float mScrollSensitivity = 0.00035f;
     bool mIsTeleportingCursor = false;
     bool mWasTeleported = false;

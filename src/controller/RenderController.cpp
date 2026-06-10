@@ -78,3 +78,5 @@ void RenderController::onSetViewportMode(const ViewportMode mode)
     mCurrViewportMode = mode;
     changedGeometry();
 }
+
+

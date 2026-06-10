@@ -70,8 +70,7 @@ private:
     QOpenGLVertexArrayObject mVAO;
     QOpenGLBuffer mVBO;
     QOpenGLBuffer mEBO{QOpenGLBuffer::IndexBuffer};
-    uint32_t numTriangles = 0;
-    uint32_t numEdges = 0;
+    uint32_t nIndices = 0;
 #ifdef TEST_HALFEDGES
     uint32_t mTestHalfEdge=0;
 #endif
