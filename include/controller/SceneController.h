@@ -15,10 +15,10 @@ class SceneController : public QObject
 public:
     explicit SceneController(QObject* parent, RenderController *renderController);
     Scene *getScene() const;
-    void loadBlankScene();
+    void loadBlankScene() const;
 
 public slots:
-    void importScene(const std::string &path);
+    void importScene(const std::string &path) const;
 
 private:
     RenderController *mRenderController;

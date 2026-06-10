@@ -15,6 +15,7 @@ class Scene
 public:
     Scene();
     ~Scene();
+    void clearScene();
     void addNode(Node* nodePtr) const;
     void addMesh(const Mesh &mesh);
     void addTexture(const Texture &texture);

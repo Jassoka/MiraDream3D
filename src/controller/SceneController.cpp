@@ -20,13 +20,14 @@ Scene *SceneController::getScene() const
     return mScene;
 }
 
-void SceneController::importScene(const std::string &path) {
+void SceneController::importScene(const std::string &path) const
+{
     loadBlankScene();
     mRenderController->changedGeometry();
     AssetImporter::loadAssimpScene(path, getScene());
 }
 
-void SceneController::loadBlankScene() {
-    delete mScene;
-    mScene = new Scene();
+void SceneController::loadBlankScene() const
+{
+    mScene->clearScene();
 }

@@ -13,6 +13,7 @@
 class Node
 {
 public:
+    //TODO DESTRUCTEUR
 
     void addChild(Node* nodePtr);
     size_t getChildrenSize() const;

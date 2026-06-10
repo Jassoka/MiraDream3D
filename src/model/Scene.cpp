@@ -33,6 +33,12 @@ Scene::~Scene() {
     delete mRootNode;
 }
 
+void Scene::clearScene()
+{
+    mMeshList.clear();
+    //TODO vider node (ils n'existent pas)
+}
+
 void Scene::addNode(Node* nodePtr) const
 {
     this->mRootNode->addChild(nodePtr);
