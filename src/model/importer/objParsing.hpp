@@ -6,6 +6,8 @@
 #define MIRADREAM3D_OBJPARSING_HPP
 #include <string>
 
+#include "model/Node.h"
+#define MAX_OBJ_NAME_SIZE 10
 
 enum ObjTokenType {
     IDENTIFIER,
@@ -19,12 +21,11 @@ enum ObjTokenType {
 };
 struct ObjToken {
     ObjTokenType type;
-    union value{
-        std::string* identifier;
+    union Value{
         int intValue;
         float floatValue;
-    };
-
+    } value;
+    std::string identifier="";
 };
 class ObjLexer {
 public:
@@ -32,7 +33,6 @@ public:
     ObjToken next();
 
 private:
-    void advance();
     ObjToken readIdentifier();
     ObjToken readNumber();
     void readSpace();
@@ -45,6 +45,39 @@ private:
 
 };
 class ObjParser {
+public:
+
+    ObjParser(const std::string &file,Node* parentNode):mLexer(ObjLexer(file)),mParentNode(parentNode){};
+
+private:
+
+    void execLexer();
+    void parse();
+
+    ObjToken mCurrent;
+    ObjLexer mLexer;
+    Node* mParentNode;
+    Node* mCurrentNode=nullptr;
+    Mesh* mCurrentMesh=nullptr;
+    uint32_t mCurrentMeshOrginVId=0;
+    std::vector<glm::vec3> mV;
+    std::vector<glm::vec3> mVN;
+    std::vector<glm::vec3> mVT;
+    std::vector<uint32_t> mNoNormal;
+    std::vector<uint32_t> mNoUv;
+
+    void next(){mCurrent=mLexer.next();};
+
+    void parseV();
+    void parseVN();
+    void parseVT();
+    void parseF(Mesh &parentMesh);
+    void parseO();
+    void parseG();
+    void parseUsemtl();
+    void parseMtllib();
+    void parseL(Mesh &parentMesh);
+
 
 };
 

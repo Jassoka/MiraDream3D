@@ -41,6 +41,11 @@ struct Vertex
 
 constexpr uint32_t VERTEX_NB_ELEMENTS = sizeof(Vertex)/sizeof(float);
 
+struct GeometricVertex
+{
+    std::vector<uint32_t> vertices;
+    uint32_t halfEdge;
+};
 
 struct Edge
 {

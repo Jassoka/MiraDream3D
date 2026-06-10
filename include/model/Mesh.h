@@ -5,6 +5,7 @@
 #ifndef MIRADREAM3D_MESH_H
 #define MIRADREAM3D_MESH_H
 #include <iosfwd>
+#include <unordered_map>
 
 #include "geometry.hpp"
 
@@ -62,7 +63,10 @@ public:
     {
         return mTriangles;
     }
-
+    const std::vector<Triangle>& getGeometricVertices() const
+    {
+        return mGeometricVertices;
+    }
     /**
      * @brief Prints mesh contents in the console
      */
@@ -77,6 +81,7 @@ public:
     }
 
     void addVertex(const Vertex &vertex);
+    void addGeometricVertex(const GeometricVertex &vertex);
     //void generateEdges();
     void generateHalfEdges();
     void triangulate();
@@ -116,6 +121,8 @@ private:
     std::vector<Face> mFaces;
     std::vector<Triangle> mTriangles;
     std::vector<uint8_t> mVertexCountPerFace;
+    std::vector<GeometricVertex> mGeometricVertices;
+
     /**
      * @brief List of the first half edge index linked a certain vertex
      * @note Is size of mVertices

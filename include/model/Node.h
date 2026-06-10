@@ -14,7 +14,7 @@
 class Node
 {
 public:
-
+    Node(std::string name=""):mName(name){};
     void addChild(Node* nodePtr);
     size_t getChildrenSize() const;
     Node* getChild(const uint32_t n) const;
@@ -26,6 +26,7 @@ public:
 
 
 private:
+    std::string mName;
     std::vector<uint32_t> mMeshes;
     std::vector<Node*> mChildren;
 };

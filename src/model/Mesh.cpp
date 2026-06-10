@@ -36,13 +36,13 @@ Mesh::Mesh(aiMesh &meshAi) {
         if (faceAi->mNumIndices > 4) exit(1); //TODO le handle pour de vrai
         if (faceAi->mNumIndices == 4)
         {
-            this->mFaces.push_back({faceAi->mIndices[0], faceAi->mIndices[1], faceAi->mIndices[2], faceAi->mIndices[3]});
+            mFaces.push_back({faceAi->mIndices[0], faceAi->mIndices[1], faceAi->mIndices[2], faceAi->mIndices[3]});
         }
         else if (faceAi->mNumIndices == 3)
         {
-            this->mFaces.push_back({faceAi->mIndices[0], faceAi->mIndices[1], faceAi->mIndices[2], 0});
+            mFaces.push_back({faceAi->mIndices[0], faceAi->mIndices[1], faceAi->mIndices[2], 0});
         }
-        this->mVertexCountPerFace.push_back(faceAi->mNumIndices);
+        mVertexCountPerFace.push_back(faceAi->mNumIndices);
     }
     triangulate();
     generateHalfEdges();
@@ -50,8 +50,8 @@ Mesh::Mesh(aiMesh &meshAi) {
 
 bool Mesh::operator==(const Mesh& other) const
 {
-    const bool sameVertices = this->mVertices == other.mVertices;
-    const bool sameFaces = this->mFaces == other.mFaces;
+    const bool sameVertices = mVertices == other.mVertices;
+    const bool sameFaces = mFaces == other.mFaces;
     return sameFaces && sameVertices; //TODO: same edges and half edges
 }
 
@@ -75,24 +75,26 @@ std::ostream& operator<<(std::ostream& os, const Mesh &mesh) {
 
 
 void Mesh::addVertex(const Vertex &vertex) {
-    this->mVertices.push_back(vertex);
+    mVertices.push_back(vertex);
 }
-
+void Mesh::addGeometricVertex(const GeometricVertex &vertex) {
+    mGeometricVertices.push_back(vertex);
+}
 void Mesh::addEdge(const Edge &edge) {
-    this->mEdges.push_back(edge);
+    mEdges.push_back(edge);
 }
 void Mesh::addHalfEdge(const HalfEdge &halfEdge)
 {
-    this->mHalfEdges.push_back(halfEdge);
+    mHalfEdges.push_back(halfEdge);
 }
 void Mesh::addQuad(const Face &face) {
-    this->mVertexCountPerFace.push_back(4);
-    this->mFaces.push_back(face);
+    mVertexCountPerFace.push_back(4);
+    mFaces.push_back(face);
 }
 
 void Mesh::addTriangle(const Face &face) {
-    this->mVertexCountPerFace.push_back(3);
-    this->mFaces.push_back(face);
+    mVertexCountPerFace.push_back(3);
+    mFaces.push_back(face);
 }
 
 /*
