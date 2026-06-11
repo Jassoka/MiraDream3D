@@ -28,6 +28,10 @@ QObject(parent)
 
     connect(renderWidget, &RenderWidget::zoom, mRenderController, &RenderController::onZoom);
     connect(renderWidget, &RenderWidget::setViewportMode, mRenderController, &RenderController::onSetViewportMode);
+#ifdef TEST_HALFEDGES
+    connect(renderWidget, &RenderWidget::addTestHalfEdgeSignal, mRenderController, &RenderController::onAddHalfEdgeTest);
+#endif
+
 }
 
 Engine::~Engine()

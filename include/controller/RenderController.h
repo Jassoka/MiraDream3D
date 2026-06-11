@@ -43,6 +43,9 @@ public slots:
     void onCameraStrafe(float dx, float dy);
     void onZoom(float factor);
     void onSetViewportMode(ViewportMode mode);
+#ifdef TEST_HALFEDGES
+    void onAddHalfEdgeTest(int i);
+#endif
 
 private:
     bool hasToRedraw = false;

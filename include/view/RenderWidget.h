@@ -37,6 +37,9 @@ signals:
     void strafeCamera(float dx, float dy);
     void zoom(float zoomFactor);
     void setViewportMode(ViewportMode mode);
+#ifdef TEST_HALFEDGES
+    void addTestHalfEdgeSignal(int i);
+#endif
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;

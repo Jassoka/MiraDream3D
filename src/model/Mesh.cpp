@@ -1,10 +1,13 @@
 #include "model/Mesh.h"
 
-#include <iostream>
 #include <unordered_map>
 #include <assimp/include/assimp/mesh.h>
 #include <assimp/vector3.h>
-#include <sys/stat.h>
+
+#ifdef ENABLE_DEBUG
+#include <iostream>
+#endif
+
 
 #include "glm/geometric.hpp"
 
@@ -60,6 +63,7 @@ bool Mesh::operator==(const Mesh& other) const
     return sameFaces && sameVertices; //TODO: same edges and half edges
 }
 
+#ifdef ENABLE_DEBUG
 std::ostream& operator<<(std::ostream& os, const Mesh &mesh) {
     os << "Vertices:" << '\n' << "{ ";
     for (const auto vertex : mesh.getVertices()) {
@@ -77,7 +81,7 @@ std::ostream& operator<<(std::ostream& os, const Mesh &mesh) {
     os << "}" << '\n';
     return os;
 }
-
+#endif
 
 void Mesh::addVertex(const Vertex &vertex) {
     this->mVertices.push_back(vertex);
@@ -100,32 +104,9 @@ void Mesh::addTriangle(const Face &face) {
     this->mFaces.push_back(face);
 }
 
-/*
-void Mesh::generateEdges()
-{
-    mEdges.clear(); //TODO pue la merde
-    for (int i = 0; i < mFaces.size(); i++)
-    {
-        Face &f = mFaces[i];
-        mEdges.push_back(Edge {f[0], f[1]});
-        mEdges.push_back(Edge {f[1], f[2]});
-        if (mVertexCountPerFace[i] == 3)
-        {
-            mEdges.push_back(Edge {f[2], f[0]});
-        }
-        if (mVertexCountPerFace[i] == 4)
-        {
-            mEdges.push_back(Edge {f[2], f[3]});
-            mEdges.push_back(Edge {f[3], f[0]});
-        }
-    }
-}
-*/
-
 void Mesh::generateHalfEdges()
 {
     //TODO FUSIONNER LES VERTEX DE MEME POINT (vertex géometriques) (ça implique des faces géométriques distinctes aussi)
-    //TODO ITERER SUR CHAQUE COMPOSANTE CONNEXE
     std::vector<std::array<int32_t, 2>> adjacentFacesToEdge;
     std::unordered_map<uint64_t, uint32_t> edgeMap;
 
@@ -172,7 +153,7 @@ void Mesh::generateHalfEdges()
     }();
 
     mHalfEdges.clear();
-    // On suppose le mesh un manifold
+    // On suppose le mesh 2-manifold
     // Trouver la liste des extremums en x
     float xMax = mVertices[0].x;
     for (uint32_t idxV = 1; idxV < mVertices.size(); idxV ++)

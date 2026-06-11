@@ -79,4 +79,13 @@ void RenderController::onSetViewportMode(const ViewportMode mode)
     changedGeometry();
 }
 
+#ifdef TEST_HALFEDGES
+void RenderController::onAddHalfEdgeTest(const int i)
+{
+    mRenderer->addTestHalfEdge(i);
+    changedCamera();
+}
+#endif
+
+
 
