@@ -30,6 +30,8 @@ QObject(parent)
     connect(renderWidget, &RenderWidget::setViewportMode, mRenderController, &RenderController::onSetViewportMode);
 #ifdef TEST_HALFEDGES
     connect(renderWidget, &RenderWidget::addTestHalfEdgeSignal, mRenderController, &RenderController::onAddHalfEdgeTest);
+    connect(renderWidget, &RenderWidget::nextTestMeshSignal, mRenderController, &RenderController::nextMeshTest);
+    connect(renderWidget, &RenderWidget::nextTestComponentSignal, mRenderController, &RenderController::nextComponentTest);
 #endif
 
 }

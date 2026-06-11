@@ -7,6 +7,8 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 
+#include "Scene.h"
+
 class Scene;
 class Camera;
 class ShaderManager;
@@ -49,8 +51,27 @@ public:
     void initShaders();
 
 #ifdef TEST_HALFEDGES
-    void addTestHalfEdge(int32_t i) {
-        mTestHalfEdge+=i;
+    void addTestHalfEdge(const int32_t i) {
+        const Mesh &currMesh = mScene->getMeshes()[mTestMesh];
+        if (i>0) mTestHalfEdge = currMesh.getNextHalfEdge(mTestHalfEdge);
+        if (i<0) mTestHalfEdge = currMesh.getPrevHalfEdge(mTestHalfEdge);
+        if (i==0)
+            if (const int32_t twin = currMesh.getTwinHalfEdge(mTestHalfEdge); twin > -1)
+                mTestHalfEdge = twin;
+    };
+
+    void nextTestMesh() {
+        const uint32_t nMeshes = mScene->getMeshes().size();
+        if (nMeshes == 0) return;
+        mTestMesh = (mTestMesh+1)%nMeshes;
+        mTestHalfEdge = 0;
+    };
+
+
+    void nextTestComponent() {
+        const auto components = mScene->getMeshes()[mTestMesh].getComponents();
+        const uint32_t nComponents = components.size();
+        mTestHalfEdge = components[(++mTestComponent)%nComponents];
     };
 #endif
 
@@ -73,6 +94,8 @@ private:
     uint32_t nIndices = 0;
 #ifdef TEST_HALFEDGES
     uint32_t mTestHalfEdge=0;
+    uint32_t mTestMesh=0;
+    uint32_t mTestComponent=0;
 #endif
 };
 #endif //MIRADREAM3D_RENDERER_H

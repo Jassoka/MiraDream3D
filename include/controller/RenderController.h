@@ -45,6 +45,9 @@ public slots:
     void onSetViewportMode(ViewportMode mode);
 #ifdef TEST_HALFEDGES
     void onAddHalfEdgeTest(int i);
+    void nextMeshTest();
+
+    void nextComponentTest();
 #endif
 
 private:

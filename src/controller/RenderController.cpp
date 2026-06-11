@@ -85,6 +85,20 @@ void RenderController::onAddHalfEdgeTest(const int i)
     mRenderer->addTestHalfEdge(i);
     changedCamera();
 }
+
+void RenderController::nextMeshTest()
+{
+    mRenderer->nextTestMesh();
+    changedCamera();
+}
+
+
+void RenderController::nextComponentTest()
+{
+    mRenderer->nextTestComponent();
+    changedCamera();
+}
+
 #endif
 
 

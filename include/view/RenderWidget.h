@@ -39,6 +39,8 @@ signals:
     void setViewportMode(ViewportMode mode);
 #ifdef TEST_HALFEDGES
     void addTestHalfEdgeSignal(int i);
+    void nextTestMeshSignal();
+    void nextTestComponentSignal();
 #endif
 protected:
     void mousePressEvent(QMouseEvent *event) override;

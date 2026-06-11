@@ -201,12 +201,12 @@ void Renderer::initShaders()
     shaders = {vertexShader, fragmentShader};
     ShaderManager::createProgram(VIEWPORT_WIREFRAME, shaders);
 
-    #ifdef TEST_HALFEDGES
+#ifdef TEST_HALFEDGES
     vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_test_halfedges.vert", GL_VERTEX_SHADER);
     fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_test_halfedges.frag", GL_FRAGMENT_SHADER);
     shaders = {vertexShader, fragmentShader};
     ShaderManager::createProgram("viewport_test_halfedges", shaders);
-    #endif
+#endif
 
 }
 
