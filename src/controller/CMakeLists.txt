@@ -8,8 +8,9 @@ add_library(Controller STATIC
         RenderController.cpp
 )
 target_include_directories(Controller PUBLIC
-        ${DIR_INC}
         ${CMAKE_SOURCE_DIR}/libs
+        PRIVATE
+        ${DIR_INC}
 )
 
 target_link_libraries(Controller PRIVATE

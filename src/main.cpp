@@ -6,7 +6,6 @@
 #include <filesystem>
 #include <QSurfaceFormat>
 
-
 #ifdef ENABLE_RENDERDOC
     #include "RenderDocHelper.hpp"
     #include <QLibrary>
@@ -15,10 +14,6 @@
 
 int main(int argc, char *argv[])
 {
-#ifdef ENABLE_RENDERDOC
-    qDebug() << "DEBUG mode";
-    initRenderDoc();
-#endif
 #ifdef TEST_HALFEDGES
     qDebug() << "half edges test";
 #endif

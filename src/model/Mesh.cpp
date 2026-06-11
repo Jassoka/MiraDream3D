@@ -46,6 +46,11 @@ Mesh::Mesh(aiMesh &meshAi) {
     }
     triangulate();
     generateHalfEdges();
+#ifdef ENABLE_DEBUG
+    std::cout << " Nb de half edges: " << mHalfEdges.size() << '\n';
+    std::cout << " Nb de edges: " << mEdges.size() << '\n';
+#endif
+
 }
 
 bool Mesh::operator==(const Mesh& other) const

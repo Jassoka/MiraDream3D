@@ -9,7 +9,7 @@
 #include <array>
 #include <vector>
 #include <cfloat>
-#ifdef DEBUG
+#ifdef ENABLE_DEBUG
 #include <ostream>
 #endif
 
@@ -85,7 +85,7 @@ struct geometricVertex
     std::vector<uint32_t> vertices;
     uint32_t halfEdge;
 };
-#ifdef DEBUG
+#ifdef ENABLE_DEBUG
 inline std::ostream& operator<<(std::ostream& os, const HalfEdge &he) {
     os << he.origin << " -> " << he.end << " next "<< he.next << " twin " << he.twin << std::endl;
     return os;

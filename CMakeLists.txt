@@ -16,15 +16,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Gestion des assets avec QT
 set(CMAKE_AUTORCC ON)
 
-#ASSIMP
-set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
-
-set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "" FORCE)
-
 #Qt
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
@@ -35,11 +26,16 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets OpenGLWidgets)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Gui )
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Gui)
 
-option(TEST_HALFEDGES "Active les tests halfedges" OFF)
-set(TEST_HALFEDGES OFF CACHE BOOL "" FORCE)
 
-if(TEST_HALFEDGES)
+add_library(EngineCore STATIC)
+
+# Mode debug
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_sources(EngineCore PUBLIC
+            src/RenderDocHelper.cpp)
+    add_compile_definitions(ENABLE_DEBUG)
     add_compile_definitions(TEST_HALFEDGES)
+    add_compile_definitions(ENABLE_RENDERDOC)
 endif()
 
 # Chemin vers les modules
@@ -48,17 +44,8 @@ add_subdirectory(src/view)
 add_subdirectory(src/controller)
 
 
-add_subdirectory(libs/assimp)
-
-target_compile_options(assimp PRIVATE
-        -Wno-error
-        -Wno-unknown-warning-option
-)
 set(PROJECT_SOURCES
         src/main.cpp
-        resources.qrc
-        include/RenderDocHelper.hpp
-        src/RenderDocHelper.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -84,18 +71,18 @@ else()
     endif()
 endif()
 
-add_library(EngineCore STATIC)
 
 # Précompilation
 
 target_precompile_headers(EngineCore PRIVATE
         <vector>
         <string>
-        <assimp>
         <unordered_map>
         <glm/glm.hpp>
         <QOpenGLFunctions>
 )
+
+
 
 # Liste des modules
 target_link_libraries(EngineCore PUBLIC
@@ -104,9 +91,14 @@ target_link_libraries(EngineCore PUBLIC
         Controller
 )
 
-target_link_libraries(MiraDream3D PRIVATE EngineCore)
+target_include_directories(EngineCore PUBLIC
+        ${DIR_INC}
+)
 
-# target_link_libraries(MiraDream3D PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_sources(EngineCore PUBLIC
+        resources.qrc)
+
+target_link_libraries(MiraDream3D PUBLIC EngineCore)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
@@ -132,13 +124,6 @@ install(TARGETS MiraDream3D
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(MiraDream3D)
 endif()
-
-
-# Mode debug avec RenderDoc
-add_executable(debugMain ${PROJECT_SOURCES})
-target_link_libraries(debugMain PRIVATE EngineCore)
-target_compile_definitions(debugMain PRIVATE DEBUG)
-target_compile_definitions(debugMain PRIVATE ENABLE_RENDERDOC)
 
 # Google Test
 include(FetchContent)

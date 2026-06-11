@@ -5,7 +5,7 @@ add_library(View STATIC
         ../../include/view/RenderWidget.h
 )
 
-target_include_directories(View PUBLIC
+target_include_directories(View PRIVATE
         ${DIR_INC}
 )
 
