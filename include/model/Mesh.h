@@ -127,6 +127,10 @@ private:
      * @note Is size of mVertices
      */
     std::vector<uint32_t> mHalfEdgeIndexPerVertex;
+    /**
+     * @brief List of the first half-edge index for all components of the mesh
+     */
+    std::vector<uint32_t> mComponents;
     bool isTriangulated = false;
 };
 #endif //MIRADREAM3D_MESH_H
