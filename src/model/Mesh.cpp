@@ -8,6 +8,8 @@
 
 #include "glm/geometric.hpp"
 
+halfEdgeDirection Mesh::defaultHalfEdgeDirection = ABC;
+
 Mesh::Mesh(uint32_t MaterialID):mMaterialID(MaterialID) {
 
 }
@@ -220,7 +222,7 @@ void Mesh::generateHalfEdges(std::vector<std::vector<uint32_t>> facesPerVertex)
         uint32_t faceID;
 
         // Si il n'existe pas: alors c'est plat sur x, on prend n'importe quelle premiere normale
-        halfEdgeDirection firstOrientation = ABC;
+        halfEdgeDirection firstOrientation = defaultHalfEdgeDirection;
         if (Vx == -1)
         {
             faceID = 0;
@@ -254,11 +256,15 @@ void Mesh::generateHalfEdges(std::vector<std::vector<uint32_t>> facesPerVertex)
             const uint32_t next_i = (i+1)%faceSize;
             const uint32_t prev_i = (i + faceSize -1)%faceSize;
             const uint32_t origin = currFace[i];
-            const uint32_t end = currFace[(firstOrientation == ABC) ? next_i : prev_i];
+            const uint32_t end = currFace[(firstOrientation == defaultHalfEdgeDirection) ? next_i : prev_i];
+
+            // On oriente les faces pour être dans le sens des half edges
 
             mHalfEdges.push_back(HalfEdge{halfEdgeMax + next_i, halfEdgeMax + prev_i, faceID, -1, origin, end});
             visitedVertex[origin] = 1;
         }
+
+        if (firstOrientation != defaultHalfEdgeDirection) swapFaceOrientation(faceID);
         // Propagation des half edges, jusqu'a que chaque face soit touchée
 
         visitedFace[faceID] = 1;
@@ -299,7 +305,7 @@ void Mesh::generateHalfEdges(std::vector<std::vector<uint32_t>> facesPerVertex)
                 continue;
             }
 
-            halfEdgeDirection faceOrientation = ABC;
+            halfEdgeDirection faceOrientation;
             // la nouvelle half edge commence dans l'autre sens
             uint32_t origin = currHalfEdge.end;
             uint32_t end = currHalfEdge.origin;
@@ -361,13 +367,20 @@ void Mesh::generateHalfEdges(std::vector<std::vector<uint32_t>> facesPerVertex)
                      static_cast<uint32_t>(neighbouringFace),
                     -1,
                     origin,
-                    end
+                     end
                 });
                 visitedVertex[origin] = 1;
             }
+
+
+            if (faceOrientation != defaultHalfEdgeDirection) swapFaceOrientation(neighbouringFace);
             halfEdgeIterationIndex++;
         }
     }
+#ifdef TEST_HALFEDGES
+    std::cout << "Nb of half edges: " << mHalfEdges.size() << '\n';
+    std::cout << "Nb of edges: "<< mEdges.size() << '\n';
+#endif
 }
 
 void Mesh::triangulate()
@@ -402,7 +415,9 @@ void Mesh::triangulate()
             //DONE MARCHE meme SI pas CONVEXE pourtant c'est LA MEILLEURE PROPRIÉTÉ DU MONDE !!!!!!!1§§1§§
         }
     }
+#ifdef ENABLE_DEBUG
     std::cout << *this << std::endl;
+#endif
 }
 
 void Mesh::findNormalAndOrientation(uint32_t AId,const std::vector<uint32_t> &adjacentFaces, glm::vec3 &normal, halfEdgeDirection &direction)

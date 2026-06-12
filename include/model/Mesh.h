@@ -5,10 +5,7 @@
 #ifndef MIRADREAM3D_MESH_H
 #define MIRADREAM3D_MESH_H
 #include <iosfwd>
-
 #include "geometry.hpp"
-
-#include "glm/vec3.hpp"
 
 struct aiMesh;
 
@@ -17,9 +14,6 @@ enum halfEdgeDirection {ABC,ACB};
 
 class Mesh
 {
-#ifdef TEST_HALFEDGES
-    friend class PrimitiveMeshes;
-#endif
 public:
 
     /**
@@ -52,6 +46,21 @@ public:
         return mHalfEdges;
     }
 
+    uint32_t getNextHalfEdge(const uint32_t i) const
+    {
+        return mHalfEdges[i].next;
+    }
+
+    uint32_t getPrevHalfEdge(const uint32_t i) const
+    {
+        return mHalfEdges[i].prev;
+    }
+
+    int32_t getTwinHalfEdge(const uint32_t i) const
+    {
+        return mHalfEdges[i].twin;
+    }
+
     const std::vector<Face>& getFaces() const
     {
         return mFaces;
@@ -61,6 +70,12 @@ public:
     const std::vector<Triangle>& getTriangles() const
     {
         return mTriangles;
+    }
+
+
+    const std::vector<uint32_t>& getComponents() const
+    {
+        return mComponents;
     }
 
     /**
@@ -112,9 +127,31 @@ private:
         return -1;
     }
 
+    void swapFaceOrientation(const uint32_t faceID)
+    {
+        Face &f = mFaces[faceID];
+        const uint32_t n = mVertexCountPerFace[faceID];
+        for (uint32_t i = 0; i < n/2; i++)
+        {
+            const uint32_t tmp = f[i];
+            f[i] = f[n-i-1];
+            f[n-i-1] = tmp;
+        }
+    }
+
+    /**
+     *
+     * A :
+     * E : mean of points adjacents to A
+     **/
+    void findNormalAndOrientation(uint32_t AId ,const std::vector<uint32_t> &adjacentFaces, glm::vec3 &normal, halfEdgeDirection &direction);
+    glm::vec3 getNormal(Face &face,halfEdgeDirection orientation);
+
+
 
     uint32_t mMaterialID=0;
     std::vector<Vertex> mVertices;
+    std::vector<geometricVertex> mGeometricVertices;
     std::vector<Edge> mEdges;
     std::vector<HalfEdge> mHalfEdges;
     std::vector<Face> mFaces;
@@ -128,16 +165,9 @@ private:
     /**
      * @brief List of the first half-edge index for all components of the mesh
      */
+    static halfEdgeDirection defaultHalfEdgeDirection;
     std::vector<uint32_t> mComponents;
     bool isTriangulated = false;
-
-    /**
-     *
-     * A :
-     * E : mean of points adjacents to A
-     **/
-    void findNormalAndOrientation(uint32_t AId ,const std::vector<uint32_t> &adjacentFaces, glm::vec3 &normal, halfEdgeDirection &direction);
-    glm::vec3 getNormal(Face &face,halfEdgeDirection orientation);
 };
 #endif //MIRADREAM3D_MESH_H
 

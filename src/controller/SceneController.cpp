@@ -3,29 +3,31 @@
 //
 
 #include "controller/SceneController.h"
+#include "controller/RenderController.h"
+#include "model/Scene.h"
 #include "model/AssetImporter.h"
-#include "model/PrimitiveMeshes.hpp"
+#include "model/PrimitiveMeshes.h"
 
-SceneController::SceneController(QObject* parent) : QObject(parent)
+SceneController::SceneController(QObject* parent, RenderController *renderController) :
+QObject(parent), mRenderController(renderController), mScene(new Scene())
 {
-
-    mScene.addMesh(PrimitiveMeshes::getCube());
-
-/*
-    Mesh triangle = Mesh(0);
-    triangle.addVertex({-0.5f, -0.5f, 0.0f, 0.0, 0.0, 0.0, 0.0, 0.0});
-    triangle.addVertex({0.5f, -0.5f, 0.0f, 0.0, 0.0, 0.0, 0.0, 0.0});
-    triangle.addVertex({0.0f, 0.5f, 0.0f, 0.0, 0.0, 0.0, 0.0, 0.0});
-    triangle.addFace({0, 1, 2});
-
-    mScene.addMesh(triangle);*/
+    mScene->addMesh(PrimitiveMeshes::getCube());
+    mRenderController->changedGeometry();
 }
 
-Scene *SceneController::getScene()
+Scene *SceneController::getScene() const
 {
-    return &mScene;
+    return mScene;
 }
 
-void SceneController::loadBlankScene() {
-    mScene=Scene();
+void SceneController::importScene(const std::string &path) const
+{
+    loadBlankScene();
+    mRenderController->changedGeometry();
+    AssetImporter::loadAssimpScene(path, getScene());
+}
+
+void SceneController::loadBlankScene() const
+{
+    mScene->clearScene();
 }

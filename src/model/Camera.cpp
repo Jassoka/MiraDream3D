@@ -3,10 +3,10 @@
 //
 
 #include "model/Camera.h"
+#include "defs.h"
 
 #include <cstdio>
 #include <iostream>
-#include <qlogging.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 Camera::Camera(const glm::vec3 up,
@@ -17,7 +17,8 @@ Camera::Camera(const glm::vec3 up,
                const double nearPlane,
                const double farPlane,
                const double aspectRatio):
-    mFOV(FOV), mNearPlane(nearPlane), mFarPlane(farPlane), mAspectRatio(aspectRatio)
+    mFOV(FOV), mNearPlane(nearPlane), mFarPlane(farPlane), mAspectRatio(aspectRatio),
+    mAnchorPoint(WORLD_ORIGIN)
 {
     const glm::mat4 translatedRotationMatrix(
         glm::vec4(right, 0.0),

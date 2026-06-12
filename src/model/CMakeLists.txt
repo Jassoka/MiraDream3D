@@ -12,20 +12,38 @@ add_library(Model STATIC
         Scene.cpp
         Node.cpp
         Mesh.cpp
-        ../../include/model/PrimitiveMeshes.hpp
         AssetImporter.cpp
         ../../include/model/AssetImporter.h
+        ../../include/model/PrimitiveMeshes.h
+        PrimitiveMeshes.cpp
 )
 
 target_include_directories(Model PUBLIC
-        ${DIR_INC}
         ${CMAKE_SOURCE_DIR}/libs
         PRIVATE
-        ${CMAKE_SOURCE_DIR}/include/util
-
+        ${DIR_INC}
 )
 
-target_link_libraries(Model PRIVATE
-        assimp
+#ASSIMP
+set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
+
+set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "" FORCE)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/libs/assimp ${CMAKE_CURRENT_BINARY_DIR}/assimp_build)
+
+target_compile_options(assimp PRIVATE
+        -Wno-error
+        -Wno-unknown-warning-option
+)
+
+
+
+target_link_libraries(Model PUBLIC
         Qt${QT_VERSION_MAJOR}::OpenGL
+        PRIVATE
+        assimp
 )

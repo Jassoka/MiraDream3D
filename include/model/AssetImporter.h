@@ -1,7 +1,7 @@
-#ifndef MIRADREAM3D_LOADFILE_H
-#define MIRADREAM3D_LOADFILE_H
-#include "model/Scene.h"
+#ifndef MIRADREAM3D_ASSETIMPORTER_H
+#define MIRADREAM3D_ASSETIMPORTER_H
 
+class Scene;
 /**
  * @brief Class which implements static methods for assert importation within the software
  */
@@ -18,4 +18,4 @@ public:
 };
 
 
-#endif //MIRADREAM3D_LOADFILE_H
+#endif //MIRADREAM3D_ASSETIMPORTER_H
