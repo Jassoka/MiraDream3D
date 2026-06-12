@@ -78,7 +78,11 @@ public:
 
     void addVertex(const Vertex &vertex);
     //void generateEdges();
-    void generateHalfEdges();
+    /**
+     * @brief
+     * @param facesPerVertex List faces per vertex (within a geometric vertex)
+     */
+    void generateHalfEdges(std::vector<std::vector<uint32_t>> facesPerVertex);
     void triangulate();
     void addQuad(const Face &face);
     void addTriangle(const Face &face);

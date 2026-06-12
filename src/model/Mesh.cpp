@@ -117,7 +117,7 @@ void Mesh::generateEdges()
 }
 */
 
-void Mesh::generateHalfEdges()
+void Mesh::generateHalfEdges(std::vector<std::vector<uint32_t>> facesPerVertex)
 {
 
     std::vector<uint8_t> visitedFace(mFaces.size(), 0);
