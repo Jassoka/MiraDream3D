@@ -128,9 +128,6 @@ void Mesh::generateHalfEdges(std::vector<std::vector<uint32_t>> facesPerVertex)
 
 
     mHalfEdges.clear();
-
-    //TODO FUSIONNER LES VERTEX DE MEME POINT (vertex géometriques) (ça implique des faces géométriques distinctes aussi)
-    //TODO chaque vertex geometrique stocke une half edge qui lui appartient pour O(1) lookup
     std::vector<std::array<int32_t, 2>> adjacentFacesToEdge;
     std::unordered_map<uint64_t, uint32_t> edgeMap;
 
@@ -176,7 +173,7 @@ void Mesh::generateHalfEdges(std::vector<std::vector<uint32_t>> facesPerVertex)
         }
     }();
 
-
+    /*
     auto facesPerVertex = std::vector<std::vector<uint32_t>>(mVertices.size());
     for (uint32_t fID = 0; fID < mFaces.size(); fID++)
     {
@@ -185,22 +182,26 @@ void Mesh::generateHalfEdges(std::vector<std::vector<uint32_t>> facesPerVertex)
             facesPerVertex[f[i]].push_back(fID);
         }
     }
+    */
 
+    std::vector<glm::vec3> normalPerFace(mFaces.size());
     while (facesToVisit != 0)
     {
         // On suppose le mesh un manifold
         /* Trouver la liste des extremums en x */
         int firstIndex = 0;
         while (visitedVertex[firstIndex]) firstIndex++;
-        float xMax = mVertices[firstIndex].x;
-        for (uint32_t idxV = firstIndex; idxV < mVertices.size(); idxV ++)
+        float xMax = getGeometricVertexPosition(firstIndex).x;
+        for (uint32_t idxV = firstIndex; idxV < mGeometricVertices.size(); idxV ++)
         {
-            if (mVertices[idxV].x > xMax && !visitedVertex[idxV]) xMax = mVertices[idxV].x;
+            const float currX = getGeometricVertexPosition(idxV).x;
+            if (currX > xMax && !visitedVertex[idxV]) xMax = currX;
         }
         std::unordered_set<uint32_t> extremums;
-        for (uint32_t idxV = firstIndex; idxV < mVertices.size(); idxV ++)
+        for (uint32_t idxV = firstIndex; idxV < mGeometricVertices.size(); idxV ++)
         {
-            if (xMax - mVertices[idxV].x < FLT_EPSILON && !visitedVertex[idxV]) extremums.insert(idxV);
+            const float currX = getGeometricVertexPosition(idxV).x;
+            if (xMax - currX < FLT_EPSILON && !visitedVertex[idxV]) extremums.insert(idxV);
         }
         // On cherche un point Vx tq il existe un voisin non extremum
         uint32_t Vx = -1;
@@ -218,15 +219,13 @@ void Mesh::generateHalfEdges(std::vector<std::vector<uint32_t>> facesPerVertex)
             }
         }
 
-        std::vector<glm::vec3> normalPerFace(mFaces.size()); //TODO envoyer les normales dans ce vecteur
         uint32_t faceID;
 
         // Si il n'existe pas: alors c'est plat sur x, on prend n'importe quelle premiere normale
-        halfEdgeDirection firstOrientation = defaultHalfEdgeDirection;
         if (Vx == -1)
         {
             faceID = 0;
-            normalPerFace[faceID] = getNormal(mFaces[faceID], firstOrientation);
+            normalPerFace[faceID] = getNormal(mFaces[faceID], defaultHalfEdgeDirection);
         }
         // Sinon: soit Vx ce point, on nomme E la moyenne des points adjacents
         // On prend n'importe quelle face (0), et on a EE' (E' proj ortho de E sur la face) sa normale
@@ -237,7 +236,8 @@ void Mesh::generateHalfEdges(std::vector<std::vector<uint32_t>> facesPerVertex)
         else
         {
             faceID = facesPerVertex[Vx][0];
-            findNormalAndOrientation(Vx, facesPerVertex[Vx], normalPerFace[faceID], firstOrientation);
+            const halfEdgeDirection firstOrientation = findFaceOrientation(Vx, facesPerVertex[Vx], &normalPerFace[faceID]);
+            if (firstOrientation != defaultHalfEdgeDirection) swapFaceOrientation(faceID); // On oriente correctement les faces
         }
         // 1ere face
         Face &currFace = mFaces[faceID];
@@ -256,15 +256,13 @@ void Mesh::generateHalfEdges(std::vector<std::vector<uint32_t>> facesPerVertex)
             const uint32_t next_i = (i+1)%faceSize;
             const uint32_t prev_i = (i + faceSize -1)%faceSize;
             const uint32_t origin = currFace[i];
-            const uint32_t end = currFace[(firstOrientation == defaultHalfEdgeDirection) ? next_i : prev_i];
+            const uint32_t end = currFace[next_i];
 
             // On oriente les faces pour être dans le sens des half edges
 
             mHalfEdges.push_back(HalfEdge{halfEdgeMax + next_i, halfEdgeMax + prev_i, faceID, -1, origin, end});
             visitedVertex[origin] = 1;
         }
-
-        if (firstOrientation != defaultHalfEdgeDirection) swapFaceOrientation(faceID);
         // Propagation des half edges, jusqu'a que chaque face soit touchée
 
         visitedFace[faceID] = 1;
@@ -372,14 +370,28 @@ void Mesh::generateHalfEdges(std::vector<std::vector<uint32_t>> facesPerVertex)
                 visitedVertex[origin] = 1;
             }
 
-
             if (faceOrientation != defaultHalfEdgeDirection) swapFaceOrientation(neighbouringFace);
+            normalPerFace[neighbouringFace] = getNormal(currFace, defaultHalfEdgeDirection);
             halfEdgeIterationIndex++;
+        }
+    }
+    for (uint32_t gIdx = 0; gIdx < mGeometricVertices.size(); gIdx++)
+    {
+        auto [vertices, halfEdge] = mGeometricVertices[gIdx];
+        //TODO trouver une solution pour rajouter un half edge par geometric vertex
+        for (uint32_t vIdx = 0; vIdx < vertices.size(); vIdx++)
+        {
+            uint32_t faceID = facesPerVertex[gIdx][vIdx];
+            glm::vec3 normal = normalPerFace[faceID];
+            mVertices[vIdx].nx = normal.x;
+            mVertices[vIdx].ny = normal.y;
+            mVertices[vIdx].nz = normal.z; //TODO la société si yavait un setter pour la normale
         }
     }
 #ifdef TEST_HALFEDGES
     std::cout << "Nb of half edges: " << mHalfEdges.size() << '\n';
     std::cout << "Nb of edges: "<< mEdges.size() << '\n';
+    for (auto v : normalPerFace) {std::cout << v.x << " " << v.y << " " << v.z << '\n';}
 #endif
 }
 
@@ -420,15 +432,17 @@ void Mesh::triangulate()
 #endif
 }
 
-void Mesh::findNormalAndOrientation(uint32_t AId,const std::vector<uint32_t> &adjacentFaces, glm::vec3 &normal, halfEdgeDirection &direction)
+halfEdgeDirection Mesh::findFaceOrientation(uint32_t AId,const std::vector<uint32_t> &adjacentFaces, glm::vec3 *normalPtr) const
 {
     //Si point isolé
+    glm::vec3 normal;
     if  (adjacentFaces.size()==0) {
         normal=glm::vec3(0.0,0.0,1.0);
-        direction=ABC;
+        if (normalPtr) *normalPtr = normal;
+        return ABC;
     }
     //Calcul de E
-    glm::vec3 E=glm::vec3(0.0);
+    glm::vec3 E=glm::vec3(0.0); // E : mean of points adjacents to A
     std::vector<bool> visitedVertices(mVertices.size(),false);
     visitedVertices[AId]=true;
     uint32_t nAdjacentVertices=0;
@@ -452,18 +466,23 @@ void Mesh::findNormalAndOrientation(uint32_t AId,const std::vector<uint32_t> &ad
     glm::vec3 A=glm::vec3(AVertex.x,AVertex.y,AVertex.z);
     glm::vec3 EA=A-E;
     normal=getNormal(mFaces[adjacentFaces[0]],halfEdgeDirection::ABC);
+
+    halfEdgeDirection orientation;
     if (glm::dot(EA,normal)>0) {
-        direction=ABC;
+        orientation = ABC;
     }
     else {
         normal=-normal;
-        direction=ACB;
+        orientation = ACB;
     }
+    if (normalPtr) *normalPtr = normal;
+    return orientation;
 }
 
 
 
-glm::vec3 Mesh::getNormal(Face &face,halfEdgeDirection orientation){
+glm::vec3 Mesh::getNormal(const Face &face, const halfEdgeDirection orientation) const
+{
     Vertex AVertex=mVertices[face[0]];
     Vertex BVertex=mVertices[face[1]];
     Vertex CVertex=mVertices[face[2]];

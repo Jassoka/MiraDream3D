@@ -139,13 +139,16 @@ private:
         }
     }
 
+    glm::vec3 getGeometricVertexPosition(const uint32_t idx) const
+    {
+        return mVertices[mGeometricVertices[idx].vertices[0]].toVec3();
+    }
+
     /**
-     *
-     * A :
-     * E : mean of points adjacents to A
+     * @brief //TODO
      **/
-    void findNormalAndOrientation(uint32_t AId ,const std::vector<uint32_t> &adjacentFaces, glm::vec3 &normal, halfEdgeDirection &direction);
-    glm::vec3 getNormal(Face &face,halfEdgeDirection orientation);
+    halfEdgeDirection findFaceOrientation(uint32_t AId,const std::vector<uint32_t> &adjacentFaces, glm::vec3 *normalPtr = nullptr) const;
+    glm::vec3 getNormal(const Face &face,halfEdgeDirection orientation) const;
 
 
 
