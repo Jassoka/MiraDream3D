@@ -255,6 +255,9 @@ void HalfEdgeBuilder::buildImpl()
     uint32_t facesToVisit = faces.size();
     mNormalPerFace.resize(faces.size());
 
+    mVisitedFace.resize(faces.size());
+    mVisitedVertex.resize(mMesh.mGeometricVertices.size());
+
     //std::vector<glm::vec3> normalPerFace(faces.size());
     while (facesToVisit != 0)
     {
