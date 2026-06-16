@@ -5,8 +5,9 @@
 #ifndef MIRADREAM3D_ERRORCONTROLLER_H
 #define MIRADREAM3D_ERRORCONTROLLER_H
 #include <string>
-
+#include <stdexcept>
 class ErrorController {
+
 public:
     static void showError(const std::runtime_error &e,const std::string& title="Error");
 };

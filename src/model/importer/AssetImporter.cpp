@@ -65,29 +65,7 @@ Node* aiNodeToNode(aiNode* nodeAi, Mesh** sceneMeshes){
 
 */
 
-bool AssetImporter::loadObjFile(const std::string &path, Scene* scene) {
+void AssetImporter::loadObjFile(const std::string &path, Scene* scene) {
     ObjParser parser = ObjParser(path,scene);
-
-    try {
-        parser.parse();
-    }
-    catch (const ObjLexerException &e ) {
-        ErrorController::showError(e);
-        return false;
-    }
-    catch (const ObjParserException &e ) {
-        ErrorController::showError(e);
-        return false;
-    }
-    catch (const ObjException &e ) {
-        ErrorController::showError(e);
-        return false;
-    }
-    catch (const std::exception &e) {
-        exit(3);//erreurs non prevues;
-        return false;
-    }
-
-    return true;
-
+    parser.parse();
 }
