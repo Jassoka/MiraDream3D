@@ -6,7 +6,7 @@
 #define MIRADREAM3D_OBJPARSING_HPP
 #include <string>
 
-#include "file_funcs.hpp"
+#include "util/file_funcs.hpp"
 #include "glm/vec2.hpp"
 #include "model/Node.h"
 #define MAX_OBJ_NAME_SIZE 10

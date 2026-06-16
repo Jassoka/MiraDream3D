@@ -15,12 +15,15 @@ class Scene
 public:
     Scene();
     ~Scene();
+    Node* getRootNode() const { return mRootNode; }
+    const std::vector<Mesh> &getMeshes() const;
     void clearScene();
     void addNode(Node* nodePtr) const;
     void addMesh(const Mesh &mesh);
     void addTexture(const Texture &texture);
     void addMaterial(const Material &material);
-    const std::vector<Mesh> &getMeshes() const;
+    Mesh* newMesh();
+    void removeLastMesh();
 private:
     Camera mSceneCamera; //TODO: plusieurs caméras
     glm::vec3 mLight; //TODO: plusieurs lumières

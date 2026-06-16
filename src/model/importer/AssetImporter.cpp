@@ -14,8 +14,8 @@
  * @param sceneMeshes
  * @return
  */
+/*
 Node* aiNodeToNode(aiNode* nodeAi,Mesh** sceneMeshes);
-
 
 bool AssetImporter::loadAssimpScene(const std::string &path, Scene *scene) {
     //Imporation
@@ -62,7 +62,7 @@ Node* aiNodeToNode(aiNode* nodeAi, Mesh** sceneMeshes){
 }
 
 
-
+*/
 bool AssetImporter::loadObjFile(const std::string &path, Scene* scene) {
     ObjParser parser = ObjParser(path,scene);
     parser.parse();

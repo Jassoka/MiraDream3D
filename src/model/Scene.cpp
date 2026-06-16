@@ -24,9 +24,10 @@ Scene::Scene():
             defaultSceneCameraNearPlane,
             defaultSceneCameraFarPlane,
             defaultSceneAspectRatio
-        )),
-    mRootNode(new Node())
+        ))
 {
+    std::string name="Root node";
+    mRootNode =static_cast<Node*>(new HierarchyNode(name));
 }
 
 Scene::~Scene() {
@@ -41,7 +42,7 @@ void Scene::clearScene()
 
 void Scene::addNode(Node* nodePtr) const
 {
-    this->mRootNode->addChild(nodePtr);
+    dynamic_cast<HierarchyNode*>(this->mRootNode)->addChild(nodePtr);
 }
 void Scene::addMesh(const Mesh &mesh) {
     this->mMeshList.push_back(mesh);
@@ -56,4 +57,13 @@ void Scene::addMaterial(const Material &material) {
 const std::vector<Mesh> &Scene::getMeshes() const
 {
     return mMeshList;
+}
+
+Mesh* Scene::newMesh() {
+    auto m = Mesh(0);
+    addMesh(m);
+    return &mMeshList[mMeshList.size()-1];
+}
+void Scene::removeLastMesh() {
+    mMeshList.pop_back();
 }

@@ -105,11 +105,6 @@ struct HalfEdge {
 
 };
 
-struct geometricVertex
-{
-    std::vector<uint32_t> vertices;
-    uint32_t halfEdge;
-};
 #ifdef ENABLE_DEBUG
 inline std::ostream& operator<<(std::ostream& os, const HalfEdge &he) {
     os << he.origin << " -> " << he.end << " next "<< he.next << " twin " << he.twin << std::endl;

@@ -13,6 +13,7 @@ halfEdgeDirection Mesh::defaultHalfEdgeDirection = ABC;
 Mesh::Mesh(uint32_t MaterialID):mMaterialID(MaterialID) {
 
 }
+/*
 Mesh::Mesh(aiMesh &meshAi) {
     this->mMaterialID=meshAi.mMaterialIndex;
 
@@ -48,7 +49,7 @@ Mesh::Mesh(aiMesh &meshAi) {
     }
     triangulate();
     generateHalfEdges();
-}
+}*/
 
 bool Mesh::operator==(const Mesh& other) const
 {

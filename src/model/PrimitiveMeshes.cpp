@@ -21,7 +21,7 @@ Mesh &PrimitiveMeshes::getCube()
         return *(getInstance().mCube);
 }
 
-
+/*
 void PrimitiveMeshes::generateCube() const
 {
         // === Coin (+X, +Y, +Z) ===
@@ -88,3 +88,4 @@ void PrimitiveMeshes::generateCube() const
         mCube->triangulate() ;
         mCube->generateHalfEdges();
 }
+*/

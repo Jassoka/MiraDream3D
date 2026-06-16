@@ -11,7 +11,7 @@
 SceneController::SceneController(QObject* parent, RenderController *renderController) :
 QObject(parent), mRenderController(renderController), mScene(new Scene())
 {
-    mScene->addMesh(PrimitiveMeshes::getCube());
+    //mScene->addMesh(PrimitiveMeshes::getCube());
     mRenderController->changedGeometry();
 }
 
@@ -24,7 +24,7 @@ void SceneController::importScene(const std::string &path) const
 {
     loadBlankScene();
     mRenderController->changedGeometry();
-    AssetImporter::loadAssimpScene(path, getScene());
+    AssetImporter::loadObjFile(path, getScene()); //TODO faire switch sur extension quand meme
 }
 
 void SceneController::loadBlankScene() const
