@@ -60,6 +60,7 @@ struct Vertex
         u=vt[0];
         v=vt[1];
     }
+    void setNormal(const glm::vec3 n) { nx = n.x; ny = n.y; nz = n.z; }
 };
 
 
