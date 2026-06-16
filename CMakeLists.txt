@@ -46,6 +46,7 @@ add_subdirectory(src/controller)
 
 set(PROJECT_SOURCES
         src/main.cpp
+        include/model/HalfEdgeBuilder.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

@@ -8,12 +8,14 @@
 #include "geometry.hpp"
 
 struct aiMesh;
+class HalfEdgeBuilder;
 
 enum halfEdgeDirection {ABC,ACB};
 
 
 class Mesh
 {
+    friend class HalfEdgeBuilder;
 public:
 
     /**
@@ -102,16 +104,29 @@ public:
      * @brief
      * @param facesPerVertex List faces per vertex (within a geometric vertex)
      */
-    void generateHalfEdges(std::vector<std::vector<uint32_t>> facesPerVertex);
+    void generateHalfEdges(const std::vector<std::vector<uint32_t>> *facesPerVertex = nullptr);
     void triangulate();
     void addQuad(const Face &face);
     void addTriangle(const Face &face);
 private:
     void addEdge(const Edge &edge);
     void addHalfEdge(const HalfEdge &halfEdge);
+
     uint8_t getNbVertex(const uint32_t faceID) const
     {
         return mVertexCountPerFace[faceID];
+    }
+
+    void swapFaceOrientation(const uint32_t faceID)
+    {
+        Face &f = mFaces[faceID];
+        const uint32_t n = mVertexCountPerFace[faceID];
+        for (uint32_t i = 0; i < n/2; i++)
+        {
+            const uint32_t tmp = f[i];
+            f[i] = f[n-i-1];
+            f[n-i-1] = tmp;
+        }
     }
 
     /**
@@ -131,17 +146,6 @@ private:
         return -1;
     }
 
-    void swapFaceOrientation(const uint32_t faceID)
-    {
-        Face &f = mFaces[faceID];
-        const uint32_t n = mVertexCountPerFace[faceID];
-        for (uint32_t i = 0; i < n/2; i++)
-        {
-            const uint32_t tmp = f[i];
-            f[i] = f[n-i-1];
-            f[n-i-1] = tmp;
-        }
-    }
 
     glm::vec3 getGeometricVertexPosition(const uint32_t idx) const
     {

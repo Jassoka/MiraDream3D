@@ -466,7 +466,7 @@ void ObjParser::removeDefaultMesh() {
 
 void ObjParser::finishMesh() {
     mCurrentMesh->triangulate();
-    mCurrentMesh->generateHalfEdges(mCurrentMeshFacePerGeometricVertex);
+    mCurrentMesh->generateHalfEdges(&mCurrentMeshFacePerGeometricVertex);
 }
 
 
