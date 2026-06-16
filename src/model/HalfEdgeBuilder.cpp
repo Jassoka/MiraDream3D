@@ -275,10 +275,7 @@ void HalfEdgeBuilder::generateHardNormals() const
         for (uint32_t vIdx = 0; vIdx < vertices.size(); vIdx++)
         {
             const uint32_t faceID = (*mFacesPerVertex)[gIdx][vIdx];
-            const glm::vec3 normal = mNormalPerFace[faceID];
-            mMesh.mVertices[vIdx].nx = normal.x;
-            mMesh.mVertices[vIdx].ny = normal.y;
-            mMesh.mVertices[vIdx].nz = normal.z; //TODO la société si yavait un setter pour la normale
+            mMesh.mVertices[vIdx].setNormal(mNormalPerFace[faceID]);
         }
     }
 }
