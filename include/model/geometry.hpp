@@ -12,6 +12,7 @@
 #include <ostream>
 
 #include "glm/vec3.hpp"
+#include "glm/vec2.hpp"
 #include "glm/common.hpp"
 struct Vertex
 {
@@ -35,10 +36,20 @@ struct Vertex
     glm::vec3 toVec3() {
         return(glm::vec3(x,y,z));
     }
+    Vertex(float xPos,float yPos,float zPos,float xN,float yN,float zN,float U,float V) {
+        x=xPos;
+        y=yPos;
+        z=zPos;
+        nx=xN;
+        ny=yN;
+        nz=zN;
+        u=U;
+        v=V;
+    }
     Vertex(glm::vec3 vpos,glm::vec3 vn,glm::vec2 vt) {
         x=vpos[0];
-        y=vpos[0];
-        z=vpos[0];
+        y=vpos[1];
+        z=vpos[2];
         nx=vn[0];
         ny=vn[1];
         nz=vn[2];

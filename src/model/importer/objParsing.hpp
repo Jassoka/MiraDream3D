@@ -6,8 +6,12 @@
 #define MIRADREAM3D_OBJPARSING_HPP
 #include <string>
 
+#include "file_funcs.hpp"
+#include "glm/vec2.hpp"
 #include "model/Node.h"
 #define MAX_OBJ_NAME_SIZE 10
+
+class Scene;
 
 enum ObjTokenType {
     IDENTIFIER,
@@ -47,36 +51,43 @@ private:
 class ObjParser {
 public:
 
-    ObjParser(const std::string &file,Node* parentNode):mLexer(ObjLexer(file)),mParentNode(parentNode){};
-
-private:
-
-    void execLexer();
+    ObjParser(const std::string &file,Scene* scene):mLexer(ObjLexer( readFileToString(file))),mScene(scene){};
     void parse();
+private:
+    void execParser();
+
 
     ObjToken mCurrent;
     ObjLexer mLexer;
-    Node* mParentNode;
+    Scene* mScene;
     Node* mCurrentNode=nullptr;
     Mesh* mCurrentMesh=nullptr;
-    uint32_t mCurrentMeshOrginVId=0;
+    Node* mDefaultMeshNode=nullptr;
+    uint32_t mCurrentMeshOriginVId=0;
+    bool mCurrentMeshHasNormals=true;
+    bool mCurrentMeshHasUVCoords=true;
+    std::vector<std::vector<uint32_t>> mCurrentMeshFacePerGeometricVertex;
+    std::unordered_map<uint32_t,uint32_t> mCurrentMeshGeometricVerticesMap;
     std::vector<glm::vec3> mV;
     std::vector<glm::vec3> mVN;
-    std::vector<glm::vec3> mVT;
+    std::vector<glm::vec2> mVT;
     std::vector<uint32_t> mNoNormal;
     std::vector<uint32_t> mNoUv;
 
     void next(){mCurrent=mLexer.next();};
-
+    void finishMesh();
     void parseV();
     void parseVN();
     void parseVT();
-    void parseF(Mesh &parentMesh);
+    void parseF();
     void parseO();
     void parseG();
+    void parseL();
     void parseUsemtl();
     void parseMtllib();
-    void parseL(Mesh &parentMesh);
+
+
+    void removeDefaultMesh();
 
 
 };

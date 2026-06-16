@@ -27,5 +27,6 @@ Scene *SceneController::getScene()
 }
 
 void SceneController::loadBlankScene() {
-    mScene=Scene();
+    auto s = new Scene();
+    mScene=*s;
 }

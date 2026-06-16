@@ -15,7 +15,7 @@ public:
      * @return Success of import
      */
     static bool loadAssimpScene(const std::string &path, Scene *scene);
-    static bool loadObjFile(const std::string &path, Scene *scene);
+    static bool loadObjFile(const std::string &path, Scene* scene);
 };
 
 

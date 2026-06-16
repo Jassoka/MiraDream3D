@@ -7,6 +7,9 @@
 #include <array>
 #include <iostream>
 
+#include "glm/vec2.hpp"
+#include "model/Scene.h"
+
 
 //accepte 1 à 9, ., - ;
 bool isNumber(char &c) {
@@ -167,133 +170,295 @@ void ObjLexer::skipLine() {
     mPos++;
 }
 
+
+
 ObjToken ObjLexer::errorToken() {
     std::cout <<"mot clef inconnu dans le Lexer"<<std::endl;
     return ObjToken{.type=UNKNOWN};
 }
 
+void ObjParser::parse() {
+    next();
+
+
+    //bool oEncountered=false;
+    bool gEncountered=false;
+    mCurrentNode=mScene->getRootNode();
+    mCurrentMesh=mScene->newMesh();
+    mDefaultMeshNode = dynamic_cast<Node*>(new MeshNode("",mScene->getMeshes().size()-1));
+    dynamic_cast<HierarchyNode*>(mCurrentNode)->addChild(mDefaultMeshNode);
+
+
+
+
+
+    while (mCurrent.type != END ) {
+        if (mCurrent.type != IDENTIFIER) {
+            if (mCurrent.type!=NEWLINE){
+                //TODO explosion
+                return;}
+            next();
+            continue;
+        }
+        if (mCurrent.identifier=="v") {
+            parseV();
+            next();
+        }
+        else if (mCurrent.identifier=="f"){
+            parseF();
+            next();
+        }
+        else if (mCurrent.identifier=="vn"){
+            parseVN();
+            next();
+        }
+        else if (mCurrent.identifier=="vt"){
+            parseVT();
+            next();
+        }
+        else if (mCurrent.identifier=="g"){
+            if (!gEncountered) {
+                if (!gEncountered && mCurrentMesh->getVertices().empty()) {
+                    removeDefaultMesh();   // ← le 1er g supprime le mesh par défaut
+                }
+                else {mDefaultMeshNode=nullptr;}
+                gEncountered = true;
+            }
+            parseG();
+            next();
+        }
+        else if (mCurrent.identifier=="o"){
+            parseO();
+            next();
+        }
+        else {
+            //TODO explosion
+            return;
+        }
+    }
+    finishMesh();
+}
+
+
 void ObjParser::parseV() {
     glm::vec3 v;
-    auto expectedTokenType= INT;
     int coord=0;
+    next();
     while (mCurrent.type != NEWLINE && mCurrent.type != END ){//TODO les commentaires en fin de ligne enculent cela
+        if (coord < 3) {
+            if (mCurrent.type==FLOAT) {
+                v[coord]= mCurrent.value.floatValue;
+            }
+            else if (mCurrent.type==INT) {
+                v[coord]= mCurrent.value.intValue;
+            }
+            else {
+                //TODO explosion
+            }
+        }
+        else {
+            //TODO explosion
+        }
+        coord++;
         next();
-        if (mCurrent.type!=expectedTokenType) {
-            break;
-        }
-        if (mCurrent.type == FLOAT) {
-            v[coord]=mCurrent.value.floatValue;
-            expectedTokenType=SLASH;
-            coord++;
-        }
-        else expectedTokenType=FLOAT;
     }
     if (coord!=3) {
+        //TODO explosion
         return;
-    }//TODO explosion
-
+    }
     mV.push_back(v);
-    mCurrentMesh->addGeometricVertex(GeometricVertex {});
 }
 
 void ObjParser::parseVN() {
-    glm::vec3 v;
-    auto expectedTokenType= INT;
+    glm::vec3 vn;
     int coord=0;
+    next();
     while (mCurrent.type != NEWLINE && mCurrent.type != END ){//TODO les commentaires en fin de ligne enculent cela
+        if (coord < 3 ) {
+            if (mCurrent.type==FLOAT) {
+                vn[coord]= mCurrent.value.floatValue;
+            }
+            else if (mCurrent.type==INT) {
+                vn[coord]= mCurrent.value.intValue;
+            }
+            else {
+                //TODO explosion
+            }
+        }
+        else {
+            //TODO explosion
+        }
+        coord++;
         next();
-        if (mCurrent.type!=expectedTokenType) {
-            break;
-        }
-        if (mCurrent.type == FLOAT) {
-            v[coord]=mCurrent.value.floatValue;
-            expectedTokenType=SLASH;
-            coord++;
-        }
-        else expectedTokenType=FLOAT;
     }
     if (coord!=3) {
+        //TODO explosion
         return;
-    }//TODO explosion
-
-    mVN.push_back(v);
+    }
+    mVN.push_back(glm::normalize(vn));
 }
 
 void ObjParser::parseVT() {
-    glm::vec3 v=glm::vec3(0);
-    auto expectedTokenType= INT;
+    glm::vec3 vt;
     int coord=0;
+    next();
     while (mCurrent.type != NEWLINE && mCurrent.type != END ){//TODO les commentaires en fin de ligne enculent cela
+        if (coord < 3 ) {
+            if (mCurrent.type==FLOAT) {
+                vt[coord]= mCurrent.value.floatValue;
+            }
+            else if (mCurrent.type==INT) {
+                vt[coord]= mCurrent.value.intValue;
+            }
+            else {
+                //TODO explosion
+            }
+        }
+        else {
+            //TODO explosion
+        }
+        coord++;
         next();
-        if (mCurrent.type!=expectedTokenType) {
-            break;
-        }
-        if (mCurrent.type == FLOAT) {
-            v[coord]=mCurrent.value.floatValue;
-            expectedTokenType=SLASH;
-            coord++;
-        }
-        else expectedTokenType=FLOAT;
     }
-    if (coord<3&&coord>4) {
-        return;
-    }//TODO explosion
 
-    mVT.push_back(v);
+    mVT.push_back(glm::vec2(vt));
 }
 
 void ObjParser::parseO() {
     next();
-    std::string name=" ";
+    std::string name="";
     if (mCurrent.type==IDENTIFIER) {
         name=mCurrent.identifier;
+        next();
+    }
+    auto* newNode = new HierarchyNode(name);
+
+    // si le mesh par défaut existe encore, le déplacer dans ce nouvel objet
+    if (mDefaultMeshNode != nullptr) {
+        dynamic_cast<HierarchyNode*>(mCurrentNode)->popLastChild();
+        newNode->addChild(mDefaultMeshNode);
+        mDefaultMeshNode = nullptr;
+
+    }else {
+        // Crée un mesh propre pour ce nouvel objet
+        finishMesh();
+        mCurrentMesh = mScene->newMesh();
+        auto* meshNode = new MeshNode(name, mScene->getMeshes().size() - 1);
+        newNode->addChild(meshNode);
+        mCurrentMeshGeometricVerticesMap.clear();
+        mCurrentMeshFacePerGeometricVertex.clear();
+        mCurrentMeshHasUVCoords = true;
+        mCurrentMeshHasNormals = true;
     }
 
-    mCurrentNode = new Node(name);    //TODO liberer
-    mParentNode->addChild(mCurrentNode);
+    mCurrentNode = newNode;
+    dynamic_cast<HierarchyNode*>(mScene->getRootNode())->addChild(mCurrentNode);
 }
-void ObjParser::parseF(Mesh &parentMesh) {
-    uint nVertex=0;
-    uint nComposante=0;
-    next();
-    uint32_t v=0;
-    int vn=-1;
-    int vt=-1;
 
-    auto verticesMeshTab=;
+void ObjParser::parseG() {
+    next();
+    std::string name="";
+    while (mCurrent.type==IDENTIFIER)
+    {
+        if (name!="") {
+            name+=" ";
+        }
+        name+=mCurrent.identifier;
+        next();
+    }
+    if (mCurrentMesh) finishMesh();
+    mCurrentMesh=mScene->newMesh();
+    dynamic_cast<HierarchyNode *>(mCurrentNode)->addChild(new MeshNode(name,mScene->getMeshes().size()-1));
+    mCurrentMeshFacePerGeometricVertex.clear();
+    mCurrentMeshGeometricVerticesMap.clear();
+    mCurrentMeshHasUVCoords=true;
+    mCurrentMeshHasNormals=true;
+}
+
+
+void ObjParser::parseF() {
+    uint nVertex=0;
+    next();
+    Face face;
 
     while (mCurrent.type != NEWLINE && mCurrent.type != END ) {
-
-        if (mCurrent.type!=IDENTIFIER) {
+        int v=-1;
+        int vn=-1;
+        int vt=-1;
+        if (mCurrent.type!=INT) {
             break;
         }
-
+        v=mCurrent.value.intValue-1;
         next();
+        if (mCurrent.type==SLASH) {
+            next();
+            if (mCurrent.type==INT) {
+                vt=mCurrent.value.intValue-1;
+                next();
+            }
 
-        mCurrentMesh->addVertex(Vertex(mVector));
-        mCurrentMesh->getGeometricVertices()[v].vertices.push_back(v);
+            if (mCurrent.type==SLASH) {
+                next();
+                if (mCurrent.type==INT) {
+                    vn=mCurrent.value.intValue-1;
+                    next();
+                }
+            }
+
+        }
+
+        //quand on a fini de parser le point
+
+        if (mCurrentMeshHasNormals && vn==-1){mCurrentMeshHasNormals=false;}
+        if (mCurrentMeshHasUVCoords && vt==-1){mCurrentMeshHasUVCoords=false;}
+        mCurrentMesh->addVertex(Vertex(
+            mV[v],
+            (vn==-1) ? glm::vec3(0.0) : mVN[vn],
+                (vt==-1) ? glm::vec2(0.0) : mVT[vt]
+            ));
+        //creation du geomvertx s'il n'existe pas
+        if (mCurrentMeshGeometricVerticesMap.find(v)==mCurrentMeshGeometricVerticesMap.end()) {
+            mCurrentMesh->addGeometricVertex(GeometricVertex {});
+            mCurrentMeshFacePerGeometricVertex.push_back(std::vector<uint32_t>());
+            mCurrentMeshGeometricVerticesMap[v]=mCurrentMesh->getGeometricVertices().size()-1;
+        }
+
+        mCurrentMesh->getGeometricVertices()[mCurrentMeshGeometricVerticesMap[v]].vertices.push_back(mCurrentMesh->getVertices().size() - 1);
+        face[nVertex]=mCurrentMesh->getVertices().size()-1;
+        nVertex++;
+
+        for (int i = 0;i<nVertex;i++) {
+            mCurrentMeshFacePerGeometricVertex[mCurrentMeshGeometricVerticesMap[face[i]]].push_back(face[i]);
+        }
     }
 
-
-    auto sizeVerticesMeshTab= mCurrentMesh->getVertices().size();
-    Face face;
     switch (nVertex) {
         case(3):
-            face[0]=sizeVerticesMeshTab-3;
-            face[0]=sizeVerticesMeshTab-2;
-            face[0]=sizeVerticesMeshTab-1;
-            parentMesh.addTriangle(face);
+            mCurrentMesh->addTriangle(face);
             break;
         case(4):
-
-            face[0]=sizeVerticesMeshTab-4;
-            face[0]=sizeVerticesMeshTab-3;
-            face[0]=sizeVerticesMeshTab-2;
-            face[0]=sizeVerticesMeshTab-1;
-            parentMesh.addQuad(face);
+            mCurrentMesh->addQuad(face);
             break;
         default:
             return;//TODO explosion
             break;
     }
+}
+
+void ObjParser::removeDefaultMesh() {
+    // retirer le MeshNode du parent
+    auto* parent = dynamic_cast<HierarchyNode*>(mCurrentNode);
+    parent->removeLastChild();   // à ajouter dans HierarchyNode
+    delete dynamic_cast<MeshNode*>(mDefaultMeshNode);
+
+    // retirer le mesh de la scène
+    mScene->removeLastMesh();        // à ajouter dans Scene
+
+    mCurrentMesh = nullptr;
+    mDefaultMeshNode = nullptr;
+}
+
+void ObjParser::finishMesh() {
+    mCurrentMesh->triangulate();
+    mCurrentMesh->generateHalfEdges(mCurrentMeshFacePerGeometricVertex);
 }

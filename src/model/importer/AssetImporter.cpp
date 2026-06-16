@@ -6,6 +6,8 @@
 #include "model/Node.h"
 #include "model/AssetImporter.h"
 
+#include "objParsing.hpp"
+
 
 /**
  * @brief //TODO
@@ -50,11 +52,11 @@ Node* aiNodeToNode(aiNode* nodeAi, Mesh** sceneMeshes){
     Node* nodePtr = new Node();
     //On ajoute les meshes
     for (uint32_t i=0;i< nodeAi->mNumMeshes;i++) {
-        nodePtr->addMesh(nodeAi->mMeshes[i]);
+        //static_cast<HierarchyNode*>(nodePtr)->addMesh(nodeAi->mMeshes[i]);
     }
     //On cree les enfants
     for (uint32_t i=0;i< nodeAi->mNumChildren;i++) {
-        nodePtr->addChild(aiNodeToNode(nodeAi->mChildren[i],sceneMeshes));
+        //static_cast<HierarchyNode*>(nodePtr)->addChild(aiNodeToNode(nodeAi->mChildren[i],sceneMeshes));
     }
 
     return(nodePtr);
@@ -62,3 +64,8 @@ Node* aiNodeToNode(aiNode* nodeAi, Mesh** sceneMeshes){
 
 
 
+bool AssetImporter::loadObjFile(const std::string &path, Scene* scene) {
+    ObjParser parser = ObjParser(path,scene);
+    parser.parse();
+        return true;
+}

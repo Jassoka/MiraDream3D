@@ -356,6 +356,7 @@ void Mesh::generateHalfEdges()
 
 void Mesh::triangulate()
 {
+    mTriangles.clear();
     for (int i = 0; i < mFaces.size(); i++)
     {
         Face &f = mFaces[i];

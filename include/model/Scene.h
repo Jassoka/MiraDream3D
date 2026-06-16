@@ -21,7 +21,7 @@ private:
     static constexpr float defaultSceneAspectRatio = 16.0f/9.0f;
     Camera mSceneCamera; //TODO: plusieurs caméras
     glm::vec3 mLight; //TODO: plusieurs lumières
-    Node *mRootNode = nullptr;
+    Node* mRootNode = nullptr;
     std::vector<Mesh> mMeshList;
     std::vector<Texture> mTextureList;
     std::vector<Material> mMaterialList;
@@ -29,9 +29,15 @@ public:
 
     void addNode(Node* nodePtr);
     void addMesh(Mesh &mesh);
+    Mesh* newMesh();
+    void removeLastMesh();
     void addTexture(Texture &texture);
     void addMaterial(Material &material);
+    Node* getRootNode(){return mRootNode;};
     const std::vector<Mesh> &getMeshes() const;
+
+
+
     Scene();
     ~Scene();
 };

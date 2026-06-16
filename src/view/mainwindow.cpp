@@ -44,7 +44,10 @@ MainWindow::MainWindow(QWidget *parent,Engine* engine)
     );
     if (!path.isEmpty()) {
         mEngine->getSceneController()->loadBlankScene();
-        AssetImporter::loadAssimpScene(path.toStdString(),mEngine->getSceneController()->getScene());
+        // ← mettre à jour le pointeur APRÈS loadBlankScene, pas avant
+        mRenderWidget->setScene(mEngine->getSceneController()->getScene());
+        //AssetImporter::loadAssimpScene(path.toStdString(),mEngine->getSceneController()->getScene());
+        AssetImporter::loadObjFile(path.toStdString(),mEngine->getSceneController()->getScene());
         mRenderWidget->setHasChanged(true);
     }
 });

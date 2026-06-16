@@ -100,25 +100,39 @@ void Renderer::geometryRedrawTemplate()
     for (const Mesh &mesh : mScene->getMeshes() )
     {
         // Buffer de vertices
-        const auto vertices = mesh.getVertices();
-        const Vertex *vertices_data = vertices.data(); // Pointeur vers les vertices
+        std::vector<Vertex> allVertices;
+        std::vector<uint32_t> triangleIndices;
+        uint32_t vertexOffset = 0;
 
-        mVBO.allocate(vertices_data,vertices.size() * sizeof(Vertex));
+        for (const Mesh &mesh : mScene->getMeshes()) {
+            const auto& vertices = mesh.getVertices();
+            allVertices.insert(allVertices.end(), vertices.begin(), vertices.end());
 
+            for (const auto& t : mesh.getTriangles()) {
+                triangleIndices.push_back(t[0] + vertexOffset);
+                triangleIndices.push_back(t[1] + vertexOffset);
+                triangleIndices.push_back(t[2] + vertexOffset);
+            }
+            vertexOffset += vertices.size();
+        }
+        mVBO.allocate(allVertices.data(), allVertices.size() * sizeof(Vertex));
+        numTriangles = triangleIndices.size();
+        mEBO.bind();
+        mEBO.allocate(triangleIndices.data(), numTriangles * sizeof(uint32_t));
         if (m == ViewportMode::SOLID)
         {
             // Buffer des faces //TODO rajouter algo de triangulation
             //mesh.triangulate(); //TODO le faire ailleurs mais pas dans le draw
             const auto triangles = mesh.getTriangles();
-            std::vector<uint32_t> triangleIndices;
+            std::vector<uint32_t> triangleIndicesA;
             for (const auto& t: triangles)
             {
-                triangleIndices.push_back(t[0]);
-                triangleIndices.push_back(t[1]);
-                triangleIndices.push_back(t[2]);
+                triangleIndicesA.push_back(t[0]);
+                triangleIndicesA.push_back(t[1]);
+                triangleIndicesA.push_back(t[2]);
             }
-            const uint32_t *trig_data = triangleIndices.data();
-            numTriangles = triangleIndices.size();
+            const uint32_t *trig_data = triangleIndicesA.data();
+            numTriangles = triangleIndicesA.size();
 
             mEBO.bind();
             mEBO.allocate(trig_data,numTriangles * sizeof(uint32_t));

@@ -63,7 +63,7 @@ public:
     {
         return mTriangles;
     }
-    const std::vector<GeometricVertex>& getGeometricVertices() const
+     std::vector<GeometricVertex>& getGeometricVertices()
     {
         return mGeometricVertices;
     }
@@ -87,7 +87,6 @@ public:
     void triangulate();
     void addQuad(const Face &face);
     void addTriangle(const Face &face);
-
 private:
     void addEdge(const Edge &edge);
     void addHalfEdge(const HalfEdge &halfEdge);
