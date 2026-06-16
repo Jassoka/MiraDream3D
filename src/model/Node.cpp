@@ -1,30 +1,11 @@
 #include "model/Node.h"
-#include "model/Mesh.h"
-#include <cassert>
 
-void Node::addChild(Node* nodePtr) {
-    this->mChildren.push_back(nodePtr);
+Node::~Node() = default;
+
+size_t Node::getChildrenSize() const {
+    return 0;
 }
 
-size_t Node::getChildrenSize() const{
-    return(this->mChildren.size());
+bool Node::isLeaf() {
+    return true;
 }
-
-Node* Node::getChild(const uint32_t n) const {
-    assert(n<this->getChildrenSize());
-    return(this->mChildren[n]);
-}
-
-void Node::addMesh(uint32_t meshId){
-    this->mMeshes.push_back(meshId);
-}
-
-size_t Node::getMeshesSize() const {
-    return(this->mMeshes.size());
-}
-
-uint32_t Node::getMesh(const uint32_t n) const{
-    assert(n<this->getMeshesSize());
-    return(this->mMeshes[n]);
-}
-

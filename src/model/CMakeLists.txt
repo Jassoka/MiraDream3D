@@ -12,8 +12,10 @@ add_library(Model STATIC
         Scene.cpp
         Node.cpp
         Mesh.cpp
-        AssetImporter.cpp
+        importer/AssetImporter.cpp
         ../../include/model/AssetImporter.h
+        importer/objParsing.cpp
+        importer/objParsing.hpp
         ../../include/model/PrimitiveMeshes.h
         PrimitiveMeshes.cpp
 )

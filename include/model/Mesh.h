@@ -78,6 +78,10 @@ public:
         return mComponents;
     }
 
+     std::vector<GeometricVertex>& getGeometricVertices()
+    {
+        return mGeometricVertices;
+    }
     /**
      * @brief Prints mesh contents in the console
      */
@@ -92,6 +96,7 @@ public:
     }
 
     void addVertex(const Vertex &vertex);
+    void addGeometricVertex(const GeometricVertex &vertex);
     //void generateEdges();
     /**
      * @brief
@@ -101,7 +106,6 @@ public:
     void triangulate();
     void addQuad(const Face &face);
     void addTriangle(const Face &face);
-
 private:
     void addEdge(const Edge &edge);
     void addHalfEdge(const HalfEdge &halfEdge);
@@ -154,7 +158,7 @@ private:
 
     uint32_t mMaterialID=0;
     std::vector<Vertex> mVertices;
-    std::vector<geometricVertex> mGeometricVertices;
+    std::vector<GeometricVertex> mGeometricVertices;
     std::vector<Edge> mEdges;
     std::vector<HalfEdge> mHalfEdges;
     std::vector<Face> mFaces;
