@@ -6,6 +6,8 @@ add_library(Controller STATIC
         SceneController.cpp
         Engine.cpp
         RenderController.cpp
+        ../../include/controller/ErrorController.h
+        ErrorController.cpp
 )
 target_include_directories(Controller PUBLIC
         ${CMAKE_SOURCE_DIR}/libs

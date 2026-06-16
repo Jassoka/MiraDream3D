@@ -18,5 +18,4 @@ public:
     static bool loadObjFile(const std::string &path, Scene* scene);
 };
 
-
 #endif //MIRADREAM3D_ASSETIMPORTER_H

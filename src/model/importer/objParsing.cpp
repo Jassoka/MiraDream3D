@@ -6,17 +6,18 @@
 
 #include <array>
 #include <iostream>
+#include <cctype>
 
 #include "glm/vec2.hpp"
 #include "model/Scene.h"
-
+#include <sstream>
 
 //accepte 1 à 9, ., - ;
-bool isNumber(char &c) {
+bool isNumber(const char c) {
     return '0'<=c && c<='9' ;
 }
 //accepte les lettres maj/min et le _
-bool isLetter(char &c) {
+bool isLetter(const char c) {
     return ('a'<=c && c<='z') || ('A'<=c && c<='Z')  ;
 }
 
@@ -27,7 +28,6 @@ ObjToken ObjLexer::next() {
         return ObjToken{.type=END};
     }
     char c=mSrc[mPos];
-
     if (c=='\n') {
         skipLine();
         return(ObjToken{.type=NEWLINE});
@@ -43,7 +43,9 @@ ObjToken ObjLexer::next() {
     if (isLetter(c)|| c=='_'){return readIdentifier();}
     if (isNumber(c) || c=='-' || c=='.'||c=='+' ){return readNumber();}
 
-    return (errorToken());
+    std::cout << "error char :" << c << std::endl;
+    error("Unknown grammar");
+
 }
 ObjToken ObjLexer::readIdentifier() {
     char c=mSrc[mPos];
@@ -52,11 +54,12 @@ ObjToken ObjLexer::readIdentifier() {
     token.type=IDENTIFIER;
 
     uint32_t stringPos=0;
-    while (mPos<mSrc.size() && (isLetter(c) || isNumber(c) || c=='_')) {
-        token.identifier+=c;
-        mPos++;
-        mCol++;
-        c=mSrc[mPos];
+    while (mPos < mSrc.size() &&
+       (isLetter(mSrc[mPos]) || isNumber(mSrc[mPos]) || mSrc[mPos]=='_'))
+    {
+        token.identifier += mSrc[mPos];
+        ++mPos;
+        ++mCol;
     }
     return token;
 }
@@ -79,7 +82,6 @@ ObjToken ObjLexer::readNumber(){
         if (c=='.') {
             isValid=false;
             if (isFloat) {
-
                 break;
             }
             isFloat = true;
@@ -136,7 +138,7 @@ ObjToken ObjLexer::readNumber(){
         mCol++;
         c=mSrc[mPos];
     }
-    if (!isValid) return errorToken();
+    if (!isValid)  error("Not a number ");
     if (hasExp) {
         if (isExpNeg) exponent=-exponent;
         number*=std::pow(10,exponent);
@@ -153,13 +155,14 @@ ObjToken ObjLexer::readNumber(){
     return token;
 }
 
-void ObjLexer::readSpace(){
-    char c = mSrc[mPos];
-    while (mPos<mSrc.size() && c==' ') {
+
+void ObjLexer::readSpace() {
+    while (mPos < mSrc.size() &&
+           std::isspace(static_cast<unsigned char>(mSrc[mPos])) &&
+           mSrc[mPos] != '\n') {
         mPos++;
         mCol++;
-        c=mSrc[mPos];
-    }
+           }
 }
 
 void ObjLexer::skipLine() {
@@ -172,9 +175,8 @@ void ObjLexer::skipLine() {
 
 
 
-ObjToken ObjLexer::errorToken() {
-    std::cout <<"mot clef inconnu dans le Lexer"<<std::endl;
-    return ObjToken{.type=UNKNOWN};
+void ObjLexer::error(const std::string &msg) const {
+    throw ObjLexerException(msg,mLin,mCol);
 }
 
 void ObjParser::parse() {
@@ -195,7 +197,7 @@ void ObjParser::parse() {
     while (mCurrent.type != END ) {
         if (mCurrent.type != IDENTIFIER) {
             if (mCurrent.type!=NEWLINE){
-                //TODO explosion
+                error((std::stringstream() << "Token non attendu : " << mCurrent.type ).str());
                 return;}
             next();
             continue;
@@ -218,7 +220,7 @@ void ObjParser::parse() {
         }
         else if (mCurrent.identifier=="g"){
             if (!gEncountered) {
-                if (!gEncountered && mCurrentMesh->getVertices().empty()) {
+                if ( mCurrentMesh->getVertices().empty()) {
                     removeDefaultMesh();   // ← le 1er g supprime le mesh par défaut
                 }
                 else {mDefaultMeshNode=nullptr;}
@@ -232,13 +234,16 @@ void ObjParser::parse() {
             next();
         }
         else {
-            //TODO explosion
+            error((std::stringstream() << "Identifiant inconnu : " << mCurrent.identifier ).str());
             return;
         }
     }
     finishMesh();
 }
 
+void ObjParser::notEnoughComponentsError(int i) const {
+    error((std::stringstream() << " Nombre de composantes incorrect : " << i ).str());
+}
 
 void ObjParser::parseV() {
     glm::vec3 v;
@@ -253,17 +258,17 @@ void ObjParser::parseV() {
                 v[coord]= mCurrent.value.intValue;
             }
             else {
-                //TODO explosion
+                error("Expected a number");
             }
         }
         else {
-            //TODO explosion
+            notEnoughComponentsError(4);
         }
         coord++;
         next();
     }
     if (coord!=3) {
-        //TODO explosion
+        notEnoughComponentsError(coord);
         return;
     }
     mV.push_back(v);
@@ -282,17 +287,17 @@ void ObjParser::parseVN() {
                 vn[coord]= mCurrent.value.intValue;
             }
             else {
-                //TODO explosion
+                error("Expected a number");
             }
         }
         else {
-            //TODO explosion
+            notEnoughComponentsError(4);
         }
         coord++;
         next();
     }
     if (coord!=3) {
-        //TODO explosion
+        notEnoughComponentsError(coord);
         return;
     }
     mVN.push_back(glm::normalize(vn));
@@ -311,11 +316,11 @@ void ObjParser::parseVT() {
                 vt[coord]= mCurrent.value.intValue;
             }
             else {
-                //TODO explosion
+                error("Expected a number");
             }
         }
         else {
-            //TODO explosion
+            notEnoughComponentsError(4);
         }
         coord++;
         next();
@@ -323,6 +328,7 @@ void ObjParser::parseVT() {
 
     mVT.push_back(glm::vec2(vt));
 }
+
 
 void ObjParser::parseO() {
     next();
@@ -380,6 +386,7 @@ void ObjParser::parseF() {
     uint nVertex=0;
     next();
     Face face;
+    Face faceGeoIdx;
 
     while (mCurrent.type != NEWLINE && mCurrent.type != END ) {
         int v=-1;
@@ -425,13 +432,12 @@ void ObjParser::parseF() {
 
         mCurrentMesh->getGeometricVertices()[mCurrentMeshGeometricVerticesMap[v]].vertices.push_back(mCurrentMesh->getVertices().size() - 1);
         face[nVertex]=mCurrentMesh->getVertices().size()-1;
+        faceGeoIdx[nVertex] = mCurrentMeshGeometricVerticesMap[v];
         nVertex++;
-
-        for (int i = 0;i<nVertex;i++) {
-            mCurrentMeshFacePerGeometricVertex[mCurrentMeshGeometricVerticesMap[face[i]]].push_back(face[i]);
-        }
     }
-
+    for (int i = 0;i<nVertex;i++) {
+        mCurrentMeshFacePerGeometricVertex[faceGeoIdx[i]].push_back(face[i]);
+    }
     switch (nVertex) {
         case(3):
             mCurrentMesh->addTriangle(face);
@@ -440,7 +446,7 @@ void ObjParser::parseF() {
             mCurrentMesh->addQuad(face);
             break;
         default:
-            return;//TODO explosion
+            error((std::stringstream() << " Nombre de sommets incorrect : " << nVertex ).str());
             break;
     }
 }
@@ -461,4 +467,9 @@ void ObjParser::removeDefaultMesh() {
 void ObjParser::finishMesh() {
     mCurrentMesh->triangulate();
     mCurrentMesh->generateHalfEdges(mCurrentMeshFacePerGeometricVertex);
+}
+
+
+void ObjParser::error(const std::string &msg) const {
+    throw ObjParserException(msg,mLexer.getLine(),mLexer.getLine());
 }

@@ -3,6 +3,8 @@ add_library(View STATIC
         RenderWidget.cpp
         ../../include/view/MainWindow.h
         ../../include/view/RenderWidget.h
+        ../../include/view/ErrorViewer.hpp
+        ErrorViewer.cpp
 )
 
 target_include_directories(View PRIVATE

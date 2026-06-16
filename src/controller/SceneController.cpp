@@ -24,7 +24,10 @@ void SceneController::importScene(const std::string &path) const
 {
     loadBlankScene();
     mRenderController->changedGeometry();
-    AssetImporter::loadObjFile(path, getScene()); //TODO faire switch sur extension quand meme
+    if (!AssetImporter::loadObjFile(path, getScene())) {
+        loadBlankScene();
+    }
+        //TODO faire switch sur extension quand meme
 }
 
 void SceneController::loadBlankScene() const

@@ -5,6 +5,7 @@
 #ifndef MIRADREAM3D_OBJPARSING_HPP
 #define MIRADREAM3D_OBJPARSING_HPP
 #include <string>
+#include <unordered_map>
 
 #include "util/file_funcs.hpp"
 #include "glm/vec2.hpp"
@@ -35,13 +36,14 @@ class ObjLexer {
 public:
     ObjLexer(const std::string &file):mSrc(file){};
     ObjToken next();
-
+    uint32_t getLine() const {return mLin;}
+    uint32_t getCol() const {return mCol;}
 private:
     ObjToken readIdentifier();
     ObjToken readNumber();
     void readSpace();
     void skipLine();
-    ObjToken errorToken();
+    void error(const std::string &msg) const;
     uint32_t mLin=0;
     uint32_t mCol=0;
     uint32_t mPos=0;
@@ -86,11 +88,37 @@ private:
     void parseUsemtl();
     void parseMtllib();
 
-
+    void error(const std::string &msg) const;
+    void notEnoughComponentsError(int i) const;
     void removeDefaultMesh();
 
 
 };
+
+class ObjException : public std::runtime_error {
+public:
+    ObjException(const std::string& msg)
+        : std::runtime_error(msg) {}
+
+};
+
+
+class ObjLexerException : public ObjException {
+public:
+    ObjLexerException(const std::string& msg, int line, int col)
+        : ObjException("[Lexer l." + std::to_string(line) +
+                       " c." + std::to_string(col) + "] " + msg) {}
+};
+
+class ObjParserException : public ObjException {
+public:
+    ObjParserException(const std::string& msg, int line, int col)
+        : ObjException("[Parser l." + std::to_string(line) +
+                       " c." + std::to_string(col) + "] " + msg) {}
+};
+
+
+
 
 
 #endif //MIRADREAM3D_OBJPARSING_HPP
