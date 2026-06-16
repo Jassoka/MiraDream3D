@@ -65,7 +65,7 @@ public:
 
     const std::vector<Face>& getFaces() const
     {
-        return mFaces;
+        return mRenderFaces;
     }
 
 
@@ -106,8 +106,8 @@ public:
      */
     void generateHalfEdges(const std::vector<std::vector<uint32_t>> *facesPerVertex = nullptr);
     void triangulate();
-    void addQuad(const Face &face);
-    void addTriangle(const Face &face);
+    void addQuad(const Face &geomFace,const Face &renderFace) ;
+    void addTriangle(const Face &geomFace,const Face &renderFace) ;
 private:
     void addEdge(const Edge &edge);
     void addHalfEdge(const HalfEdge &halfEdge);
@@ -119,7 +119,7 @@ private:
 
     void swapFaceOrientation(const uint32_t faceID)
     {
-        Face &f = mFaces[faceID];
+        Face &f = mRenderFaces[faceID];
         const uint32_t n = mVertexCountPerFace[faceID];
         for (uint32_t i = 0; i < n/2; i++)
         {
@@ -137,7 +137,7 @@ private:
         const int n = getNbVertex(faceID);
         for (int i = 0; i < n; i++)
         {
-            if (mFaces[faceID][i] == vertexID)
+            if (mRenderFaces[faceID][i] == vertexID)
             {
                 if (i+1 == n) return 0;
                 return i+1;
@@ -165,7 +165,8 @@ private:
     std::vector<GeometricVertex> mGeometricVertices;
     std::vector<Edge> mEdges;
     std::vector<HalfEdge> mHalfEdges;
-    std::vector<Face> mFaces;
+    std::vector<Face> mRenderFaces;
+    std::vector<Face> mGeometricFaces;
     std::vector<Triangle> mTriangles;
     std::vector<uint8_t> mVertexCountPerFace;
     /**

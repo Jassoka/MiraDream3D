@@ -55,7 +55,7 @@ Mesh::Mesh(aiMesh &meshAi) {
 bool Mesh::operator==(const Mesh& other) const
 {
     const bool sameVertices = mVertices == other.mVertices;
-    const bool sameFaces = mFaces == other.mFaces;
+    const bool sameFaces = mRenderFaces == other.mRenderFaces;
     return sameFaces && sameVertices; //TODO: same edges and half edges
 }
 
@@ -91,14 +91,16 @@ void Mesh::addHalfEdge(const HalfEdge &halfEdge)
 {
     mHalfEdges.push_back(halfEdge);
 }
-void Mesh::addQuad(const Face &face) {
+void Mesh::addQuad(const Face &geomFace,const Face &renderFace) {
     mVertexCountPerFace.push_back(4);
-    mFaces.push_back(face);
+    mRenderFaces.push_back(renderFace);
+    mGeometricFaces.push_back(geomFace);
 }
 
-void Mesh::addTriangle(const Face &face) {
+void Mesh::addTriangle(const Face &geomFace,const Face &renderFace) {
     mVertexCountPerFace.push_back(3);
-    mFaces.push_back(face);
+    mRenderFaces.push_back(renderFace);
+    mGeometricFaces.push_back(geomFace);
 }
 
 /*
@@ -137,9 +139,9 @@ void Mesh::generateHalfEdges(const std::vector<std::vector<uint32_t>> *facesPerV
 void Mesh::triangulate()
 {
     mTriangles.clear();
-    for (int i = 0; i < mFaces.size(); i++)
+    for (int i = 0; i < mRenderFaces.size(); i++)
     {
-        Face &f = mFaces[i];
+        Face &f = mRenderFaces[i];
         if (mVertexCountPerFace[i] == 3)
         {
             mTriangles.push_back(Triangle {f[0], f[1], f[2]});
@@ -187,7 +189,7 @@ halfEdgeDirection Mesh::findFaceOrientation(uint32_t AId,const std::vector<uint3
     visitedVertices[AId]=true;
     uint32_t nAdjacentVertices=0;
     for (auto faceId : adjacentFaces) {
-        auto face=mFaces[faceId];
+        auto face=mRenderFaces[faceId];
         for (uint32_t i=0;i<mVertexCountPerFace[faceId];i++) {
             auto vertexId=face[i];
             //on regarde si le sommet a deja ete ajoute a la somme, si non, on le fait et on l'ajoute a la liste des points visites
@@ -205,7 +207,7 @@ halfEdgeDirection Mesh::findFaceOrientation(uint32_t AId,const std::vector<uint3
     Vertex AVertex=mVertices[AId];
     glm::vec3 A=glm::vec3(AVertex.x,AVertex.y,AVertex.z);
     glm::vec3 EA=A-E;
-    normal=getNormal(mFaces[adjacentFaces[0]],halfEdgeDirection::ABC);
+    normal=getNormal(mRenderFaces[adjacentFaces[0]],halfEdgeDirection::ABC);
 
     halfEdgeDirection orientation;
     if (glm::dot(EA,normal)>0) {

@@ -94,7 +94,7 @@ uint32_t HalfEdgeBuilder::generateFirstFaceHalfEdges(std::vector<uint32_t> &half
     if (Vx == -1)
     {
         faceID = 0;
-        mNormalPerFace[faceID] = mMesh.getNormal(mMesh.mFaces[faceID], defaultHalfEdgeDirection);
+        mNormalPerFace[faceID] = mMesh.getNormal(mMesh.mRenderFaces[faceID], defaultHalfEdgeDirection);
     }
     // Sinon: soit Vx ce point, on nomme E la moyenne des points adjacents
     // On prend n'importe quelle face (0), et on a EE' (E' proj ortho de E sur la face) sa normale
@@ -109,7 +109,7 @@ uint32_t HalfEdgeBuilder::generateFirstFaceHalfEdges(std::vector<uint32_t> &half
         if (firstOrientation != defaultHalfEdgeDirection) mMesh.swapFaceOrientation(faceID); // On oriente correctement les faces
     }
     // 1ere face
-    const Face &currFace = mMesh.mFaces[faceID];
+    const Face &currFace = mMesh.mRenderFaces[faceID];
     const uint32_t faceSize = mMesh.getNbVertex(faceID);
 
     const uint32_t halfEdgeMax = mHalfEdges.size();
@@ -198,7 +198,7 @@ void HalfEdgeBuilder::generateHalfEdges(uint32_t &facesToVisit)
 
             // On propage sur la nouvelle face
             faceID = neighbouringFace;
-            auto &face = mMesh.mFaces[faceID];
+            auto &face = mMesh.mRenderFaces[faceID];
 
             mVisitedFace[faceID] = 1;
             facesToVisit--;
