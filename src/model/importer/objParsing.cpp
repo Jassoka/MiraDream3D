@@ -385,8 +385,8 @@ void ObjParser::parseG() {
 void ObjParser::parseF() {
     uint nVertex=0;
     next();
-    Face face;
-    Face faceGeoIdx;
+    Face renderFace;
+    Face geomFace;
 
     while (mCurrent.type != NEWLINE && mCurrent.type != END ) {
         int v=-1;
@@ -431,19 +431,20 @@ void ObjParser::parseF() {
         }
 
         mCurrentMesh->getGeometricVertices()[mCurrentMeshGeometricVerticesMap[v]].vertices.push_back(mCurrentMesh->getVertices().size() - 1);
-        face[nVertex]=mCurrentMesh->getVertices().size()-1;
-        faceGeoIdx[nVertex] = mCurrentMeshGeometricVerticesMap[v];
+        renderFace[nVertex]=mCurrentMesh->getVertices().size()-1;
+        geomFace[nVertex] = mCurrentMeshGeometricVerticesMap[v];
         nVertex++;
     }
-    for (int i = 0;i<nVertex;i++) {
-        mCurrentMeshFacePerGeometricVertex[faceGeoIdx[i]].push_back(face[i]);
+    const uint32_t faceID = mCurrentMesh->getRenderFaces().size(); // id que la face aura une fois ajoutée
+    for (int i = 0; i < nVertex; i++) {
+        mCurrentMeshFacePerGeometricVertex[geomFace[i]].push_back(faceID);
     }
     switch (nVertex) {
         case(3):
-            mCurrentMesh->addTriangle(face);
+            mCurrentMesh->addTriangle(geomFace,renderFace);
             break;
         case(4):
-            mCurrentMesh->addQuad(face);
+            mCurrentMesh->addQuad(geomFace,renderFace);
             break;
         default:
             error((std::stringstream() << " Nombre de sommets incorrect : " << nVertex ).str());

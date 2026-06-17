@@ -60,17 +60,20 @@ public:
         {
             sortedMesh.addVertex(vertices[sortedIndices[i]]);
         }
-
+    /*
         // CORRECTION 2 : On traduit les indices des faces
-        for (const auto& f : m.getFaces())
+        for (const auto& f : m.getRenderFaces())
         {
-            Face newFace(f.size());
+            Face newRenderFace;
             for (uint32_t i = 0; i < f.size(); i++)
             {
                 uint32_t oldVertexIdx = f[i]; // L'index du sommet original
                 newFace[i] = oldToNew[oldVertexIdx]; // Conversion avec la table
             }
-            sortedMesh.addFace(newFace);
+            if (f.size()==3) {
+                sortedMesh.addQuad(newFace);
+            }
+
         }
         return sortedMesh;
     }

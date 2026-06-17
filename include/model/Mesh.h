@@ -63,11 +63,14 @@ public:
         return mHalfEdges[i].twin;
     }
 
-    const std::vector<Face>& getFaces() const
+    const std::vector<Face>& getGeometricFaces() const
+    {
+        return mGeometricFaces;
+    }
+    const std::vector<Face>& getRenderFaces() const
     {
         return mRenderFaces;
     }
-
 
     const std::vector<Triangle>& getTriangles() const
     {
@@ -119,13 +122,18 @@ private:
 
     void swapFaceOrientation(const uint32_t faceID)
     {
-        Face &f = mRenderFaces[faceID];
+        Face &rf = mRenderFaces[faceID];
+        Face &gf = mGeometricFaces[faceID];
         const uint32_t n = mVertexCountPerFace[faceID];
         for (uint32_t i = 0; i < n/2; i++)
         {
-            const uint32_t tmp = f[i];
-            f[i] = f[n-i-1];
-            f[n-i-1] = tmp;
+            const uint32_t tmp = rf[i];
+            rf[i] = rf[n-i-1];
+            rf[n-i-1] = tmp;
+
+            const uint32_t tmp_ = gf[i];
+            gf[i] = gf[n-i-1];
+            gf[n-i-1] = tmp_;
         }
     }
 

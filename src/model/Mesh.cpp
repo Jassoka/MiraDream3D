@@ -65,8 +65,8 @@ std::ostream& operator<<(std::ostream& os, const Mesh &mesh) {
         os << "(" << vertex.x <<", "<< vertex.y <<", "<< vertex.z<<") ";
     }
     os << "}" << '\n';
-    os << "Faces: " << '\n' << "{ ";
-    for (const auto face : mesh.getFaces()) {
+    os << "Render faces: " << '\n' << "{ ";
+    for (const auto face : mesh.getRenderFaces()) {
 
         for (const auto vertex : face) {
             os << vertex << " ";
@@ -185,17 +185,19 @@ halfEdgeDirection Mesh::findFaceOrientation(uint32_t AId,const std::vector<uint3
     }
     //Calcul de E
     glm::vec3 E=glm::vec3(0.0); // E : mean of points adjacents to A
-    std::vector<bool> visitedVertices(mVertices.size(),false);
+    std::vector<bool> visitedVertices(mGeometricVertices.size(),false);
     visitedVertices[AId]=true;
     uint32_t nAdjacentVertices=0;
     for (auto faceId : adjacentFaces) {
-        auto face=mRenderFaces[faceId];
+        //On prend une face adjacente
+        auto face=mGeometricFaces[faceId];
         for (uint32_t i=0;i<mVertexCountPerFace[faceId];i++) {
+            //pour chaque vertex adjacent, s'il est deja visite on s'en branle sinon on l'ajoute a la moyenne
             auto vertexId=face[i];
             //on regarde si le sommet a deja ete ajoute a la somme, si non, on le fait et on l'ajoute a la liste des points visites
             if (!visitedVertices[vertexId]){
-                auto vertex=mVertices[vertexId];
-                E+=glm::vec3(vertex.x,vertex.y,vertex.z);
+                auto vertexPos=getGeometricVertexPosition(vertexId)  ;
+                E+=glm::vec3(vertexPos.x,vertexPos.y,vertexPos.z);
                 visitedVertices[vertexId]=true;
                 nAdjacentVertices+=1;
             }
@@ -207,7 +209,7 @@ halfEdgeDirection Mesh::findFaceOrientation(uint32_t AId,const std::vector<uint3
     Vertex AVertex=mVertices[AId];
     glm::vec3 A=glm::vec3(AVertex.x,AVertex.y,AVertex.z);
     glm::vec3 EA=A-E;
-    normal=getNormal(mRenderFaces[adjacentFaces[0]],halfEdgeDirection::ABC);
+    normal=getNormal(mGeometricFaces[adjacentFaces[0]],halfEdgeDirection::ABC);
 
     halfEdgeDirection orientation;
     if (glm::dot(EA,normal)>0) {
@@ -223,18 +225,18 @@ halfEdgeDirection Mesh::findFaceOrientation(uint32_t AId,const std::vector<uint3
 
 
 
-glm::vec3 Mesh::getNormal(const Face &face, const halfEdgeDirection orientation) const
+glm::vec3 Mesh::getNormal(const Face &geomFace, const halfEdgeDirection orientation) const
 {
-    Vertex AVertex=mVertices[face[0]];
-    Vertex BVertex=mVertices[face[1]];
-    Vertex CVertex=mVertices[face[2]];
+    glm::vec3 APos=getGeometricVertexPosition(geomFace[0]);
+    glm::vec3 BPos=getGeometricVertexPosition(geomFace[1]);
+    glm::vec3 CPos=getGeometricVertexPosition(geomFace[2]);
     if (orientation==ACB) {
-        std::swap(BVertex,CVertex);
+        std::swap(BPos,CPos);
     }
 
-    const glm::vec3 A=glm::vec3(AVertex.x,AVertex.y,AVertex.z);
-    const glm::vec3 B=glm::vec3(BVertex.x,BVertex.y,BVertex.z);
-    const glm::vec3 C=glm::vec3(CVertex.x,CVertex.y,CVertex.z);
+    const auto A=glm::vec3(APos.x,APos.y,APos.z);
+    const auto B=glm::vec3(BPos.x,BPos.y,BPos.z);
+    const auto C=glm::vec3(CPos.x,CPos.y,CPos.z);
         //AB^AC normalisé
     return(glm::normalize(glm::cross(B-A,C-A)));
 }

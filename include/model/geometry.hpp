@@ -70,6 +70,8 @@ struct GeometricVertex
 {
     std::vector<uint32_t> vertices;
     uint32_t halfEdge;
+
+
 };
 
 struct Edge

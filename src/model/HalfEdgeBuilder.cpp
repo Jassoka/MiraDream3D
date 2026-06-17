@@ -17,7 +17,7 @@ void HalfEdgeBuilder::generateEdges()
 {
     // On génère les edges normales également
     uint32_t edgeID = mEdges.size();
-    auto &faces = mMesh.getFaces();
+    auto &faces = mMesh.getGeometricFaces();
     for (int32_t fID = 0; fID < faces.size(); fID++)
     {
         Face f = faces[fID];
@@ -45,7 +45,7 @@ void HalfEdgeBuilder::generateEdges()
 
 void HalfEdgeBuilder::generateFacesPerVertex()
 {
-    auto &faces = mMesh.getFaces();
+    auto &faces = mMesh.getGeometricFaces();
     mOwnedFacesPerVertex.resize(mMesh.getGeometricVertices().size());
     for (uint32_t fID = 0; fID < faces.size(); fID++)
     {
@@ -94,7 +94,7 @@ uint32_t HalfEdgeBuilder::generateFirstFaceHalfEdges(std::vector<uint32_t> &half
     if (Vx == -1)
     {
         faceID = 0;
-        mNormalPerFace[faceID] = mMesh.getNormal(mMesh.mRenderFaces[faceID], defaultHalfEdgeDirection);
+        mNormalPerFace[faceID] = mMesh.getNormal(mMesh.mGeometricFaces[faceID], defaultHalfEdgeDirection);
     }
     // Sinon: soit Vx ce point, on nomme E la moyenne des points adjacents
     // On prend n'importe quelle face (0), et on a EE' (E' proj ortho de E sur la face) sa normale
@@ -109,7 +109,7 @@ uint32_t HalfEdgeBuilder::generateFirstFaceHalfEdges(std::vector<uint32_t> &half
         if (firstOrientation != defaultHalfEdgeDirection) mMesh.swapFaceOrientation(faceID); // On oriente correctement les faces
     }
     // 1ere face
-    const Face &currFace = mMesh.mRenderFaces[faceID];
+    const Face &currFace = mMesh.mGeometricFaces[faceID];
     const uint32_t faceSize = mMesh.getNbVertex(faceID);
 
     const uint32_t halfEdgeMax = mHalfEdges.size();
@@ -198,7 +198,7 @@ void HalfEdgeBuilder::generateHalfEdges(uint32_t &facesToVisit)
 
             // On propage sur la nouvelle face
             faceID = neighbouringFace;
-            auto &face = mMesh.mRenderFaces[faceID];
+            auto &face = mMesh.mGeometricFaces[faceID];
 
             mVisitedFace[faceID] = 1;
             facesToVisit--;
@@ -251,7 +251,7 @@ void HalfEdgeBuilder::buildImpl()
     if (!mFacesPerVertex)
         generateFacesPerVertex();
     generateEdges();
-    const auto &faces = mMesh.getFaces();
+    const auto &faces = mMesh.getGeometricFaces();
     uint32_t facesToVisit = faces.size();
     mNormalPerFace.resize(faces.size());
 
