@@ -269,10 +269,11 @@ void HalfEdgeBuilder::buildImpl()
 
 void HalfEdgeBuilder::generateNormals() const
 {
+    mMesh.mHardNormals.resize(mMesh.mRenderVertices.size());
     for (uint32_t gIdx = 0; gIdx < mMesh.mGeometricVertices.size(); gIdx++)
     {
         auto [vertices, halfEdge] = mMesh.mGeometricVertices[gIdx];
-        std::vector<std::vector<uint32_t>> smoothingGroups(mMesh.nSmoothGroups);
+        std::vector<std::vector<uint32_t>> smoothingGroups(mMesh.nSmoothGroups + 1);
         //TODO trouver une solution pour rajouter un half edge par geometric vertex
         for (uint32_t vIdx = 0; vIdx < vertices.size(); vIdx++)
         {
@@ -295,16 +296,16 @@ void HalfEdgeBuilder::generateNormals() const
                 mMesh.mRenderVertices[renderVertexID].setNormal(userNormal);
             }
         }
-        if (!mMesh.isSmooth()) //TODO ce serait pratique de mettre ça ailleurs pour réutiliser
+        if (mMesh.isSmooth()) //TODO ce serait pratique de mettre ça ailleurs pour réutiliser
         {
-            std::vector<glm::vec3> smoothGroupAverageNormals(mMesh.nSmoothGroups);
+            std::vector<glm::vec3> smoothGroupAverageNormals(mMesh.nSmoothGroups + 1);
             // Groupe 0 (smoothing off)
             for (const auto renderVertexID : smoothingGroups[0])
             {
                 const auto normal = mMesh.mRenderVertices[renderVertexID].getNormal();
                 mMesh.mRenderVertices[renderVertexID].setNormal(normal);
             }
-            for (int i = 1; i < mMesh.nSmoothGroups; i++)
+            for (int i = 1; i <= mMesh.nSmoothGroups; i++)
             {
                 glm::vec3 normalSum(0.0);
                 for (const auto renderVertexID : smoothingGroups[i])
