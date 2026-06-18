@@ -2,16 +2,51 @@
 
 #include <iostream>
 #include <unordered_map>
-#include <sys/stat.h>
 
 #include "glm/geometric.hpp"
+#include "glm/mat4x4.hpp"
 #include "model/HalfEdgeBuilder.h"
 
 halfEdgeDirection Mesh::defaultHalfEdgeDirection = ABC;
 
-Mesh::Mesh(uint32_t MaterialID):mMaterialID(MaterialID) {
-
+Mesh::Mesh(const uint32_t materialID,const std::vector<glm::vec3> &positions,const std::vector<SizedFace> &faces, const glm::mat4 &translationRotationMatrix, const float scale):
+mMaterialID(materialID)
+{
+    mGeometricVertices.reserve(positions.size());
+    mRenderVertices.reserve(positions.size()*4);
+    hasNormals = false;
+    nSmoothGroups = 0;
+    for (auto p : positions)
+    {
+        addGeometricVertex({{}, 0});
+    }
+    for (auto f : faces)
+    {
+        Face renderFace{};
+        for (int i = 0; i < f.faceSize; i++) // Construction des vertices à la vollée (1 par point de face)
+        {
+            const uint32_t geomVertexID = f[i];
+            RenderVertex v{ positions[geomVertexID], glm::vec3(0.0), glm::vec2(0.0)};
+            uint32_t vID = addVertex(v);
+            mGeometricVertices[geomVertexID].vertices.push_back(vID);
+            renderFace[i] = vID;
+        }
+        switch (f.faceSize)
+        {
+        case 3:
+            addTriangle(f.face, renderFace);
+            break;
+        case 4:
+            addQuad(f.face, renderFace);
+            break;
+        default:
+            break;
+        }
+    }
+    triangulate();
+    generateHalfEdges();
 }
+
 /*
 Mesh::Mesh(aiMesh &meshAi) {
     this->mMaterialID=meshAi.mMaterialIndex;
@@ -76,8 +111,9 @@ std::ostream& operator<<(std::ostream& os, const Mesh &mesh) {
 }
 
 
-void Mesh::addVertex(const RenderVertex &vertex) {
+uint32_t Mesh::addVertex(const RenderVertex &vertex) {
     mRenderVertices.push_back(vertex);
+    return mRenderVertices.size()-1;
 }
 void Mesh::addGeometricVertex(const GeometricVertex &vertex) {
     mGeometricVertices.push_back(vertex);

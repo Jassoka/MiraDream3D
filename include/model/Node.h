@@ -5,6 +5,7 @@
 #ifndef MIRADREAM3D_NODE_H
 #define MIRADREAM3D_NODE_H
 #include <vector>
+#include <string>
 
 #include "Mesh.h"
 

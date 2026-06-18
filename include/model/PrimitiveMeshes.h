@@ -7,13 +7,13 @@
 #include <cstdint>
 
 class Mesh;
-
+struct PrimitiveMesh;
 
 class PrimitiveMeshes
 {
 public:
 
-    static Mesh &getCube();
+    static Mesh generateCube();
     /*
     static void addCubeToNode(Node &node) {//TODO faire en sorte qu'on donne un ID pour chaque forme
 
@@ -21,13 +21,10 @@ public:
     }*/
 
 private:
-    PrimitiveMeshes();
-    static PrimitiveMeshes& getInstance();
-    void generateCube() const;
+    //static PrimitiveMeshes& getInstance();
 
     static constexpr uint32_t DEFAULT_TEXTURE = 0;
-
-    Mesh *mCube;
+    static const PrimitiveMesh cube;
 };
 
 

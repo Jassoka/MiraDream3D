@@ -85,6 +85,16 @@ struct Edge
 using Face = std::array<uint32_t, 4>;
 using Triangle = std::array<uint32_t, 3>;
 
+struct SizedFace
+{
+    uint32_t faceSize;
+    Face face;
+    uint32_t &operator[](const uint32_t i)
+    {
+        return face[i];
+    }
+};
+
 /**
  * @brief Oriented edge
  */

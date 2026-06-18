@@ -6,6 +6,7 @@
 #define MIRADREAM3D_MESH_H
 #include <iosfwd>
 #include "geometry.hpp"
+#include "glm/fwd.hpp"
 
 struct aiMesh;
 class HalfEdgeBuilder;
@@ -22,7 +23,12 @@ public:
     /**
      * @brief Default constructor for Mesh
      */
-    Mesh(uint32_t MaterialID);
+    Mesh(const uint32_t materialID): mMaterialID(materialID) {}
+    Mesh(uint32_t materialID,
+        const std::vector<glm::vec3> &positions,
+        const std::vector<SizedFace> &faces,
+        const glm::mat4 &translationRotationMatrix,
+        float scale);
     /*
     /**
      * @brief Constructor by copy of meshAi
@@ -102,7 +108,7 @@ public:
         return getNbVertex(faceID) == 4;
     }
 
-    void addVertex(const RenderVertex &vertex);
+    uint32_t addVertex(const RenderVertex &vertex);
     void addGeometricVertex(const GeometricVertex &vertex);
     //void generateEdges();
     /**

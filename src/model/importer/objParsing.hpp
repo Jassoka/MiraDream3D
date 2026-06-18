@@ -64,7 +64,6 @@ private:
     Mesh* mCurrentMesh=nullptr;
     Node* mDefaultMeshNode=nullptr;
     uint32_t mCurrentMeshOriginVId=0;
-    bool mCurrentMeshHasNormals=true;
     bool mCurrentMeshHasUVCoords=true;
     uint8_t mCurrentSmoothGroup=0;
     std::unordered_map<uint8_t,uint8_t> mCurrentMeshSmoothGroupsMap;
