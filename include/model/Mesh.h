@@ -167,7 +167,7 @@ private:
     halfEdgeDirection findFaceOrientation(uint32_t AId,const std::vector<uint32_t> &adjacentFaces, glm::vec3 *normalPtr = nullptr) const;
     glm::vec3 getNormal(const Face &face,halfEdgeDirection orientation) const;
 
-
+    bool isSmooth() const { return nSmoothGroups == 0; }
 
     uint32_t mMaterialID=0;
     std::vector<RenderVertex> mRenderVertices;
@@ -180,7 +180,7 @@ private:
     std::vector<uint8_t> mVertexCountPerFace;
     std::vector<uint8_t> mSmoothingGroups;
     bool hasNormals;
-    bool isSmooth;
+    uint8_t nSmoothGroups;
     std::vector<glm::vec3> mHardNormals;
     std::vector<glm::vec3> mUserNormals;
     /**
