@@ -485,7 +485,7 @@ void ObjParser::parseS() {
             if (mCurrentMesh->mRenderVertices.empty()) {
                 mCurrentMeshSmoothGroupsMap.clear();
                 mCurrentMeshSmoothGroupsMap[0]=0;
-                mCurrentMesh->nSmoothGroups=0;
+                mCurrentMesh->nSmoothGroups=1;
             }
         }
         else error("smoothing group error");
@@ -538,7 +538,7 @@ void ObjParser::createMesh(std::string name) {
     mCurrentMesh=mScene->newMesh();
 
     mCurrentMeshSmoothGroupsMap[0]=0;
-
+    mCurrentMesh->nSmoothGroups=1;
     if (mCurrentSmoothGroup!=0) {
         mCurrentMeshSmoothGroupsMap[mCurrentSmoothGroup]=1;
         mCurrentMesh->nSmoothGroups++;
