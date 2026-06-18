@@ -19,7 +19,7 @@ const std::string VIEWPORT_WIREFRAME = "viewport_wireframe";
 const std::string GRID = "grid";
 
 static constexpr glm::vec3 worldOrigin {0.0f, 0.0f, 0.0f};
-static constexpr glm::vec3 worldUp {0.0f, 0.0f, 1.0f};
+static constexpr glm::vec3 worldUp {0.0f, 1.0f, 0.0f};
 static constexpr glm::vec3 defaultEngineCameraPosition {4.0f, 4.0f, 4.0f};
 static constexpr float defaultEngineCameraFOV = glm::radians(45.0f);
 static constexpr float defaultEngineCameraNearPlane = 0.1f;
