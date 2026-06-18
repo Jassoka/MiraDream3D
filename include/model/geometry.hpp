@@ -17,7 +17,7 @@
 #include "glm/vec2.hpp"
 #include "glm/common.hpp"
 
-struct Vertex
+struct RenderVertex
 {
     float x, y, z;
     float nx, ny, nz;
@@ -30,7 +30,7 @@ struct Vertex
         return reinterpret_cast<const float*>(this)[i];
     }
 
-    bool operator==(const Vertex& other) const {
+    bool operator==(const RenderVertex& other) const {
         return( glm::abs(x-other.x) < FLT_EPSILON    &&
                 glm::abs(y-other.y) < FLT_EPSILON &&
                 glm::abs(z-other.z) < FLT_EPSILON);
@@ -40,7 +40,7 @@ struct Vertex
     {
         return(glm::vec3(x,y,z));
     }
-    Vertex(float xPos,float yPos,float zPos,float xN,float yN,float zN,float U,float V) {
+    RenderVertex(float xPos,float yPos,float zPos,float xN,float yN,float zN,float U,float V) {
         x=xPos;
         y=yPos;
         z=zPos;
@@ -50,7 +50,7 @@ struct Vertex
         u=U;
         v=V;
     }
-    Vertex(glm::vec3 vpos,glm::vec3 vn,glm::vec2 vt) {
+    RenderVertex(glm::vec3 vpos,glm::vec3 vn,glm::vec2 vt) {
         x=vpos[0];
         y=vpos[1];
         z=vpos[2];
@@ -64,7 +64,7 @@ struct Vertex
 };
 
 
-constexpr uint32_t VERTEX_NB_ELEMENTS = sizeof(Vertex)/sizeof(float);
+constexpr uint32_t VERTEX_NB_ELEMENTS = sizeof(RenderVertex)/sizeof(float);
 
 struct GeometricVertex
 {

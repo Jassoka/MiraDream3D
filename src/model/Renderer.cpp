@@ -131,7 +131,7 @@ void Renderer::geometryRedrawTemplate()
     mVBO.bind();
 
     // Buffer de vertices
-    std::vector<Vertex> vertices;
+    std::vector<RenderVertex> vertices;
     std::vector<uint32_t> indices;
     uint32_t indexOffset = 0;
 
@@ -167,8 +167,8 @@ void Renderer::geometryRedrawTemplate()
         indexOffset += meshVertices.size();
     }
 
-    const Vertex *vertices_data = vertices.data(); // Pointeur vers les vertices
-    mVBO.allocate(vertices_data,vertices.size() * sizeof(Vertex));
+    const RenderVertex *vertices_data = vertices.data(); // Pointeur vers les vertices
+    mVBO.allocate(vertices_data,vertices.size() * sizeof(RenderVertex));
 
     const uint32_t *data = indices.data();
     nIndices = indices.size();
@@ -223,15 +223,15 @@ void Renderer::initialize(QOpenGLFunctions* glFuncs)
     mVBO.bind();
     // 0: position du vertex
     mGlFuncs->glEnableVertexAttribArray(0);
-    mGlFuncs->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
+    mGlFuncs->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(RenderVertex), (void*)offsetof(RenderVertex, x));
 
     // 1: normales du vertex
     mGlFuncs->glEnableVertexAttribArray(1);
-    mGlFuncs->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, nx));
+    mGlFuncs->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(RenderVertex), (void*)offsetof(RenderVertex, nx));
 
     // 2: uv du vertex
     mGlFuncs->glEnableVertexAttribArray(2);
-    mGlFuncs->glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
+    mGlFuncs->glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(RenderVertex), (void*)offsetof(RenderVertex, u));
 
     mEBO.bind();
     mVAO.release();

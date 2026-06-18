@@ -4,6 +4,7 @@
 
 #ifndef MIRADREAM3D_ERRORCONTROLLER_H
 #define MIRADREAM3D_ERRORCONTROLLER_H
+#include <stdexcept>
 #include <string>
 #include <stdexcept>
 class ErrorController {

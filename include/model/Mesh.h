@@ -33,9 +33,9 @@ public:
         return mMaterialID;
     }
 
-    const std::vector<Vertex>& getVertices() const
+    const std::vector<RenderVertex>& getVertices() const
     {
-        return mVertices;
+        return mRenderVertices;
     }
 
     const std::vector<Edge>& getEdges() const
@@ -100,7 +100,7 @@ public:
         return getNbVertex(faceID) == 4;
     }
 
-    void addVertex(const Vertex &vertex);
+    void addVertex(const RenderVertex &vertex);
     void addGeometricVertex(const GeometricVertex &vertex);
     //void generateEdges();
     /**
@@ -157,7 +157,7 @@ private:
 
     glm::vec3 getGeometricVertexPosition(const uint32_t idx) const
     {
-        return mVertices[mGeometricVertices[idx].vertices[0]].toVec3();
+        return mRenderVertices[mGeometricVertices[idx].vertices[0]].toVec3();
     }
 
     /**
@@ -169,7 +169,7 @@ private:
 
 
     uint32_t mMaterialID=0;
-    std::vector<Vertex> mVertices;
+    std::vector<RenderVertex> mRenderVertices;
     std::vector<GeometricVertex> mGeometricVertices;
     std::vector<Edge> mEdges;
     std::vector<HalfEdge> mHalfEdges;

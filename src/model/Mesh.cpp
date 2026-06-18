@@ -54,7 +54,7 @@ Mesh::Mesh(aiMesh &meshAi) {
 
 bool Mesh::operator==(const Mesh& other) const
 {
-    const bool sameVertices = mVertices == other.mVertices;
+    const bool sameVertices = mRenderVertices == other.mRenderVertices;
     const bool sameFaces = mRenderFaces == other.mRenderFaces;
     return sameFaces && sameVertices; //TODO: same edges and half edges
 }
@@ -78,8 +78,8 @@ std::ostream& operator<<(std::ostream& os, const Mesh &mesh) {
 }
 
 
-void Mesh::addVertex(const Vertex &vertex) {
-    mVertices.push_back(vertex);
+void Mesh::addVertex(const RenderVertex &vertex) {
+    mRenderVertices.push_back(vertex);
 }
 void Mesh::addGeometricVertex(const GeometricVertex &vertex) {
     mGeometricVertices.push_back(vertex);
@@ -149,10 +149,10 @@ void Mesh::triangulate()
         else
         {
 
-            glm::vec3 A=mVertices[f[0]].toVec3();
-            glm::vec3 B=mVertices[f[1]].toVec3();
-            glm::vec3 C=mVertices[f[2]].toVec3();
-            glm::vec3 D=mVertices[f[3]].toVec3();
+            glm::vec3 A=mRenderVertices[f[0]].toVec3();
+            glm::vec3 B=mRenderVertices[f[1]].toVec3();
+            glm::vec3 C=mRenderVertices[f[2]].toVec3();
+            glm::vec3 D=mRenderVertices[f[3]].toVec3();
             glm::vec3 mid = A+C;
             mid/=2;
             //la diagonale AC sort du quad, on divise donc selon BD
@@ -206,8 +206,7 @@ halfEdgeDirection Mesh::findFaceOrientation(uint32_t AId,const std::vector<uint3
 
     E/=nAdjacentVertices;
     //E est à présent calculé
-    Vertex AVertex=mVertices[AId];
-    glm::vec3 A=glm::vec3(AVertex.x,AVertex.y,AVertex.z);
+    glm::vec3 A= getGeometricVertexPosition(AId);
     glm::vec3 EA=A-E;
     normal=getNormal(mGeometricFaces[adjacentFaces[0]],halfEdgeDirection::ABC);
 

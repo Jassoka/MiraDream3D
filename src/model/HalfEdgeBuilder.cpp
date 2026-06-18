@@ -142,108 +142,108 @@ void HalfEdgeBuilder::generateHalfEdges(uint32_t &facesToVisit)
 
     mVisitedFace[faceID] = 1;
     facesToVisit--;
-        while (halfEdgeIterationIndex < halfEdgesToIterate.size()) // tant qu'on a des aretes à parcourir
+    while (halfEdgeIterationIndex < halfEdgesToIterate.size()) // tant qu'on a des aretes à parcourir
+    {
+        const uint32_t currHalfEdgeIdx = halfEdgesToIterate[halfEdgeIterationIndex];
+        HalfEdge currHalfEdge = mHalfEdges[currHalfEdgeIdx];
+
+        const uint32_t edgeID = getEdgeMapValue(currHalfEdge.origin, currHalfEdge.end);
+
+        // Trouver la face voisine (il y en a au plus 1 par la propriété du mesh 2-manifold //TODO verifier que c'est bien 2-manifold à un moment
+        const int32_t neighbouringFace = [this, edgeID](const uint32_t face)
         {
-            const uint32_t currHalfEdgeIdx = halfEdgesToIterate[halfEdgeIterationIndex];
-            HalfEdge currHalfEdge = mHalfEdges[currHalfEdgeIdx];
-
-            const uint32_t edgeID = getEdgeMapValue(currHalfEdge.origin, currHalfEdge.end);
-
-            // Trouver la face voisine (il y en a au plus 1 par la propriété du mesh 2-manifold //TODO verifier que c'est bien 2-manifold à un moment
-            const int32_t neighbouringFace = [this, edgeID](const uint32_t face)
+            int32_t neighbour;
+            if (mAdjacentFacesToEdge[edgeID][0] == face)
             {
-                int32_t neighbour;
-                if (mAdjacentFacesToEdge[edgeID][0] == face)
-                {
-                    neighbour = mAdjacentFacesToEdge[edgeID][1];
-                }
-                else
-                {
-                    neighbour = mAdjacentFacesToEdge[edgeID][0];
-                }
-                if (neighbour == -1) return -1;
-                if (mVisitedFace[neighbour]) return -2;
-                return neighbour;
-            }(currHalfEdge.face);
-
-            if (neighbouringFace == -1) // is a boundary edge
-            {
-                halfEdgeIterationIndex++;
-                continue;
+                neighbour = mAdjacentFacesToEdge[edgeID][1];
             }
-
-            halfEdgeDirection faceOrientation;
-            // la nouvelle half edge commence dans l'autre sens
-            const uint32_t origin = currHalfEdge.end;
-            const uint32_t end = currHalfEdge.origin;
-
-            // On le rajoute dans la map pour trouver son twin si jamais il vient/ est venu
-            const auto currHalfEdgePair = &mEdgeIdToHalfEdges[getEdgeMapValue(origin, end)];
-            if ((*currHalfEdgePair)[0] == -1) // Cas: cette arête n'a jamais été vue
+            else
             {
-                (*currHalfEdgePair)[0] = currHalfEdgeIdx;
+                neighbour = mAdjacentFacesToEdge[edgeID][0];
             }
-            else // On l'a déjà vue: twins se forment
-            {
-                mHalfEdges[(*currHalfEdgePair)[0]].twin = currHalfEdgeIdx;
-                mHalfEdges[currHalfEdgeIdx].twin = (*currHalfEdgePair)[0];
-            }
+            if (neighbour == -1) return -1;
+            if (mVisitedFace[neighbour]) return -2;
+            return neighbour;
+        }(currHalfEdge.face);
 
-            if (neighbouringFace == -2) // si déjà visité, on tente quand meme de former des twins
-            {
-                halfEdgeIterationIndex++;
-                continue;
-            }
-
-
-            // On propage sur la nouvelle face
-            faceID = neighbouringFace;
-            auto &face = mMesh.mGeometricFaces[faceID];
-
-            mVisitedFace[faceID] = 1;
-            facesToVisit--;
-
-
-            const uint32_t faceSize = mMesh.getNbVertex(faceID);
-
-            uint32_t startIndice = 0;
-
-            for (uint32_t j = 0; j < faceSize; j++)
-            {
-                if (face[j] == origin)
-                {
-                    if (face[(j+1) % faceSize] == end) faceOrientation = ABC;
-                    else faceOrientation = ACB;
-                    startIndice = j;
-                }
-            }
-
-
-            const uint32_t halfEdgeLast = mHalfEdges.size();
-
-            for (uint32_t i = 0; i < faceSize; i++)
-            {
-                const uint32_t next_i = (i+1)%faceSize;
-                const uint32_t prev_i = ((i + faceSize - 1))%faceSize;
-                halfEdgesToIterate.push_back(mHalfEdges.size());
-
-                const uint32_t origin = face[(startIndice + i) % faceSize];
-                const uint32_t end = face[(startIndice + (faceOrientation==ABC?next_i:prev_i)) % faceSize];
-
-                mHalfEdges.push_back(HalfEdge{halfEdgeLast+next_i,
-                    halfEdgeLast+prev_i,
-                    faceID,
-                    -1,
-                    origin,
-                     end
-                });
-                mVisitedVertex[origin] = 1;
-            }
-
-            if (faceOrientation != defaultHalfEdgeDirection) mMesh.swapFaceOrientation(faceID);
-            mNormalPerFace[faceID] = mMesh.getNormal(face, defaultHalfEdgeDirection);
+        if (neighbouringFace == -1) // is a boundary edge
+        {
             halfEdgeIterationIndex++;
+            continue;
         }
+
+        halfEdgeDirection faceOrientation;
+        // la nouvelle half edge commence dans l'autre sens
+        const uint32_t origin = currHalfEdge.end;
+        const uint32_t end = currHalfEdge.origin;
+
+        // On le rajoute dans la map pour trouver son twin si jamais il vient/ est venu
+        const auto currHalfEdgePair = &mEdgeIdToHalfEdges[getEdgeMapValue(origin, end)];
+        if ((*currHalfEdgePair)[0] == -1) // Cas: cette arête n'a jamais été vue
+        {
+            (*currHalfEdgePair)[0] = currHalfEdgeIdx;
+        }
+        else // On l'a déjà vue: twins se forment
+        {
+            mHalfEdges[(*currHalfEdgePair)[0]].twin = currHalfEdgeIdx;
+            mHalfEdges[currHalfEdgeIdx].twin = (*currHalfEdgePair)[0];
+        }
+
+        if (neighbouringFace == -2) // si déjà visité, on tente quand meme de former des twins
+        {
+            halfEdgeIterationIndex++;
+            continue;
+        }
+
+
+        // On propage sur la nouvelle face
+        faceID = neighbouringFace;
+        auto &face = mMesh.mGeometricFaces[faceID];
+
+        mVisitedFace[faceID] = 1;
+        facesToVisit--;
+
+
+        const uint32_t faceSize = mMesh.getNbVertex(faceID);
+
+        uint32_t startIndice = 0;
+
+        for (uint32_t j = 0; j < faceSize; j++)
+        {
+            if (face[j] == origin)
+            {
+                if (face[(j+1) % faceSize] == end) faceOrientation = ABC;
+                else faceOrientation = ACB;
+                startIndice = j;
+            }
+        }
+
+
+        const uint32_t halfEdgeLast = mHalfEdges.size();
+
+        for (uint32_t i = 0; i < faceSize; i++)
+        {
+            const uint32_t next_i = (i+1)%faceSize;
+            const uint32_t prev_i = ((i + faceSize - 1))%faceSize;
+            halfEdgesToIterate.push_back(mHalfEdges.size());
+
+            const uint32_t origin = face[(startIndice + i) % faceSize];
+            const uint32_t end = face[(startIndice + (faceOrientation==ABC?next_i:prev_i)) % faceSize];
+
+            mHalfEdges.push_back(HalfEdge{halfEdgeLast+next_i,
+                halfEdgeLast+prev_i,
+                faceID,
+                -1,
+                origin,
+                 end
+            });
+            mVisitedVertex[origin] = 1;
+        }
+
+        if (faceOrientation != defaultHalfEdgeDirection) mMesh.swapFaceOrientation(faceID);
+        mNormalPerFace[faceID] = mMesh.getNormal(face, defaultHalfEdgeDirection);
+        halfEdgeIterationIndex++;
+    }
 }
 
 void HalfEdgeBuilder::buildImpl()
@@ -275,7 +275,7 @@ void HalfEdgeBuilder::generateHardNormals() const
         for (uint32_t vIdx = 0; vIdx < vertices.size(); vIdx++)
         {
             const uint32_t faceID = (*mFacesPerVertex)[gIdx][vIdx];
-            mMesh.mVertices[vIdx].setNormal(mNormalPerFace[faceID]);
+            mMesh.mRenderVertices[vertices[vIdx]].setNormal(mNormalPerFace[faceID]);
         }
     }
 }

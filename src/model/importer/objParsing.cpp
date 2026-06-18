@@ -418,7 +418,7 @@ void ObjParser::parseF() {
 
         if (mCurrentMeshHasNormals && vn==-1){mCurrentMeshHasNormals=false;}
         if (mCurrentMeshHasUVCoords && vt==-1){mCurrentMeshHasUVCoords=false;}
-        mCurrentMesh->addVertex(Vertex(
+        mCurrentMesh->addVertex(RenderVertex(
             mV[v],
             (vn==-1) ? glm::vec3(0.0) : mVN[vn],
                 (vt==-1) ? glm::vec2(0.0) : mVT[vt]
