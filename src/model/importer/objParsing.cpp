@@ -420,7 +420,7 @@ void ObjParser::parseF() {
 
         //quand on a fini de parser le point
 
-        if (mCurrentMeshHasNormals && vn==-1){mCurrentMeshHasNormals=false;}
+        if (mCurrentMesh->hasNormals && vn==-1){mCurrentMesh->hasNormals=false;}
         if (mCurrentMeshHasUVCoords && vt==-1){mCurrentMeshHasUVCoords=false;}
         mCurrentMesh->mRenderVertices.push_back(RenderVertex(
                 mV[v],
@@ -531,14 +531,14 @@ void ObjParser::finishMesh() {
     mCurrentMeshSmoothGroupsMap.clear();
 
 
-    mCurrentMeshHasNormals=true;
+    mCurrentMesh->hasNormals=true;
     mCurrentMeshHasUVCoords=true;
 }
 void ObjParser::createMesh(std::string name) {
     mCurrentMesh=mScene->newMesh();
 
     mCurrentMeshSmoothGroupsMap[0]=0;
-
+    mCurrentMesh->nSmoothGroups=0;
     if (mCurrentSmoothGroup!=0) {
         mCurrentMeshSmoothGroupsMap[mCurrentSmoothGroup]=1;
         mCurrentMesh->nSmoothGroups++;
