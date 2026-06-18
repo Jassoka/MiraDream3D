@@ -291,7 +291,6 @@ void HalfEdgeBuilder::generateNormals() const
             }
             else
             {
-
                 const auto userNormal = mMesh.mUserNormals[renderVertexID];
                 mMesh.mRenderVertices[renderVertexID].setNormal(userNormal);
             }
@@ -299,7 +298,13 @@ void HalfEdgeBuilder::generateNormals() const
         if (!mMesh.isSmooth()) //TODO ce serait pratique de mettre ça ailleurs pour réutiliser
         {
             std::vector<glm::vec3> smoothGroupAverageNormals(mMesh.nSmoothGroups);
-            for (int i = 0; i < mMesh.nSmoothGroups; i++)
+            // Groupe 0 (smoothing off)
+            for (const auto renderVertexID : smoothingGroups[0])
+            {
+                const auto normal = mMesh.mRenderVertices[renderVertexID].getNormal();
+                mMesh.mRenderVertices[renderVertexID].setNormal(normal);
+            }
+            for (int i = 1; i < mMesh.nSmoothGroups; i++)
             {
                 glm::vec3 normalSum(0.0);
                 for (const auto renderVertexID : smoothingGroups[i])
