@@ -61,6 +61,8 @@ struct RenderVertex
         v=vt[1];
     }
     void setNormal(const glm::vec3 n) { nx = n.x; ny = n.y; nz = n.z; }
+
+    glm::vec3 getNormal() const { return glm::vec3(nx, ny, nz); }
 };
 
 

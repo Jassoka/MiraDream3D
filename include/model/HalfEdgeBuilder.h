@@ -37,7 +37,7 @@ private:
     int32_t findVx();
     uint32_t generateFirstFaceHalfEdges(std::vector<uint32_t> &halfEdgesToIterate);
     void generateHalfEdges(uint32_t &facesToVisit);
-    void generateHardNormals() const;
+    void generateNormals() const;
 
     Mesh &mMesh;
 

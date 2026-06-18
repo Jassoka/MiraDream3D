@@ -6,6 +6,7 @@
 
 #include <unordered_set>
 
+#include "glm/detail/func_geometric.inl"
 #include "model/Mesh.h"
 
 halfEdgeDirection defaultHalfEdgeDirection = ABC;
@@ -263,19 +264,55 @@ void HalfEdgeBuilder::buildImpl()
     {
         generateHalfEdges(facesToVisit);
     }
-    generateHardNormals();
+    generateNormals();
 }
 
-void HalfEdgeBuilder::generateHardNormals() const
+void HalfEdgeBuilder::generateNormals() const
 {
     for (uint32_t gIdx = 0; gIdx < mMesh.mGeometricVertices.size(); gIdx++)
     {
         auto [vertices, halfEdge] = mMesh.mGeometricVertices[gIdx];
+        std::vector<std::vector<uint32_t>> smoothingGroups(mMesh.nSmoothGroups);
         //TODO trouver une solution pour rajouter un half edge par geometric vertex
         for (uint32_t vIdx = 0; vIdx < vertices.size(); vIdx++)
         {
             const uint32_t faceID = (*mFacesPerVertex)[gIdx][vIdx];
-            mMesh.mRenderVertices[vertices[vIdx]].setNormal(mNormalPerFace[faceID]);
+            const auto hardNormal = mNormalPerFace[faceID];
+            const auto renderVertexID = vertices[vIdx];
+            mMesh.mHardNormals[renderVertexID] = hardNormal;
+            if (!mMesh.hasNormals)
+            {
+                if (!mMesh.isSmooth())
+                    mMesh.mRenderVertices[renderVertexID].setNormal(hardNormal);
+                else
+                {
+                    smoothingGroups[mMesh.mSmoothingGroups[renderVertexID]].push_back(renderVertexID);
+                }
+            }
+            else
+            {
+
+                const auto userNormal = mMesh.mUserNormals[renderVertexID];
+                mMesh.mRenderVertices[renderVertexID].setNormal(userNormal);
+            }
+        }
+        if (!mMesh.isSmooth()) //TODO ce serait pratique de mettre ça ailleurs pour réutiliser
+        {
+            std::vector<glm::vec3> smoothGroupAverageNormals(mMesh.nSmoothGroups);
+            for (int i = 0; i < mMesh.nSmoothGroups; i++)
+            {
+                glm::vec3 normalSum(0.0);
+                for (const auto renderVertexID : smoothingGroups[i])
+                {
+                    normalSum += mMesh.mRenderVertices[renderVertexID].getNormal();
+                }
+                const auto smoothNormal = glm::normalize(normalSum);
+                for (const auto renderVertexID : smoothingGroups[i])
+                {
+                    mMesh.mRenderVertices[renderVertexID].setNormal(smoothNormal);
+                }
+
+            }
         }
     }
 }
