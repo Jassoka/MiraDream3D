@@ -203,6 +203,11 @@ void ObjParser::parse() {
     mCurrentMesh=mScene->newMesh();
     mDefaultMeshNode = dynamic_cast<Node*>(new MeshNode("",mScene->getMeshes().size()-1));
     dynamic_cast<HierarchyNode*>(mCurrentNode)->addChild(mDefaultMeshNode);
+    mCurrentMesh->hasNormals=true;
+    mCurrentMeshHasUVCoords=true;
+    mCurrentMeshSmoothGroupsMap[0]=0;
+    mCurrentMesh->nSmoothGroups=0;
+
 
     while (mCurrent.type != END ) {
         if (mCurrent.type != IDENTIFIER) {
