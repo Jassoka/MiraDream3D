@@ -22,11 +22,12 @@ public:
      * @brief Default constructor for Mesh
      */
     Mesh(uint32_t MaterialID);
+    /*
     /**
      * @brief Constructor by copy of meshAi
      * @param meshAi Instance of ASSIMP mesh
      */
-    Mesh(aiMesh &meshAi);
+    //Mesh(aiMesh &meshAi);
 
     uint32_t getMaterialId() const
     {

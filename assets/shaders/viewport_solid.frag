@@ -21,6 +21,4 @@ void main()
     float specular = pow(max(dot(r,V),0.0),alpha);
     float phong = ambiant + kd * diffuse + ks * specular;
     fragColor = vec4( phong * vec3(0.2,1.0,0.2),1.0);
-
-
 }

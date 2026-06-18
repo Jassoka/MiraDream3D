@@ -11,7 +11,7 @@
 
 namespace fs = std::filesystem;
 
-
+/*
 TEST(ImporterTests, SmoothTangentsImportTest) {
     // =========================================================================
     // 1. ARRANGE (Préparation) : Construire le modèle mathématique "Attendu"
@@ -80,3 +80,4 @@ TEST(ImporterTests, SmoothTangentsImportTest) {
     EXPECT_EQ(MeshComparison::canonicalMesh(actualMesh), MeshComparison::canonicalMesh(expectedMesh))
         << "Échec : Les données du Mesh importé ne correspondent pas au modèle mathématique parfait.";
 }
+*/

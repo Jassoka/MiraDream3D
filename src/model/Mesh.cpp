@@ -2,8 +2,6 @@
 
 #include <iostream>
 #include <unordered_map>
-#include <assimp/include/assimp/mesh.h>
-#include <assimp/vector3.h>
 #include <sys/stat.h>
 
 #include "glm/geometric.hpp"

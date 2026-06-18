@@ -1,6 +1,3 @@
-#include <assimp/include/assimp/Importer.hpp>
-#include <assimp/include/assimp/scene.h>
-#include <assimp/include/assimp/postprocess.h>
 #include "model/Scene.h"
 #include "model/Node.h"
 #include "model/AssetImporter.h"
