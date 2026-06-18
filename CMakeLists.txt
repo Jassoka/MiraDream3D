@@ -17,14 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 
 #Qt
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets OpenGLWidgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets OpenGLWidgets)
-
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Gui )
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Gui)
+find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets Gui)
 
 
 add_library(EngineCore STATIC)
@@ -50,28 +43,10 @@ set(PROJECT_SOURCES
         include/model/MeshBuilder.h
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(MiraDream3D
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-    )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET MiraDream3D APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-else()
-    if(ANDROID)
-        add_library(MiraDream3D SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(MiraDream3D
-            ${PROJECT_SOURCES}
-        )
-    endif()
-endif()
+qt_add_executable(MiraDream3D
+    MANUAL_FINALIZATION
+    ${PROJECT_SOURCES}
+)
 
 
 # Précompilation
@@ -105,7 +80,7 @@ target_link_libraries(MiraDream3D PUBLIC EngineCore)
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
-if(${QT_VERSION} VERSION_LESS 6.1.0)
+if(Qt6_VERSION VERSION_LESS 6.1.0)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.MiraDream3D)
 endif()
 set_target_properties(MiraDream3D PROPERTIES
@@ -123,9 +98,8 @@ install(TARGETS MiraDream3D
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(MiraDream3D)
-endif()
+qt_finalize_executable(MiraDream3D)
+
 
 # Google Test
 include(FetchContent)

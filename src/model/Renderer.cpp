@@ -113,7 +113,7 @@ void Renderer::drawTemplate()
 
 
     }
-    glDrawElements(drawMode, nIndices, GL_UNSIGNED_INT, nullptr);
+    mGlFuncs->glDrawElements(drawMode, nIndices, GL_UNSIGNED_INT, nullptr);
     mVAO.release();
 
     //on dessine d'abord la grid
@@ -132,7 +132,6 @@ void Renderer::draw(const ViewportMode mode)
 template <ViewportMode m>
 void Renderer::geometryRedrawTemplate()
 {
-
     mVAO.bind();
     mVBO.bind();
 
@@ -232,6 +231,9 @@ void Renderer::initialize(QOpenGLFunctions* glFuncs)
     if (!mVBO.create()) exit(1);
     if (!mEBO.create()) exit(1);
 
+
+    if (!mGridVAO.create()) exit(1);
+
     mVAO.bind();
     mVBO.bind();
     // 0: position du vertex
@@ -248,9 +250,6 @@ void Renderer::initialize(QOpenGLFunctions* glFuncs)
 
     mEBO.bind();
     mVAO.release();
-
-
-    glGenVertexArrays(1, &mGridVAO);
 
     initShaders();
 }
@@ -283,10 +282,9 @@ void Renderer::drawGrid() {
     const int projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
     mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera->computePerspectiveMatrix()[0][0]);
 
-
-    glBindVertexArray(mGridVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    glBindVertexArray(0);
+    mGridVAO.bind();
+    mGlFuncs->glDrawArrays(GL_TRIANGLES, 0, 3);
+    mGridVAO.release();
 
     glDisable(GL_BLEND);
 }

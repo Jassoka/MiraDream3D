@@ -94,9 +94,7 @@ private:
     QOpenGLBuffer mVBO;
     QOpenGLBuffer mEBO{QOpenGLBuffer::IndexBuffer};
 
-    GLuint mGridVAO;
-
-
+    QOpenGLVertexArrayObject mGridVAO;
 
     uint32_t nIndices = 0;
 #ifdef TEST_HALFEDGES
