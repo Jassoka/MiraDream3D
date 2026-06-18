@@ -1,0 +1,33 @@
+# cube_smooth_with_user_normals
+# Generated test asset for half-edge / normals / smoothing groups.
+# Expected: imported smooth normals. Normal index equals vertex index. s 1.
+o cube_smooth_with_user_normals
+v -1 -1 -1
+v 1 -1 -1
+v 1 1 -1
+v -1 1 -1
+v -1 -1 1
+v 1 -1 1
+v 1 1 1
+v -1 1 1
+vn -0.57735 -0.57735 -0.57735
+vn 0.57735 -0.57735 -0.57735
+vn 0.57735 0.57735 -0.57735
+vn -0.57735 0.57735 -0.57735
+vn -0.57735 -0.57735 0.57735
+vn 0.57735 -0.57735 0.57735
+vn 0.57735 0.57735 0.57735
+vn -0.57735 0.57735 0.57735
+s 1
+f 1//1 4//4 3//3
+f 1//1 3//3 2//2
+f 5//5 6//6 7//7
+f 5//5 7//7 8//8
+f 1//1 2//2 6//6
+f 1//1 6//6 5//5
+f 4//4 8//8 7//7
+f 4//4 7//7 3//3
+f 1//1 5//5 8//8
+f 1//1 8//8 4//4
+f 2//2 3//3 7//7
+f 2//2 7//7 6//6
