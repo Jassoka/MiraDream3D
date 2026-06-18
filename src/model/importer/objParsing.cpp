@@ -79,6 +79,7 @@ ObjToken ObjLexer::readNumber(){
 
     float number=0;
     while (mPos<mSrc.size() && (isNumber(c) || c=='E' || c=='e' || c=='-'||c=='+'||c=='.')) {
+        token.identifier+=c;
         if (c=='.') {
             isValid=false;
             if (isFloat) {
@@ -138,7 +139,20 @@ ObjToken ObjLexer::readNumber(){
         mCol++;
         c=mSrc[mPos];
     }
-    if (!isValid)  error("Not a number ");
+    if (!isValid) {
+
+        while (mPos<mSrc.size() && c!='\n') {
+            token.identifier+=c;
+            mPos++;
+            mCol++;
+            c=mSrc[mPos];
+        }
+
+        token.type=IDENTIFIER;
+        return(token);
+
+        //error("Not a number ");
+    }
     if (hasExp) {
         if (isExpNeg) exponent=-exponent;
         number*=std::pow(10,exponent);
@@ -190,10 +204,6 @@ void ObjParser::parse() {
     mDefaultMeshNode = dynamic_cast<Node*>(new MeshNode("",mScene->getMeshes().size()-1));
     dynamic_cast<HierarchyNode*>(mCurrentNode)->addChild(mDefaultMeshNode);
 
-
-
-
-
     while (mCurrent.type != END ) {
         if (mCurrent.type != IDENTIFIER) {
             if (mCurrent.type!=NEWLINE){
@@ -216,6 +226,10 @@ void ObjParser::parse() {
         }
         else if (mCurrent.identifier=="vt"){
             parseVT();
+            next();
+        }
+        else if (mCurrent.identifier=="l"){
+            parseL();
             next();
         }
         else if (mCurrent.identifier=="s"){
@@ -475,7 +489,14 @@ void ObjParser::parseMtllib() {
         next();
     }
 }
-
+//TODO implemeter pour de vrai
+void ObjParser::parseL() {
+    next();
+    while (mCurrent.type!=NEWLINE)
+    {
+        next();
+    }
+}
 void ObjParser::parseS() {
     next();
 
@@ -531,12 +552,12 @@ void ObjParser::finishMesh() {
     mCurrentMeshSmoothGroupsMap.clear();
 
 
-    mCurrentMesh->hasNormals=true;
-    mCurrentMeshHasUVCoords=true;
+
 }
 void ObjParser::createMesh(std::string name) {
     mCurrentMesh=mScene->newMesh();
-
+    mCurrentMesh->hasNormals=true;
+    mCurrentMeshHasUVCoords=true;
     mCurrentMeshSmoothGroupsMap[0]=0;
     mCurrentMesh->nSmoothGroups=0;
     if (mCurrentSmoothGroup!=0) {

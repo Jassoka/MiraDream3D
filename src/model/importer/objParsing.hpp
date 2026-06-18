@@ -53,11 +53,9 @@ private:
 class ObjParser {
 public:
 
-    ObjParser(const std::string &file,Scene* scene):mLexer(ObjLexer( readFileToString(file))),mScene(scene){};
+    ObjParser(const std::string &file,Scene* scene):mLexer(ObjLexer( readFileToString(file))),mScene(scene) {};
     void parse();
 private:
-    void execParser();
-
 
     ObjToken mCurrent;
     ObjLexer mLexer;
@@ -89,6 +87,7 @@ private:
     void parseS();
     void parseUsemtl();
     void parseMtllib();
+    void parseL();
 
     void error(const std::string &msg) const;
     void notEnoughComponentsError(int i) const;
