@@ -14,6 +14,10 @@
 #include "model/MeshBuilder.h"
 #include <sstream>
 
+glm::vec3 xzy(const glm::vec3 v)
+{
+    return glm::vec3(v.x, v.z, v.y);
+}
 
 ObjParser::ObjParser(const std::string &file,Scene* scene):
     mLexer(ObjLexer( readFileToString(file))),
@@ -327,7 +331,7 @@ void ObjParser::parseV() {
         notEnoughComponentsError(coord);
         return;
     }
-    mV.push_back(v);
+    mV.push_back(xzy(v));
 }
 
 void ObjParser::parseVN() {
@@ -356,7 +360,7 @@ void ObjParser::parseVN() {
         notEnoughComponentsError(coord);
         return;
     }
-    mVN.push_back(glm::normalize(vn));
+    mVN.push_back( xzy(glm::normalize(vn)));
 }
 
 void ObjParser::parseVT() {
