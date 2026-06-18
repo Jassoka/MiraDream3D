@@ -10,10 +10,9 @@
 #include "glm/vec3.hpp"
 class Mesh;
 
-struct MeshBuildInfo
+struct MeshBuildFlags
 {
     bool hasUserNormals = false;
-    int nbSmoothingGroups = 0;
     bool computedFacesPerVertex = false;
     bool computedFacesAndVertices = false;
 };
@@ -32,6 +31,7 @@ struct MeshBuildData
 
     std::vector<std::vector<uint32_t>> facesPerVertex = {};
 
+    int nbSmoothingGroups = 0;
     std::vector<uint8_t> smoothingGroups = {};
 
 
@@ -56,14 +56,14 @@ struct MeshBuildData
 class MeshBuilder
 {
 public:
-    explicit MeshBuilder(Mesh *mesh, MeshBuildData &data, MeshBuildInfo &flags);
-    static void build(Mesh *mesh, MeshBuildData data = MeshBuildData{}, MeshBuildInfo flags = MeshBuildInfo{});
+    explicit MeshBuilder(Mesh *mesh, MeshBuildData &data, MeshBuildFlags &flags);
+    static void build(Mesh *mesh, MeshBuildData data = MeshBuildData{}, MeshBuildFlags flags = MeshBuildFlags{});
 
 private:
     void buildImpl() const;
     void computeFacesAndVertices() const;
     Mesh *mMesh;
-    MeshBuildInfo &mFlags;
+    MeshBuildFlags &mFlags;
     MeshBuildData &mData;
 
 };

@@ -62,7 +62,7 @@ void MeshTopologyBuilder::generateFacesPerVertex()
     mFacesPerVertex = &mOwnedFacesPerVertex;
 }
 
-int32_t MeshTopologyBuilder::findVx()
+int32_t MeshTopologyBuilder::findVx() const
 {
     /* Trouver la liste des extremums en x */
     int firstIndex = 0;
@@ -280,7 +280,7 @@ void MeshTopologyBuilder::generateNormals() const
     for (uint32_t gIdx = 0; gIdx < mMesh->mGeometricVertices.size(); gIdx++)
     {
         auto [vertices, halfEdge] = mMesh->mGeometricVertices[gIdx];
-        std::vector<std::vector<uint32_t>> smoothingGroups(mMesh->nSmoothGroups + 1);
+        std::vector<std::vector<uint32_t>> smoothingGroups(mMesh->mNbSmoothingGroups + 1);
         //TODO trouver une solution pour rajouter un half edge par geometric vertex
         for (uint32_t vIdx = 0; vIdx < vertices.size(); vIdx++)
         {
@@ -290,7 +290,7 @@ void MeshTopologyBuilder::generateNormals() const
             {
                 const auto hardNormal = mNormalPerFace[faceID];
                 mMesh->mHardNormals[renderVertexID] = hardNormal;
-                if (!mMesh->hasNormals)
+                if (!mMesh->mHasUserNormals)
                 {
                     mMesh->mRenderVertices[renderVertexID].setNormal(hardNormal);
                 }
@@ -299,7 +299,7 @@ void MeshTopologyBuilder::generateNormals() const
                     mMesh->mRenderVertices[renderVertexID].setNormal(glm::vec3(0.0)); //TODO warning
                 }
             }
-            if (mMesh->hasNormals)
+            if (mMesh->mHasUserNormals)
             {
                 const auto userNormal = mMesh->mUserNormals[renderVertexID];
                 mMesh->mRenderVertices[renderVertexID].setNormal(userNormal);
@@ -312,14 +312,14 @@ void MeshTopologyBuilder::generateNormals() const
         }
         if (mMesh->isSmooth()) //TODO ce serait pratique de mettre ça ailleurs pour réutiliser
         {
-            std::vector<glm::vec3> smoothGroupAverageNormals(mMesh->nSmoothGroups + 1);
+            std::vector<glm::vec3> smoothGroupAverageNormals(mMesh->mNbSmoothingGroups + 1);
             // Groupe 0 (smoothing off)
             for (const auto renderVertexID : smoothingGroups[0])
             {
                 const auto normal = mMesh->mRenderVertices[renderVertexID].getNormal();
                 mMesh->mRenderVertices[renderVertexID].setNormal(normal);
             }
-            for (int i = 1; i <= mMesh->nSmoothGroups; i++)
+            for (int i = 1; i <= mMesh->mNbSmoothingGroups; i++)
             {
                 glm::vec3 normalSum(0.0);
                 for (const auto renderVertexID : smoothingGroups[i])

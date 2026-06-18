@@ -17,7 +17,7 @@
 class Mesh;
 class Node;
 class Scene;
-struct MeshBuildInfo;
+struct MeshBuildFlags;
 struct MeshBuildData;
 
 enum ObjTokenType {
@@ -76,8 +76,8 @@ private:
     bool mCurrentMeshHasUVCoords=true;
     uint8_t mCurrentSmoothGroup=0;
 
-    MeshBuildInfo *mInfo;
-    MeshBuildData *mData;
+    MeshBuildFlags *mMeshBuildFlags;
+    MeshBuildData *mMeshBuildData;
 
     std::unordered_map<uint8_t,uint8_t> mCurrentMeshSmoothGroupsMap;
     std::unordered_map<uint32_t,uint32_t> mCurrentMeshGeometricVerticesMap;

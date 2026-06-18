@@ -5,14 +5,14 @@
 #include  "model/Mesh.h"
 #include "model/MeshTopologyBuilder.h"
 
-MeshBuilder::MeshBuilder(Mesh *mesh, MeshBuildData &data, MeshBuildInfo &flags):
+MeshBuilder::MeshBuilder(Mesh *mesh, MeshBuildData &data, MeshBuildFlags &flags):
     mMesh(mesh),
     mFlags(flags),
     mData(data)
 {
 }
 
-void MeshBuilder::build(Mesh *mesh, MeshBuildData data, MeshBuildInfo flags)
+void MeshBuilder::build(Mesh *mesh, MeshBuildData data, MeshBuildFlags flags)
 {
     const auto builder = MeshBuilder(mesh, data, flags);
     builder.buildImpl();
@@ -28,12 +28,12 @@ void MeshBuilder::buildImpl() const
     mMesh->mGeometricFaces = std::move(mData.geometricFaces);
     mMesh->mVertexCountPerFace = std::move(mData.geometricVertexCountPerFace);
 
-    mMesh->hasNormals = mFlags.hasUserNormals;
+    mMesh->mHasUserNormals = mFlags.hasUserNormals;
     if (mFlags.hasUserNormals)
     {
         mMesh->mUserNormals = std::move(mData.userNormals);
     }
-    mMesh->nSmoothGroups = mFlags.nbSmoothingGroups;
+    mMesh->mNbSmoothingGroups = mData.nbSmoothingGroups;
     mMesh->mSmoothingGroups = mData.smoothingGroups;
     mMesh->triangulate();
     MeshTopologyBuilder::build(mMesh, mFlags.computedFacesPerVertex?&mData.facesPerVertex:nullptr); //TODO changer DES QUE POSSIBLE
@@ -45,7 +45,7 @@ void MeshBuilder::computeFacesAndVertices() const
     mData.geometricVertices.reserve(mData.positions.size());
     mData.renderVertices.reserve(mData.positions.size()*4);
     mFlags.hasUserNormals = false;
-    mFlags.nbSmoothingGroups = 0;
+    mData.nbSmoothingGroups = 0;
     for (auto p : mData.positions)
     {
         mData.addGeometricVertex({{}, 0});

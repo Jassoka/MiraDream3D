@@ -152,7 +152,6 @@ void Renderer::geometryRedrawTemplate()
                 indices.push_back(t[1] + indexOffset);
                 indices.push_back(t[2] + indexOffset);
             }
-            indexOffset += meshVertices.size();
         }
         else if (m == ViewportMode::WIREFRAME)
         {
@@ -165,8 +164,8 @@ void Renderer::geometryRedrawTemplate()
                 indices.push_back(geometricVertices[origin].vertices[0] + indexOffset);
                 indices.push_back(geometricVertices[end].vertices[0] + indexOffset);
             }
-            indexOffset += geometricVertices.size();
         }
+        indexOffset += meshVertices.size();
     }
 
     const RenderVertex *vertices_data = vertices.data(); // Pointeur vers les vertices

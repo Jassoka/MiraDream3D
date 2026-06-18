@@ -128,7 +128,7 @@ private:
     halfEdgeDirection findFaceOrientation(uint32_t AId,const std::vector<uint32_t> &adjacentFaces, glm::vec3 *normalPtr = nullptr) const;
     glm::vec3 getNormal(const Face &face,halfEdgeDirection orientation) const;
 
-    bool isSmooth() const { return nSmoothGroups != 0; }
+    bool isSmooth() const { return mNbSmoothingGroups != 0; }
 
     uint32_t mMaterialID=0;
     std::vector<RenderVertex> mRenderVertices;
@@ -141,8 +141,8 @@ private:
     std::vector<uint8_t> mVertexCountPerFace;
     std::vector<uint8_t> mSmoothingGroups;
     bool mIsManifold = true;
-    bool hasNormals;
-    uint8_t nSmoothGroups;
+    bool mHasUserNormals;
+    uint8_t mNbSmoothingGroups;
     std::vector<glm::vec3> mHardNormals;
     std::vector<glm::vec3> mUserNormals;
     /**
@@ -153,9 +153,8 @@ private:
     /**
      * @brief List of the first half-edge index for all components of the mesh
      */
-    static halfEdgeDirection defaultHalfEdgeDirection;
     std::vector<uint32_t> mComponents;
-    bool isTriangulated = false;
+    //bool mIsTriangulated = false;
 };
 #endif //MIRADREAM3D_MESH_H
 

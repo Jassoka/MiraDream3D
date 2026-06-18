@@ -4,11 +4,8 @@
 #include <unordered_map>
 
 #include "glm/geometric.hpp"
-#include "glm/mat4x4.hpp"
 #include "model/MeshBuilder.h"
-#include "model/MeshTopologyBuilder.h"
 
-halfEdgeDirection Mesh::defaultHalfEdgeDirection = ABC;
 
 Mesh::Mesh(const uint32_t materialID,const std::vector<glm::vec3> &positions,const std::vector<SizedFace> &faces, const glm::mat4 &translationRotationMatrix, const float scale):
 mMaterialID(materialID)

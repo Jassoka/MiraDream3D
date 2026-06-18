@@ -34,7 +34,7 @@ private:
 
     void generateFacesPerVertex();
     void generateEdges();
-    int32_t findVx();
+    int32_t findVx() const;
     uint32_t generateFirstFaceHalfEdges(std::vector<uint32_t> &halfEdgesToIterate);
     void generateHalfEdges(uint32_t &facesToVisit);
     void generateNormals() const;

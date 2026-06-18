@@ -18,17 +18,17 @@
 ObjParser::ObjParser(const std::string &file,Scene* scene):
     mLexer(ObjLexer( readFileToString(file))),
     mScene(scene),
-    mInfo(new MeshBuildInfo{}),
-    mData(new MeshBuildData{})
+    mMeshBuildFlags(new MeshBuildFlags{}),
+    mMeshBuildData(new MeshBuildData{})
 {
-    mInfo->computedFacesAndVertices = true;
-    mInfo->computedFacesPerVertex = true;
+    mMeshBuildFlags->computedFacesAndVertices = true;
+    mMeshBuildFlags->computedFacesPerVertex = true;
 }
 
 ObjParser::~ObjParser()
 {
-    delete mInfo;
-    delete mData;
+    delete mMeshBuildFlags;
+    delete mMeshBuildData;
 }
 
 
@@ -228,10 +228,10 @@ void ObjParser::parseImpl() {
     mCurrentMesh=mScene->newMesh();
     mDefaultMeshNode = dynamic_cast<Node*>(new MeshNode("",mScene->getMeshes().size()-1));
     dynamic_cast<HierarchyNode*>(mCurrentNode)->addChild(mDefaultMeshNode);
-    mInfo->hasUserNormals=true;
+    mMeshBuildFlags->hasUserNormals=true;
     mCurrentMeshHasUVCoords=true;
     mCurrentMeshSmoothGroupsMap[0]=0;
-    mInfo->nbSmoothingGroups=0;
+    mMeshBuildData->nbSmoothingGroups=0;
 
 
     while (mCurrent.type != END ) {
@@ -276,7 +276,7 @@ void ObjParser::parseImpl() {
         }
         else if (mCurrent.identifier=="g"){
             if (!gEncountered) {
-                if ( mData->renderVertices.empty()) {
+                if ( mMeshBuildData->renderVertices.empty()) {
                     removeDefaultMesh();   // ← le 1er g supprime le mesh par défaut
                 }
                 else {mDefaultMeshNode=nullptr;}
@@ -464,37 +464,37 @@ void ObjParser::parseF() {
 
         //quand on a fini de parser le point
 
-        if (mInfo->hasUserNormals && vn==-1){mInfo->hasUserNormals=false;}
+        if (mMeshBuildFlags->hasUserNormals && vn==-1){mMeshBuildFlags->hasUserNormals=false;}
         if (mCurrentMeshHasUVCoords && vt==-1){mCurrentMeshHasUVCoords=false;}
-        mData->renderVertices.push_back(RenderVertex(
+        mMeshBuildData->renderVertices.push_back(RenderVertex(
                 mV[v],
                 glm::vec3(0.0),
                 (vt==-1) ? glm::vec2(0.0) : mVT[vt]
             ));
 
-        mData->userNormals.push_back((vn==-1) ? glm::vec3(0.0) : mVN[vn]);
-        mData->smoothingGroups.push_back(mCurrentMeshSmoothGroupsMap[mCurrentSmoothGroup]);
+        mMeshBuildData->userNormals.push_back((vn==-1) ? glm::vec3(0.0) : mVN[vn]);
+        mMeshBuildData->smoothingGroups.push_back(mCurrentMeshSmoothGroupsMap[mCurrentSmoothGroup]);
 
         //creation du geomvertx s'il n'existe pas
         if (mCurrentMeshGeometricVerticesMap.find(v)==mCurrentMeshGeometricVerticesMap.end()) {
-            mData->geometricVertices.push_back(GeometricVertex {});
-            mData->facesPerVertex.push_back(std::vector<uint32_t>());
-            mCurrentMeshGeometricVerticesMap[v]=mData->geometricVertices.size()-1;
+            mMeshBuildData->geometricVertices.push_back(GeometricVertex {});
+            mMeshBuildData->facesPerVertex.push_back(std::vector<uint32_t>());
+            mCurrentMeshGeometricVerticesMap[v]=mMeshBuildData->geometricVertices.size()-1;
         }
 
-        mData->geometricVertices[mCurrentMeshGeometricVerticesMap[v]].vertices.push_back(mData->renderVertices.size() - 1);
-        renderFace[nVertex]=mData->renderVertices.size()-1;
+        mMeshBuildData->geometricVertices[mCurrentMeshGeometricVerticesMap[v]].vertices.push_back(mMeshBuildData->renderVertices.size() - 1);
+        renderFace[nVertex]=mMeshBuildData->renderVertices.size()-1;
         geomFace[nVertex] = mCurrentMeshGeometricVerticesMap[v];
         nVertex++;
     }
-    const uint32_t faceID = mData->renderFaces.size(); // id que la face aura une fois ajoutée
+    const uint32_t faceID = mMeshBuildData->renderFaces.size(); // id que la face aura une fois ajoutée
     for (int i = 0; i < nVertex; i++) {
-        mData->facesPerVertex[geomFace[i]].push_back(faceID);
+        mMeshBuildData->facesPerVertex[geomFace[i]].push_back(faceID);
     }
     switch (nVertex) {
         case(3):
         case(4):
-            mData->addFace(geomFace, renderFace, nVertex);
+            mMeshBuildData->addFace(geomFace, renderFace, nVertex);
             break;
         default:
             error((std::stringstream() << " Nombre de sommets incorrect : " << nVertex ).str());
@@ -531,10 +531,10 @@ void ObjParser::parseS() {
     if (mCurrent.type == IDENTIFIER) {
         if (mCurrent.identifier=="off") {
             mCurrentSmoothGroup=0;
-            if (mData->renderVertices.empty()) {
+            if (mMeshBuildData->renderVertices.empty()) {
                 mCurrentMeshSmoothGroupsMap.clear();
                 mCurrentMeshSmoothGroupsMap[0]=0;
-                mInfo->nbSmoothingGroups=0;
+                mMeshBuildData->nbSmoothingGroups=0;
             }
         }
         else error("smoothing group error");
@@ -548,8 +548,8 @@ void ObjParser::parseS() {
 
         mCurrentSmoothGroup=static_cast<uint8_t>(mCurrent.value.intValue);
         if (mCurrentMeshSmoothGroupsMap.find(mCurrent.value.intValue) == mCurrentMeshSmoothGroupsMap.end()) {
-            mInfo->nbSmoothingGroups++;
-            mCurrentMeshSmoothGroupsMap[mCurrent.value.intValue] = mInfo->nbSmoothingGroups;
+            mMeshBuildData->nbSmoothingGroups++;
+            mCurrentMeshSmoothGroupsMap[mCurrent.value.intValue] = mMeshBuildData->nbSmoothingGroups;
         }
 
 
@@ -573,25 +573,25 @@ void ObjParser::removeDefaultMesh() {
 }
 
 void ObjParser::finishMesh() {
-    MeshBuilder::build(mCurrentMesh, *mData, *mInfo);
-    delete mData;
-    delete mInfo;
-    mData = new MeshBuildData();
-    mInfo = new MeshBuildInfo();
+    MeshBuilder::build(mCurrentMesh, *mMeshBuildData, *mMeshBuildFlags);
+    delete mMeshBuildData;
+    delete mMeshBuildFlags;
+    mMeshBuildData = new MeshBuildData();
+    mMeshBuildFlags = new MeshBuildFlags();
     mCurrentMeshGeometricVerticesMap.clear();
     mCurrentMeshSmoothGroupsMap.clear();
 }
 void ObjParser::createMesh(std::string name) {
     mCurrentMesh=mScene->newMesh();
-    mInfo->hasUserNormals=true;
+    mMeshBuildFlags->hasUserNormals=true;
     mCurrentMeshHasUVCoords=true;
-    mInfo->computedFacesAndVertices = true;
-    mInfo->computedFacesPerVertex = true;
+    mMeshBuildFlags->computedFacesAndVertices = true;
+    mMeshBuildFlags->computedFacesPerVertex = true;
     mCurrentMeshSmoothGroupsMap[0]=0;
-    mInfo->nbSmoothingGroups=0;
+    mMeshBuildData->nbSmoothingGroups=0;
     if (mCurrentSmoothGroup!=0) {
         mCurrentMeshSmoothGroupsMap[mCurrentSmoothGroup]=1;
-        mInfo->nbSmoothingGroups++;
+        mMeshBuildData->nbSmoothingGroups++;
     }
 }
 
