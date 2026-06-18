@@ -16,6 +16,7 @@ enum halfEdgeDirection {ABC,ACB};
 class Mesh
 {
     friend class HalfEdgeBuilder;
+    friend class ObjParser;
 public:
 
     /**

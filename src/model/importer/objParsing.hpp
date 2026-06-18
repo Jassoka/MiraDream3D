@@ -68,6 +68,8 @@ private:
     uint32_t mCurrentMeshOriginVId=0;
     bool mCurrentMeshHasNormals=true;
     bool mCurrentMeshHasUVCoords=true;
+    uint8_t mCurrentSmoothGroup=0;
+    std::unordered_map<uint8_t,uint8_t> mCurrentMeshSmoothGroupsMap;
     std::vector<std::vector<uint32_t>> mCurrentMeshFacePerGeometricVertex;
     std::unordered_map<uint32_t,uint32_t> mCurrentMeshGeometricVerticesMap;
     std::vector<glm::vec3> mV;
@@ -84,14 +86,14 @@ private:
     void parseF();
     void parseO();
     void parseG();
-    void parseL();
+    void parseS();
     void parseUsemtl();
     void parseMtllib();
 
     void error(const std::string &msg) const;
     void notEnoughComponentsError(int i) const;
     void removeDefaultMesh();
-
+    void createMesh(std::string name);
 
 };
 

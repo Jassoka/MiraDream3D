@@ -218,6 +218,18 @@ void ObjParser::parse() {
             parseVT();
             next();
         }
+        else if (mCurrent.identifier=="s"){
+            parseS();
+            next();
+        }
+        else if (mCurrent.identifier=="mtllib"){
+            parseMtllib();
+            next();
+        }
+        else if (mCurrent.identifier=="usemtl"){
+            parseUsemtl();
+            next();
+        }
         else if (mCurrent.identifier=="g"){
             if (!gEncountered) {
                 if ( mCurrentMesh->getVertices().empty()) {
@@ -351,10 +363,6 @@ void ObjParser::parseO() {
         mCurrentMesh = mScene->newMesh();
         auto* meshNode = new MeshNode(name, mScene->getMeshes().size() - 1);
         newNode->addChild(meshNode);
-        mCurrentMeshGeometricVerticesMap.clear();
-        mCurrentMeshFacePerGeometricVertex.clear();
-        mCurrentMeshHasUVCoords = true;
-        mCurrentMeshHasNormals = true;
     }
 
     mCurrentNode = newNode;
@@ -373,12 +381,8 @@ void ObjParser::parseG() {
         next();
     }
     if (mCurrentMesh) finishMesh();
-    mCurrentMesh=mScene->newMesh();
+    createMesh(name);
     dynamic_cast<HierarchyNode *>(mCurrentNode)->addChild(new MeshNode(name,mScene->getMeshes().size()-1));
-    mCurrentMeshFacePerGeometricVertex.clear();
-    mCurrentMeshGeometricVerticesMap.clear();
-    mCurrentMeshHasUVCoords=true;
-    mCurrentMeshHasNormals=true;
 }
 
 
@@ -418,24 +422,28 @@ void ObjParser::parseF() {
 
         if (mCurrentMeshHasNormals && vn==-1){mCurrentMeshHasNormals=false;}
         if (mCurrentMeshHasUVCoords && vt==-1){mCurrentMeshHasUVCoords=false;}
-        mCurrentMesh->addVertex(RenderVertex(
-            mV[v],
-            (vn==-1) ? glm::vec3(0.0) : mVN[vn],
+        mCurrentMesh->mRenderVertices.push_back(RenderVertex(
+                mV[v],
+                glm::vec3(0.0),
                 (vt==-1) ? glm::vec2(0.0) : mVT[vt]
             ));
+
+        mCurrentMesh->mUserNormals.push_back((vn==-1) ? glm::vec3(0.0) : mVN[vn]);
+        mCurrentMesh->mSmoothingGroups.push_back(mCurrentMeshSmoothGroupsMap[mCurrentSmoothGroup]);
+
         //creation du geomvertx s'il n'existe pas
         if (mCurrentMeshGeometricVerticesMap.find(v)==mCurrentMeshGeometricVerticesMap.end()) {
-            mCurrentMesh->addGeometricVertex(GeometricVertex {});
+            mCurrentMesh->mGeometricVertices.push_back(GeometricVertex {});
             mCurrentMeshFacePerGeometricVertex.push_back(std::vector<uint32_t>());
-            mCurrentMeshGeometricVerticesMap[v]=mCurrentMesh->getGeometricVertices().size()-1;
+            mCurrentMeshGeometricVerticesMap[v]=mCurrentMesh->mGeometricVertices.size()-1;
         }
 
         mCurrentMesh->getGeometricVertices()[mCurrentMeshGeometricVerticesMap[v]].vertices.push_back(mCurrentMesh->getVertices().size() - 1);
-        renderFace[nVertex]=mCurrentMesh->getVertices().size()-1;
+        renderFace[nVertex]=mCurrentMesh->mRenderVertices.size()-1;
         geomFace[nVertex] = mCurrentMeshGeometricVerticesMap[v];
         nVertex++;
     }
-    const uint32_t faceID = mCurrentMesh->getRenderFaces().size(); // id que la face aura une fois ajoutée
+    const uint32_t faceID = mCurrentMesh->mRenderFaces.size(); // id que la face aura une fois ajoutée
     for (int i = 0; i < nVertex; i++) {
         mCurrentMeshFacePerGeometricVertex[geomFace[i]].push_back(faceID);
     }
@@ -451,6 +459,51 @@ void ObjParser::parseF() {
             break;
     }
 }
+//TODO implemeter pour de vrai
+void ObjParser::parseUsemtl() {
+    next();
+    while (mCurrent.type!=NEWLINE)
+    {
+        next();
+    }
+}
+//TODO implemeter pour de vrai
+void ObjParser::parseMtllib() {
+    next();
+    while (mCurrent.type!=NEWLINE)
+    {
+        next();
+    }
+}
+
+void ObjParser::parseS() {
+    next();
+
+    if (mCurrent.type == IDENTIFIER) {
+        if (mCurrent.identifier=="off") {
+            mCurrentSmoothGroup=0;
+            if (mCurrentMesh->mRenderVertices.empty()) {
+                mCurrentMeshSmoothGroupsMap.clear();
+                mCurrentMeshSmoothGroupsMap[0]=0;
+                mCurrentMesh->nSmoothGroups=0;
+            }
+        }
+        else error("smoothing group error");
+    }
+    else if (mCurrent.type == INT) {
+        if (mCurrent.value.intValue>255) {
+            error("too high smoothing group (>255), changed to 0.");//TODO warning
+            mCurrent.value.intValue=0;
+        }
+
+        mCurrentSmoothGroup=mCurrent.value.intValue;
+        mCurrentMesh->nSmoothGroups++;
+        mCurrentMeshSmoothGroupsMap[mCurrent.value.intValue] = mCurrentMesh->nSmoothGroups;
+    }
+    else error("smoothing group error");
+    next();
+}
+
 
 void ObjParser::removeDefaultMesh() {
     // retirer le MeshNode du parent
@@ -468,8 +521,24 @@ void ObjParser::removeDefaultMesh() {
 void ObjParser::finishMesh() {
     mCurrentMesh->triangulate();
     mCurrentMesh->generateHalfEdges(&mCurrentMeshFacePerGeometricVertex);
-}
+    mCurrentMeshFacePerGeometricVertex.clear();
+    mCurrentMeshGeometricVerticesMap.clear();
+    mCurrentMeshSmoothGroupsMap.clear();
 
+
+    mCurrentMeshHasNormals=true;
+    mCurrentMeshHasUVCoords=true;
+}
+void ObjParser::createMesh(std::string name) {
+    mCurrentMesh=mScene->newMesh();
+
+    mCurrentMeshSmoothGroupsMap[0]=0;
+
+    if (mCurrentSmoothGroup!=0) {
+        mCurrentMeshSmoothGroupsMap[mCurrentSmoothGroup]=1;
+        mCurrentMesh->nSmoothGroups++;
+    }
+}
 
 void ObjParser::error(const std::string &msg) const {
     throw ObjParserException(msg,mLexer.getLine(),mLexer.getLine());
