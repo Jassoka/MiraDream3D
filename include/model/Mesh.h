@@ -178,6 +178,11 @@ private:
     std::vector<Face> mGeometricFaces;
     std::vector<Triangle> mTriangles;
     std::vector<uint8_t> mVertexCountPerFace;
+    std::vector<uint8_t> mSmoothingGroups;
+    bool hasNormals;
+    bool isSmooth;
+    std::vector<glm::vec3> mHardNormals;
+    std::vector<glm::vec3> mUserNormals;
     /**
      * @brief List of the first half edge index linked a certain vertex
      * @note Is size of mVertices
