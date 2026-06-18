@@ -7,5 +7,7 @@
         <file>assets/shaders/viewport_wireframe.frag</file>
         <file>assets/shaders/viewport_test_halfedges.vert</file>
         <file>assets/shaders/viewport_test_halfedges.frag</file>
+        <file>assets/shaders/grid.vert</file>
+        <file>assets/shaders/grid.frag</file>
     </qresource>
 </RCC>

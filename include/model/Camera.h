@@ -43,6 +43,10 @@ public:
     }
 
     glm::vec3 getPosition();
+    glm::vec3 getLookAt();
+
+    double getFarPlane() const;
+    double getNearPlane() const;
     /**
      * @brief
      * @param dPhi Horizontal translation

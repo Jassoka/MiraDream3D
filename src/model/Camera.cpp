@@ -60,9 +60,16 @@ const glm::mat4& Camera::computePerspectiveMatrix()
 glm::vec3 Camera::getPosition() {
     return(-glm::vec3(mTranslationMatrix[3]));
 }
+glm::vec3 Camera::getLookAt() {
+    return glm::vec3(mRotationMatrix[0][2],mRotationMatrix[1][2],mRotationMatrix[2][2]);
+}
 
-
-
+double Camera::getFarPlane() const {
+    return mFarPlane;
+}
+double Camera::getNearPlane() const {
+    return mNearPlane;
+}
 void Camera::rotateAroundAnchor(const float dPhi, const float dTheta)
 {
     const float rho = glm::length(glm::vec3(mTranslationMatrix[3]) - mAnchorPoint);

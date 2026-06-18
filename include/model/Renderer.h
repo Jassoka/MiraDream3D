@@ -84,6 +84,8 @@ private:
     template <ViewportMode m>
     void geometryRedrawTemplate();
 
+    void drawGrid();
+
     Camera *mEngineCamera = initEngineCamera();
     ShaderManager *mShaderManager;
     const Scene *mScene = nullptr;
@@ -91,6 +93,11 @@ private:
     QOpenGLVertexArrayObject mVAO;
     QOpenGLBuffer mVBO;
     QOpenGLBuffer mEBO{QOpenGLBuffer::IndexBuffer};
+
+    GLuint mGridVAO;
+
+
+
     uint32_t nIndices = 0;
 #ifdef TEST_HALFEDGES
     uint32_t mTestHalfEdge=0;

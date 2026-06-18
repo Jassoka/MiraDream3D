@@ -16,7 +16,7 @@
 
 const std::string VIEWPORT_SOLID = "viewport_solid";
 const std::string VIEWPORT_WIREFRAME = "viewport_wireframe";
-
+const std::string GRID = "grid";
 
 static constexpr glm::vec3 worldOrigin {0.0f, 0.0f, 0.0f};
 static constexpr glm::vec3 worldUp {0.0f, 0.0f, 1.0f};
@@ -45,6 +45,7 @@ Camera *Renderer::initEngineCamera()
 template <ViewportMode m>
 void Renderer::drawTemplate()
 {
+
     // On choisit le programme du vertex shader
     GLuint programID;
     switch (m)
@@ -109,9 +110,14 @@ void Renderer::drawTemplate()
 
             break;
         }
+
+
     }
     glDrawElements(drawMode, nIndices, GL_UNSIGNED_INT, nullptr);
     mVAO.release();
+
+    //on dessine d'abord la grid
+    drawGrid();
 }
 
 void Renderer::draw(const ViewportMode mode)
@@ -208,10 +214,16 @@ void Renderer::initShaders()
     ShaderManager::createProgram("viewport_test_halfedges", shaders);
 #endif
 
+
+    vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/grid.vert", GL_VERTEX_SHADER);
+    fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/grid.frag", GL_FRAGMENT_SHADER);
+    shaders = {vertexShader, fragmentShader};
+    ShaderManager::createProgram(GRID, shaders);
 }
 
 void Renderer::initialize(QOpenGLFunctions* glFuncs)
 {
+    //3D
     mGlFuncs = glFuncs;
     ShaderManager::initialize(glFuncs);
 
@@ -236,6 +248,9 @@ void Renderer::initialize(QOpenGLFunctions* glFuncs)
     mEBO.bind();
     mVAO.release();
 
+
+    glGenVertexArrays(1, &mGridVAO);
+
     initShaders();
 }
 
@@ -249,3 +264,28 @@ void Renderer::resize(const int width, int height) const
 
 template void Renderer::drawTemplate<ViewportMode::SOLID>();
 template void Renderer::drawTemplate<ViewportMode::WIREFRAME>();
+
+
+
+
+void Renderer::drawGrid() {
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    GLuint programID = ShaderManager::getShaderProgram(GRID);
+    mGlFuncs->glUseProgram(programID);
+    // Arguments de la caméra
+    const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
+    mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera->computeViewMatrix()[0][0]);
+
+    const int projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
+    mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera->computePerspectiveMatrix()[0][0]);
+
+
+    glBindVertexArray(mGridVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(0);
+
+    glDisable(GL_BLEND);
+}
