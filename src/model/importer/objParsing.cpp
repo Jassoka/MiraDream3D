@@ -491,14 +491,19 @@ void ObjParser::parseS() {
         else error("smoothing group error");
     }
     else if (mCurrent.type == INT) {
-        if (mCurrent.value.intValue>255) {
+        if (mCurrent.value.intValue>255  ||mCurrent.value.intValue<0) {
             error("too high smoothing group (>255), changed to 0.");//TODO warning
             mCurrent.value.intValue=0;
+
         }
 
-        mCurrentSmoothGroup=mCurrent.value.intValue;
-        mCurrentMesh->nSmoothGroups++;
-        mCurrentMeshSmoothGroupsMap[mCurrent.value.intValue] = mCurrentMesh->nSmoothGroups;
+        mCurrentSmoothGroup=static_cast<uint8_t>(mCurrent.value.intValue);
+        if (mCurrentMeshSmoothGroupsMap.find(mCurrent.value.intValue) == mCurrentMeshSmoothGroupsMap.end()) {
+            mCurrentMesh->nSmoothGroups++;
+            mCurrentMeshSmoothGroupsMap[mCurrent.value.intValue] = mCurrentMesh->nSmoothGroups;
+        }
+
+
     }
     else error("smoothing group error");
     next();
