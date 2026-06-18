@@ -14,13 +14,13 @@ uniform mat4 projMatrix;
 //t>0 indique que l'on regarde a travers la surface y=0
 
 void main() {
-    float denom = farUnProj.y - nearUnProj.y ;
+    float denom = farUnProj.z - nearUnProj.z ;
 
     if (abs(denom)<1e-6){
         fragColor=vec4(0.0);
     }
     else {
-        float t = -nearUnProj.y/denom;
+        float t = -nearUnProj.z/denom;
         vec3 planePos=nearUnProj + t * (farUnProj - nearUnProj);
 
         vec4 clip_space_pos = projMatrix * viewMatrix * vec4(planePos, 1.0);
@@ -33,7 +33,7 @@ void main() {
         float wireSize=1e-2;
 
 
-        vec2 coord = planePos.xz / tileSize;
+        vec2 coord = planePos.xy / tileSize;
         vec2 derivative = fwidth(coord);
         vec2 grid = abs(fract(coord - 0.5) - 0.5) / derivative;
         float line = min(grid.x, grid.y);
