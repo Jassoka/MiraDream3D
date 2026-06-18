@@ -9,39 +9,34 @@
 #include "glm/fwd.hpp"
 
 struct aiMesh;
-class HalfEdgeBuilder;
+class MeshTopologyBuilder;
 
 enum halfEdgeDirection {ABC,ACB};
 
 
 class Mesh
 {
-    friend class HalfEdgeBuilder;
-    friend class ObjParser;
+    friend class MeshTopologyBuilder;
+    friend class MeshBuilder;
 public:
 
     /**
      * @brief Default constructor for Mesh
      */
     Mesh(const uint32_t materialID): mMaterialID(materialID) {}
+
     Mesh(uint32_t materialID,
         const std::vector<glm::vec3> &positions,
         const std::vector<SizedFace> &faces,
         const glm::mat4 &translationRotationMatrix,
         float scale);
-    /*
-    /**
-     * @brief Constructor by copy of meshAi
-     * @param meshAi Instance of ASSIMP mesh
-     */
-    //Mesh(aiMesh &meshAi);
 
     uint32_t getMaterialId() const
     {
         return mMaterialID;
     }
 
-    const std::vector<RenderVertex>& getVertices() const
+    const std::vector<RenderVertex>& getRenderVertices() const
     {
         return mRenderVertices;
     }
@@ -91,14 +86,13 @@ public:
         return mComponents;
     }
 
-     std::vector<GeometricVertex>& getGeometricVertices()
+    const std::vector<GeometricVertex>& getGeometricVertices() const
     {
         return mGeometricVertices;
     }
-    /**
-     * @brief Prints mesh contents in the console
-     */
+#ifdef ENABLE_DEBUG
     bool operator==(const Mesh &other) const;
+#endif
 
     bool isTriangle(const uint32_t faceID) const
     {
@@ -108,60 +102,20 @@ public:
         return getNbVertex(faceID) == 4;
     }
 
-    uint32_t addVertex(const RenderVertex &vertex);
-    void addGeometricVertex(const GeometricVertex &vertex);
-    //void generateEdges();
-    /**
-     * @brief
-     * @param facesPerVertex List faces per vertex (within a geometric vertex)
-     */
-    void generateHalfEdges(const std::vector<std::vector<uint32_t>> *facesPerVertex = nullptr);
-    void triangulate();
-    void addQuad(const Face &geomFace,const Face &renderFace) ;
-    void addTriangle(const Face &geomFace,const Face &renderFace) ;
 private:
-    void addEdge(const Edge &edge);
-    void addHalfEdge(const HalfEdge &halfEdge);
+    void triangulate();
 
     uint8_t getNbVertex(const uint32_t faceID) const
     {
         return mVertexCountPerFace[faceID];
     }
 
-    void swapFaceOrientation(const uint32_t faceID)
-    {
-        Face &rf = mRenderFaces[faceID];
-        Face &gf = mGeometricFaces[faceID];
-        const uint32_t n = mVertexCountPerFace[faceID];
-        for (uint32_t i = 0; i < n/2; i++)
-        {
-            const uint32_t tmp = rf[i];
-            rf[i] = rf[n-i-1];
-            rf[n-i-1] = tmp;
-
-            const uint32_t tmp_ = gf[i];
-            gf[i] = gf[n-i-1];
-            gf[n-i-1] = tmp_;
-        }
-    }
+    void swapFaceOrientation(uint32_t faceID);
 
     /**
      * @brief Returns the index which comes after vertexID in a face
      */
-    int getNextIndice(const uint32_t faceID, const uint32_t vertexID) const
-    {
-        const int n = getNbVertex(faceID);
-        for (int i = 0; i < n; i++)
-        {
-            if (mRenderFaces[faceID][i] == vertexID)
-            {
-                if (i+1 == n) return 0;
-                return i+1;
-            }
-        }
-        return -1;
-    }
-
+    int getNextIndice(uint32_t faceID, uint32_t vertexID) const;
 
     glm::vec3 getGeometricVertexPosition(const uint32_t idx) const
     {
@@ -186,6 +140,7 @@ private:
     std::vector<Triangle> mTriangles;
     std::vector<uint8_t> mVertexCountPerFace;
     std::vector<uint8_t> mSmoothingGroups;
+    bool mIsManifold = true;
     bool hasNormals;
     uint8_t nSmoothGroups;
     std::vector<glm::vec3> mHardNormals;

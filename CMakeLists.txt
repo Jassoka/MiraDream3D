@@ -46,7 +46,8 @@ add_subdirectory(src/controller)
 
 set(PROJECT_SOURCES
         src/main.cpp
-        include/model/HalfEdgeBuilder.h
+        include/model/MeshTopologyBuilder.h
+        include/model/MeshBuilder.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

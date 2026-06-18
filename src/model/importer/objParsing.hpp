@@ -6,13 +6,19 @@
 #define MIRADREAM3D_OBJPARSING_HPP
 #include <string>
 #include <unordered_map>
+#include <vector>
+#include <bits/parse_numbers.h>
 
 #include "util/file_funcs.hpp"
 #include "glm/vec2.hpp"
-#include "model/Node.h"
+#include "glm/vec3.hpp"
 #define MAX_OBJ_NAME_SIZE 10
 
+class Mesh;
+class Node;
 class Scene;
+struct MeshBuildInfo;
+struct MeshBuildData;
 
 enum ObjTokenType {
     IDENTIFIER,
@@ -53,21 +59,27 @@ private:
 class ObjParser {
 public:
 
-    ObjParser(const std::string &file,Scene* scene):mLexer(ObjLexer( readFileToString(file))),mScene(scene) {};
-    void parse();
+    ObjParser(const std::string &file,Scene* scene);
+    ~ObjParser();
+    static void parse(const std::string &file,Scene* scene);
 private:
+
+    void parseImpl();
 
     ObjToken mCurrent;
     ObjLexer mLexer;
     Scene* mScene;
     Node* mCurrentNode=nullptr;
-    Mesh* mCurrentMesh=nullptr;
+    Mesh *mCurrentMesh;
     Node* mDefaultMeshNode=nullptr;
     uint32_t mCurrentMeshOriginVId=0;
     bool mCurrentMeshHasUVCoords=true;
     uint8_t mCurrentSmoothGroup=0;
+
+    MeshBuildInfo *mInfo;
+    MeshBuildData *mData;
+
     std::unordered_map<uint8_t,uint8_t> mCurrentMeshSmoothGroupsMap;
-    std::vector<std::vector<uint32_t>> mCurrentMeshFacePerGeometricVertex;
     std::unordered_map<uint32_t,uint32_t> mCurrentMeshGeometricVerticesMap;
     std::vector<glm::vec3> mV;
     std::vector<glm::vec3> mVN;

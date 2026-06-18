@@ -13,24 +13,24 @@
 
 class Mesh;
 
-class HalfEdgeBuilder
+class MeshTopologyBuilder
 {
 public:
-    static void build(Mesh& mesh, const std::vector<std::vector<uint32_t>>* facesPerVertex = nullptr);
+    static void build(Mesh *mesh, const std::vector<std::vector<uint32_t>>* facesPerVertex = nullptr);
 private:
-    explicit HalfEdgeBuilder(Mesh &mesh, const std::vector<std::vector<uint32_t>>* facesPerVertex);
+    explicit MeshTopologyBuilder(Mesh *mesh, const std::vector<std::vector<uint32_t>>* facesPerVertex);
     void buildImpl();
     static uint64_t getEdgeMapKey(const uint32_t firstVertex, const uint32_t secondVertex) {
         const uint32_t origin = std::min(firstVertex, secondVertex);
         const uint32_t end = std::max(firstVertex, secondVertex);
         return static_cast<uint64_t>(origin) << 32 | end;
-    };
+    }
 
     int32_t getEdgeMapValue(const uint32_t firstVertex, const uint32_t secondVertex) {
         const auto it = mEdgeMap.find(getEdgeMapKey(firstVertex, secondVertex));
         if (it == mEdgeMap.end()) return -1;
         return it->second;
-    };
+    }
 
     void generateFacesPerVertex();
     void generateEdges();
@@ -39,10 +39,7 @@ private:
     void generateHalfEdges(uint32_t &facesToVisit);
     void generateNormals() const;
 
-    Mesh &mMesh;
-
-    std::vector<Edge> mEdges;
-    std::vector<HalfEdge> mHalfEdges;
+    Mesh *mMesh;
 
     std::vector<uint8_t> mVisitedFace;
     std::vector<uint8_t> mVisitedVertex;

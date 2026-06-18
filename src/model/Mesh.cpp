@@ -5,86 +5,21 @@
 
 #include "glm/geometric.hpp"
 #include "glm/mat4x4.hpp"
-#include "model/HalfEdgeBuilder.h"
+#include "model/MeshBuilder.h"
+#include "model/MeshTopologyBuilder.h"
 
 halfEdgeDirection Mesh::defaultHalfEdgeDirection = ABC;
 
 Mesh::Mesh(const uint32_t materialID,const std::vector<glm::vec3> &positions,const std::vector<SizedFace> &faces, const glm::mat4 &translationRotationMatrix, const float scale):
 mMaterialID(materialID)
 {
-    mGeometricVertices.reserve(positions.size());
-    mRenderVertices.reserve(positions.size()*4);
-    hasNormals = false;
-    nSmoothGroups = 0;
-    for (auto p : positions)
-    {
-        addGeometricVertex({{}, 0});
-    }
-    for (auto f : faces)
-    {
-        Face renderFace{};
-        for (int i = 0; i < f.faceSize; i++) // Construction des vertices à la vollée (1 par point de face)
-        {
-            const uint32_t geomVertexID = f[i];
-            RenderVertex v{ positions[geomVertexID], glm::vec3(0.0), glm::vec2(0.0)};
-            uint32_t vID = addVertex(v);
-            mGeometricVertices[geomVertexID].vertices.push_back(vID);
-            renderFace[i] = vID;
-        }
-        switch (f.faceSize)
-        {
-        case 3:
-            addTriangle(f.face, renderFace);
-            break;
-        case 4:
-            addQuad(f.face, renderFace);
-            break;
-        default:
-            break;
-        }
-    }
-    triangulate();
-    generateHalfEdges();
+    MeshBuildData data;
+    data.positions = positions;
+    data.faces = faces;
+    MeshBuilder::build(this, data);
 }
 
-/*
-Mesh::Mesh(aiMesh &meshAi) {
-    this->mMaterialID=meshAi.mMaterialIndex;
-
-
-    bool hasNormales =meshAi.HasNormals();
-    bool hasUV =meshAi.HasTextureCoords(0);
-
-    for (uint32_t i=0;i<meshAi.mNumVertices;i++) {
-        aiVector3D pos = meshAi.mVertices[i];
-        aiVector3D normale = hasNormales ? meshAi.mNormals[i]:aiVector3D(0.0,0.0,0.0);//TODO ca explose certainement si pas de normales
-        aiVector3D uv = hasUV ? meshAi.mTextureCoords[0][i]:aiVector3D(0.0,0.0,0.0);
-        this->mVertices.push_back(
-            Vertex {
-                pos[0],pos[1],pos[2],
-                normale[0],normale[1],normale[2],
-                uv[0],uv[1]
-            }
-        );
-    }
-
-    for (uint32_t i=0;i<meshAi.mNumFaces;i++) {
-        const aiFace* faceAi = &meshAi.mFaces[i];
-        if (faceAi->mNumIndices > 4) exit(1); //TODO le handle pour de vrai
-        if (faceAi->mNumIndices == 4)
-        {
-            mFaces.push_back({faceAi->mIndices[0], faceAi->mIndices[1], faceAi->mIndices[2], faceAi->mIndices[3]});
-        }
-        else if (faceAi->mNumIndices == 3)
-        {
-            mFaces.push_back({faceAi->mIndices[0], faceAi->mIndices[1], faceAi->mIndices[2], 0});
-        }
-        mVertexCountPerFace.push_back(faceAi->mNumIndices);
-    }
-    triangulate();
-    generateHalfEdges();
-}*/
-
+#ifdef ENABLE_DEBUG
 bool Mesh::operator==(const Mesh& other) const
 {
     const bool sameVertices = mRenderVertices == other.mRenderVertices;
@@ -94,7 +29,7 @@ bool Mesh::operator==(const Mesh& other) const
 
 std::ostream& operator<<(std::ostream& os, const Mesh &mesh) {
     os << "Vertices:" << '\n' << "{ ";
-    for (const auto vertex : mesh.getVertices()) {
+    for (const auto vertex : mesh.getRenderVertices()) {
         os << "(" << vertex.x <<", "<< vertex.y <<", "<< vertex.z<<") ";
     }
     os << "}" << '\n';
@@ -109,66 +44,7 @@ std::ostream& operator<<(std::ostream& os, const Mesh &mesh) {
     os << "}" << '\n';
     return os;
 }
-
-
-uint32_t Mesh::addVertex(const RenderVertex &vertex) {
-    mRenderVertices.push_back(vertex);
-    return mRenderVertices.size()-1;
-}
-void Mesh::addGeometricVertex(const GeometricVertex &vertex) {
-    mGeometricVertices.push_back(vertex);
-}
-void Mesh::addEdge(const Edge &edge) {
-    mEdges.push_back(edge);
-}
-void Mesh::addHalfEdge(const HalfEdge &halfEdge)
-{
-    mHalfEdges.push_back(halfEdge);
-}
-void Mesh::addQuad(const Face &geomFace,const Face &renderFace) {
-    mVertexCountPerFace.push_back(4);
-    mRenderFaces.push_back(renderFace);
-    mGeometricFaces.push_back(geomFace);
-}
-
-void Mesh::addTriangle(const Face &geomFace,const Face &renderFace) {
-    mVertexCountPerFace.push_back(3);
-    mRenderFaces.push_back(renderFace);
-    mGeometricFaces.push_back(geomFace);
-}
-
-/*
-void Mesh::generateEdges()
-{
-    mEdges.clear(); //TODO pue la merde
-    for (int i = 0; i < mFaces.size(); i++)
-    {
-        Face &f = mFaces[i];
-        mEdges.push_back(Edge {f[0], f[1]});
-        mEdges.push_back(Edge {f[1], f[2]});
-        if (mVertexCountPerFace[i] == 3)
-        {
-            mEdges.push_back(Edge {f[2], f[0]});
-        }
-        if (mVertexCountPerFace[i] == 4)
-        {
-            mEdges.push_back(Edge {f[2], f[3]});
-            mEdges.push_back(Edge {f[3], f[0]});
-        }
-    }
-}
-*/
-
-void Mesh::generateHalfEdges(const std::vector<std::vector<uint32_t>> *facesPerVertex)
-{
-    HalfEdgeBuilder::build(*this, facesPerVertex);
-    /*
-#ifdef TEST_HALFEDGES
-    std::cout << "Nb of half edges: " << mHalfEdges.size() << '\n';
-    std::cout << "Nb of edges: "<< mEdges.size() << '\n';
-    for (auto v : normalPerFace) {std::cout << v.x << " " << v.y << " " << v.z << '\n';}
-#endif */
-}
+#endif
 
 void Mesh::triangulate()
 {
@@ -206,6 +82,37 @@ void Mesh::triangulate()
 #ifdef ENABLE_DEBUG
     std::cout << *this << std::endl;
 #endif
+}
+
+void Mesh::swapFaceOrientation(const uint32_t faceID)
+{
+    Face &rf = mRenderFaces[faceID];
+    Face &gf = mGeometricFaces[faceID];
+    const uint32_t n = mVertexCountPerFace[faceID];
+    for (uint32_t i = 0; i < n/2; i++)
+    {
+        const uint32_t tmp = rf[i];
+        rf[i] = rf[n-i-1];
+        rf[n-i-1] = tmp;
+
+        const uint32_t tmp_ = gf[i];
+        gf[i] = gf[n-i-1];
+        gf[n-i-1] = tmp_;
+    }
+}
+
+int Mesh::getNextIndice(const uint32_t faceID, const uint32_t vertexID) const
+{
+    const int n = getNbVertex(faceID);
+    for (int i = 0; i < n; i++)
+    {
+        if (mRenderFaces[faceID][i] == vertexID)
+        {
+            if (i+1 == n) return 0;
+            return i+1;
+        }
+    }
+    return -1;
 }
 
 halfEdgeDirection Mesh::findFaceOrientation(uint32_t AId,const std::vector<uint32_t> &adjacentFaces, glm::vec3 *normalPtr) const
@@ -255,8 +162,6 @@ halfEdgeDirection Mesh::findFaceOrientation(uint32_t AId,const std::vector<uint3
     if (normalPtr) *normalPtr = normal;
     return orientation;
 }
-
-
 
 glm::vec3 Mesh::getNormal(const Face &geomFace, const halfEdgeDirection orientation) const
 {

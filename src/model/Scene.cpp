@@ -59,9 +59,8 @@ const std::vector<Mesh> &Scene::getMeshes() const
     return mMeshList;
 }
 
-Mesh* Scene::newMesh() {
-    auto m = Mesh(0);
-    addMesh(m);
+Mesh *Scene::newMesh() {
+    addMesh(Mesh(0));
     return &mMeshList[mMeshList.size()-1];
 }
 void Scene::removeLastMesh() {

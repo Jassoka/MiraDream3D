@@ -22,7 +22,7 @@ public:
     void addMesh(const Mesh &mesh);
     void addTexture(const Texture &texture);
     void addMaterial(const Material &material);
-    Mesh* newMesh();
+    Mesh *newMesh();
     void removeLastMesh();
 private:
     Camera mSceneCamera; //TODO: plusieurs caméras

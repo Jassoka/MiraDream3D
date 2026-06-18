@@ -7,7 +7,8 @@
 #include <vector>
 #include <string>
 
-#include "Mesh.h"
+#include "glm/fwd.hpp"
+
 
 /**
  * @brief Represents a node in the object hierarchy tree
@@ -47,7 +48,7 @@ public:
      };
     bool isLeaf() override {return false;};
 
-    const Node* getChild(const uint32_t n) const {
+    const Node* getChild(const glm::uint32_t n) const {
         assert(n<getChildrenSize());
         return mChildren[n];
     };

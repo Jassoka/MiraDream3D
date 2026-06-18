@@ -14,7 +14,7 @@ SceneController::SceneController(QObject* parent, RenderController *renderContro
 QObject(parent), mRenderController(renderController), mScene(new Scene())
 {
     const Mesh defaultCube = PrimitiveMeshes::generateCube();
-    mScene->addMesh(defaultCube);
+    mScene->addMesh(defaultCube); //TODO mettre dans un node
     mRenderController->changedGeometry();
 }
 

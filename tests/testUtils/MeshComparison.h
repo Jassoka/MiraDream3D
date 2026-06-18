@@ -33,7 +33,7 @@ public:
      */
     static Mesh canonicalMesh(const Mesh &m)
     {
-        auto vertices = m.getVertices();
+        auto vertices = m.getRenderVertices();
         uint32_t size = vertices.size();
 
         std::vector<uint32_t> sortedIndices(size);
@@ -58,7 +58,7 @@ public:
         // CORRECTION 1 : On ajoute les sommets dans l'ordre du tri
         for (uint32_t i = 0; i < size; i++)
         {
-            sortedMesh.addVertex(vertices[sortedIndices[i]]);
+            sortedMesh.addRenderVertex(vertices[sortedIndices[i]]);
         }
     /*
         // CORRECTION 2 : On traduit les indices des faces

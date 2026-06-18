@@ -18,7 +18,8 @@ add_library(Model STATIC
         importer/objParsing.hpp
         ../../include/model/PrimitiveMeshes.h
         PrimitiveMeshes.cpp
-        HalfEdgeBuilder.cpp
+        MeshTopologyBuilder.cpp
+        MeshBuilder.cpp
 )
 
 target_include_directories(Model PUBLIC

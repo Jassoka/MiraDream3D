@@ -23,7 +23,7 @@ static constexpr glm::vec3 worldUp {0.0f, 0.0f, 1.0f};
 static constexpr glm::vec3 defaultEngineCameraPosition {4.0f, 4.0f, 4.0f};
 static constexpr float defaultEngineCameraFOV = glm::radians(45.0f);
 static constexpr float defaultEngineCameraNearPlane = 0.1f;
-static constexpr float defaultEngineCameraFarPlane = 100.0f;
+static constexpr float defaultEngineCameraFarPlane = 1000.0f;
 
 Camera *Renderer::initEngineCamera()
 {
@@ -96,8 +96,8 @@ void Renderer::drawTemplate()
 
             auto halfEdgesVect=mScene->getMeshes()[0].getHalfEdges();
             mTestHalfEdge%=halfEdgesVect.size();
-            auto origin = mScene->getMeshes()[0].getVertices()[halfEdgesVect[mTestHalfEdge].origin] ;
-            auto end = mScene->getMeshes()[0].getVertices()[halfEdgesVect[mTestHalfEdge].end];
+            auto origin = mScene->getMeshes()[0].getRenderVertices()[halfEdgesVect[mTestHalfEdge].origin] ;
+            auto end = mScene->getMeshes()[0].getRenderVertices()[halfEdgesVect[mTestHalfEdge].end];
 
             const int halfEdgeOrigin = mGlFuncs->glGetUniformLocation(programID, "halfEdgeOrigin");
             const int halfEdgeEnd = mGlFuncs->glGetUniformLocation(programID, "halfEdgeEnd");
@@ -135,9 +135,9 @@ void Renderer::geometryRedrawTemplate()
     std::vector<uint32_t> indices;
     uint32_t indexOffset = 0;
 
-    for (const Mesh &mesh : mScene->getMeshes() )
+    for (const Mesh &mesh : mScene->getMeshes())
     {
-        const auto meshVertices = mesh.getVertices();
+        const auto meshVertices = mesh.getRenderVertices();
         vertices.reserve(vertices.size() + meshVertices.size());
         vertices.insert(vertices.end(), meshVertices.begin(), meshVertices.end());
 
@@ -145,26 +145,28 @@ void Renderer::geometryRedrawTemplate()
         {
             // Buffer des faces
             const auto triangles = mesh.getTriangles();
-            indices.resize(indices.size() + triangles.size()*3);
+            indices.reserve(indices.size() + triangles.size()*3);
             for (const auto& t: triangles)
             {
                 indices.push_back(t[0] + indexOffset);
                 indices.push_back(t[1] + indexOffset);
                 indices.push_back(t[2] + indexOffset);
             }
+            indexOffset += meshVertices.size();
         }
         else if (m == ViewportMode::WIREFRAME)
         {
             //Buffer des edges
             const auto edges = mesh.getEdges();
-            indices.resize(indices.size() + edges.size()*2);
+            const auto geometricVertices = mesh.getGeometricVertices();
+            indices.reserve(indices.size() + edges.size()*2);
             for (const auto& [origin, end]: edges)
             {
-                indices.push_back(origin + indexOffset);
-                indices.push_back(end + indexOffset);
+                indices.push_back(geometricVertices[origin].vertices[0] + indexOffset);
+                indices.push_back(geometricVertices[end].vertices[0] + indexOffset);
             }
+            indexOffset += geometricVertices.size();
         }
-        indexOffset += meshVertices.size();
     }
 
     const RenderVertex *vertices_data = vertices.data(); // Pointeur vers les vertices
