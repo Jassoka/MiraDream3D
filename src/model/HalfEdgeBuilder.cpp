@@ -283,17 +283,17 @@ void HalfEdgeBuilder::generateNormals() const
             mMesh.mHardNormals[renderVertexID] = hardNormal;
             if (!mMesh.hasNormals)
             {
-                if (!mMesh.isSmooth())
-                    mMesh.mRenderVertices[renderVertexID].setNormal(hardNormal);
-                else
-                {
-                    smoothingGroups[mMesh.mSmoothingGroups[renderVertexID]].push_back(renderVertexID);
-                }
+                mMesh.mRenderVertices[renderVertexID].setNormal(hardNormal);
+
             }
             else
             {
                 const auto userNormal = mMesh.mUserNormals[renderVertexID];
                 mMesh.mRenderVertices[renderVertexID].setNormal(userNormal);
+            }
+            if (mMesh.isSmooth())
+            {
+                smoothingGroups[mMesh.mSmoothingGroups[renderVertexID]].push_back(renderVertexID);
             }
         }
         if (mMesh.isSmooth()) //TODO ce serait pratique de mettre ça ailleurs pour réutiliser
