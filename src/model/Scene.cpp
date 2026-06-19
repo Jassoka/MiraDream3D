@@ -68,6 +68,14 @@ uint32_t Scene::getMaterialID(std::string &name) {
     return mMaterialNames[name];
 }
 
+uint32_t Scene::getTextureId(const std::string & path) {
+    if (mTextureNames.find(path)== mTextureNames.end()) {
+        loadQTImageAsTexture(QString::fromStdString(path));
+    }
+    return mTextureNames[path];
+}
+
+
 const std::vector<Mesh> &Scene::getMeshes() const
 {
     return mMeshList;

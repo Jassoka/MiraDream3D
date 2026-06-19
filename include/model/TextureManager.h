@@ -4,7 +4,7 @@
 
 #ifndef MIRADREAM3D_TEXTUREMANAGER_H
 #define MIRADREAM3D_TEXTUREMANAGER_H
-#include <GL/gl.h>
+
 #include <list>
 #include <array>
 #include <QtOpenGL>

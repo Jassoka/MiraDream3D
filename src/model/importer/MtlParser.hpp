@@ -20,7 +20,7 @@ private:
     ObjToken mCurrent;
     Material* mCurrentMaterial=nullptr;
     Scene* mScene;
-    std::string mSrc;
+    std::string mDir;
 
     void parseNewmtl();
     void parseKs();
@@ -29,6 +29,7 @@ private:
     void parseD();
     void parseTr();
     void parseNs();
+    void parseMap_Kd();
     glm::vec3 parseVec3();
     void next(){mCurrent=mLexer.next();}
 

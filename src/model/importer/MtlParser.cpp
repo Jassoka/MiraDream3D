@@ -11,7 +11,7 @@
 MtlParser::MtlParser(const std::string &file,Scene* scene):
     mLexer(ObjLexer( readFileToString(file))),
     mScene(scene),
-    mSrc(std::filesystem::path(file).parent_path().string() + "/")
+    mDir(std::filesystem::path(file).parent_path().string() + "/")
 {}
 
 
@@ -56,6 +56,9 @@ void MtlParser::parseImpl() {
         }
         else if (mCurrent.identifier=="Ns") {
             parseNs();
+        }
+        else if (mCurrent.identifier=="Map_Kd") {
+            parseMap_Kd();
         }
         else {
             while (mCurrent.type !=NEWLINE) {
@@ -132,7 +135,17 @@ void MtlParser::parseNs() {
     next();
 }
 
+void MtlParser::parseMap_Kd() {
+    next();
+    std::string filename="";
+    while (mCurrent.type != NEWLINE && mCurrent.type != END) {
+        filename += mCurrent.identifier;   // accumule tous les tokens
+        next();
+    }
 
+   mCurrentMaterial->ColorTextureID = mScene->getTextureId(mDir + filename);
+    next();
+}
 
 glm::vec3 MtlParser::parseVec3() {
     glm::vec3 v=glm::vec3(0.);

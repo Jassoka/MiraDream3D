@@ -49,6 +49,9 @@ public:
     Material* giveNewMaterial(std::string &name);
     uint32_t getMaterialID(std::string &name) ;
     const Material* getMaterial(uint32_t id) const {return &mMaterialList[id];}
+
+    uint32_t getTextureId(const std::string & path);
+
 private:
     Camera mSceneCamera; //TODO: plusieurs caméras
     glm::vec3 mLight; //TODO: plusieurs lumières
