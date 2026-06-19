@@ -21,6 +21,8 @@ add_library(Model STATIC
         MeshTopologyBuilder.cpp
         MeshBuilder.cpp
         TextureManager.cpp
+        importer/MtlParser.cpp
+        importer/MtlParser.hpp
 )
 
 target_include_directories(Model PUBLIC

@@ -36,6 +36,8 @@ struct MeshBuildData
 
 
     std::vector<glm::vec3> userNormals = {};
+    uint32_t materialID=0;
+
 
     void addFace(const Face &geomFace,const Face &renderFace, const uint8_t size)
     {

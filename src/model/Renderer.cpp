@@ -18,7 +18,7 @@
 
 const std::string VIEWPORT_SOLID = "viewport_solid";
 const std::string VIEWPORT_WIREFRAME = "viewport_wireframe";
-const std::string VIEWPORT_TEXTURES = "viewport_textures";
+const std::string VIEWPORT_MATERIAL = "viewport_material";
 const std::string GRID = "grid";
 
 static constexpr glm::vec3 worldOrigin {0.0f, 0.0f, 0.0f};
@@ -63,9 +63,6 @@ void Renderer::drawTemplate()
             programID = ShaderManager::getShaderProgram("viewport_test_halfedges");
             #endif
             break;
-    case ViewportMode::TEXTURES:
-        programID = ShaderManager::getShaderProgram(VIEWPORT_TEXTURES);
-        break;
     default:
         programID = 0;
     }
@@ -84,14 +81,6 @@ void Renderer::drawTemplate()
     GLuint drawMode;
     switch (m)
     {
-    case ViewportMode::TEXTURES:
-        {
-            mGlFuncs->glActiveTexture(GL_TEXTURE0);
-            mGlFuncs->glBindTexture(GL_TEXTURE_2D, TextureManager::loadSceneTexture(0, mScene));
-            const int uTexture = mGlFuncs->glGetUniformLocation(programID,"uTexture");
-            mGlFuncs->glUniform1i(uTexture, 0);
-            drawMode = GL_TRIANGLES;
-        }
     case ViewportMode::SOLID:
         {
             const int cameraPos= mGlFuncs->glGetUniformLocation(programID, "cameraPos");
@@ -139,10 +128,12 @@ void Renderer::draw(const ViewportMode mode)
     if (mode == ViewportMode::SOLID)
         drawTemplate<ViewportMode::SOLID>();
 
-    if (mode == ViewportMode::WIREFRAME)
+    else if (mode == ViewportMode::WIREFRAME)
         drawTemplate<ViewportMode::WIREFRAME>();
-}
 
+    else if (mode == ViewportMode::MATERIAL)
+        drawTemplate<ViewportMode::MATERIAL>();
+}
 template <ViewportMode m>
 void Renderer::geometryRedrawTemplate()
 {
@@ -160,7 +151,7 @@ void Renderer::geometryRedrawTemplate()
         vertices.reserve(vertices.size() + meshVertices.size());
         vertices.insert(vertices.end(), meshVertices.begin(), meshVertices.end());
 
-        if (m == ViewportMode::SOLID || m == ViewportMode::TEXTURES)
+        if (m == ViewportMode::SOLID || m == ViewportMode::MATERIAL)
         {
             // Buffer des faces
             const auto triangles = mesh.getTriangles();
@@ -204,8 +195,12 @@ void Renderer::geometryRedraw(const ViewportMode mode)
     if (mode == ViewportMode::SOLID)
         geometryRedrawTemplate<ViewportMode::SOLID>();
 
-    if (mode == ViewportMode::WIREFRAME)
+    else if (mode == ViewportMode::WIREFRAME)
         geometryRedrawTemplate<ViewportMode::WIREFRAME>();
+
+    else if (mode == ViewportMode::MATERIAL)
+        geometryRedrawTemplate<ViewportMode::MATERIAL>();
+
 }
 
 void Renderer::initShaders()
@@ -221,11 +216,11 @@ void Renderer::initShaders()
     shaders = {vertexShader, fragmentShader};
     ShaderManager::createProgram(VIEWPORT_WIREFRAME, shaders);
 
-
-    vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_textures.vert", GL_VERTEX_SHADER);
-    fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_textures.frag", GL_FRAGMENT_SHADER);
+    vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_material.vert", GL_VERTEX_SHADER);
+    fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_material.frag", GL_FRAGMENT_SHADER);
     shaders = {vertexShader, fragmentShader};
-    ShaderManager::createProgram(VIEWPORT_TEXTURES, shaders);
+    ShaderManager::createProgram(VIEWPORT_MATERIAL, shaders);
+
 
 #ifdef TEST_HALFEDGES
     vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_test_halfedges.vert", GL_VERTEX_SHADER);
@@ -243,6 +238,7 @@ void Renderer::initShaders()
 
 void Renderer::initialize(QOpenGLFunctions* glFuncs)
 {
+    //3D
     mGlFuncs = glFuncs;
     ShaderManager::initialize(glFuncs);
     TextureManager::initialize(glFuncs);
@@ -284,9 +280,7 @@ void Renderer::resize(const int width, int height) const
 
 template void Renderer::drawTemplate<ViewportMode::SOLID>();
 template void Renderer::drawTemplate<ViewportMode::WIREFRAME>();
-
-
-
+template void Renderer::drawTemplate<ViewportMode::MATERIAL>();
 
 void Renderer::drawGrid() {
 

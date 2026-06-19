@@ -37,6 +37,9 @@ void MeshBuilder::buildImpl() const
     mMesh->mSmoothingGroups = mData.smoothingGroups;
     mMesh->triangulate();
     MeshTopologyBuilder::build(mMesh, mFlags.computedFacesPerVertex?&mData.facesPerVertex:nullptr); //TODO changer DES QUE POSSIBLE
+
+    mMesh->mMaterialID=mData.materialID;
+
 }
 
 

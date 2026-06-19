@@ -14,6 +14,8 @@
 #include "model/MeshBuilder.h"
 #include <sstream>
 
+#include "MtlParser.hpp"
+
 glm::vec3 xzy(const glm::vec3 v)
 {
     return glm::vec3(v.x, v.z, v.y);
@@ -23,7 +25,8 @@ ObjParser::ObjParser(const std::string &file,Scene* scene):
     mLexer(ObjLexer( readFileToString(file))),
     mScene(scene),
     mMeshBuildFlags(new MeshBuildFlags{}),
-    mMeshBuildData(new MeshBuildData{})
+    mMeshBuildData(new MeshBuildData{}),
+    mDir(file.substr(0, file.find_last_of('/') + 1))
 {
     mMeshBuildFlags->computedFacesAndVertices = true;
     mMeshBuildFlags->computedFacesPerVertex = true;
@@ -505,20 +508,25 @@ void ObjParser::parseF() {
             break;
     }
 }
-//TODO implemeter pour de vrai
-void ObjParser::parseUsemtl() {
-    next();
-    while (mCurrent.type!=NEWLINE)
-    {
-        next();
-    }
-}
-//TODO implemeter pour de vrai
 void ObjParser::parseMtllib() {
     next();
-    while (mCurrent.type!=NEWLINE)
-    {
+    std::string filename="";
+    while (mCurrent.type != NEWLINE && mCurrent.type != END) {
+        filename += mCurrent.identifier;   // accumule tous les tokens
         next();
+    }
+    MtlParser::parse(mDir + filename, mScene);
+}
+
+void ObjParser::parseUsemtl() {
+    next();
+    if (mCurrent.type   == IDENTIFIER) {
+        std::string name="";
+        while (mCurrent.type != NEWLINE && mCurrent.type != END) {
+            name += mCurrent.identifier;   // accumule tous les tokens
+            next();
+        }
+        mMeshBuildData->materialID=mScene->getMaterialID(mCurrent.identifier);
     }
 }
 //TODO implemeter pour de vrai

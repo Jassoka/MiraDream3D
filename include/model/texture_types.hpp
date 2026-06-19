@@ -13,13 +13,15 @@ constexpr uint32_t TEXTURE_SIZE = 1024;
 
 struct Material
 {
+    std::string name;
     uint32_t ColorTextureID;
     /** @brief Ambiant, Diffuse and Specular coefficients
      */
-    float Ka, Kd, Ks;
+    glm::vec3 Ka, Kd, Ks;
     /** @brief Transparency coefficient
      */
     float alpha;
+    float shininess;
 };
 
 /**
