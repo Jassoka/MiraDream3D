@@ -68,6 +68,7 @@ private:
     ObjToken mCurrent;
     ObjLexer mLexer;
     Scene* mScene;
+    std::string mDir;
     Node* mCurrentNode=nullptr;
     Mesh *mCurrentMesh;
     Node* mDefaultMeshNode=nullptr;

@@ -19,6 +19,7 @@ MtlParser::MtlParser(const std::string &file,Scene* scene):
 void MtlParser::parse(const std::string& file, Scene* scene){
     auto instance = MtlParser(file, scene);
     instance.parseImpl();
+
 }
 
 
@@ -37,30 +38,29 @@ void MtlParser::parseImpl() {
             parseNewmtl();
             next();
         }
+        else if (mCurrentMaterial==nullptr){return;}//TODO explosion
         else if (mCurrent.identifier=="Ks") {
             parseKs();
-            next();
         }
         else if (mCurrent.identifier=="Ka") {
             parseKa();
-            next();
         }
         else if (mCurrent.identifier=="Kd") {
             parseKd();
-            next();
         }
         else if (mCurrent.identifier=="d") {
-            parseKs();
-            next();
+            parseD();
         }
         else if (mCurrent.identifier=="Tr") {
             parseTr();
-            next();
         }
         else {
-            //TODO erreur
+            while (mCurrent.type !=NEWLINE) {
+                next();
+            }
+            next();
         }
-        next();
+
     }
 }
 
@@ -73,6 +73,7 @@ void MtlParser::parseNewmtl() {
         //TODO erreur
     }
     mCurrentMaterial=mScene->giveNewMaterial(mCurrent.identifier);
+    next();
 }
 
 
@@ -99,7 +100,6 @@ void MtlParser::parseD() {
         //TODO explosion
     }
     next();
-    if (mCurrent.type != NEWLINE) {}//TODO explosion
 }
 
 void MtlParser::parseTr() {
@@ -114,12 +114,11 @@ void MtlParser::parseTr() {
         //TODO explosion
     }
     next();
-    if (mCurrent.type != NEWLINE) {}//TODO explosion
 }
 
 
 glm::vec3 MtlParser::parseVec3() {
-    glm::vec3 v;
+    glm::vec3 v=glm::vec3(0.);
     int coord=0;
     next();
     while (mCurrent.type != NEWLINE && mCurrent.type != END ){//TODO les commentaires en fin de ligne enculent cela

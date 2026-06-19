@@ -20,6 +20,8 @@ add_library(Model STATIC
         PrimitiveMeshes.cpp
         MeshTopologyBuilder.cpp
         MeshBuilder.cpp
+        importer/MtlParser.cpp
+        importer/MtlParser.hpp
 )
 
 target_include_directories(Model PUBLIC

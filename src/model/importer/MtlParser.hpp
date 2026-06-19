@@ -11,7 +11,6 @@
 class MtlParser {
 public:
     MtlParser(const std::string &file,Scene* scene);
-    ~MtlParser();
     static void parse(const std::string &file,Scene* scene);
 private:
 

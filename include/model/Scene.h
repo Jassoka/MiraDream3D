@@ -31,6 +31,9 @@ public:
     void addMaterial(const Material &material);
     Mesh *newMesh();
     void removeLastMesh();
+
+    Material* giveNewMaterial(std::string &name);
+    uint32_t getMaterialID(std::string &name) ;
 private:
     Camera mSceneCamera; //TODO: plusieurs caméras
     glm::vec3 mLight; //TODO: plusieurs lumières
@@ -38,6 +41,8 @@ private:
     std::vector<Mesh> mMeshList;
     std::vector<Texture> mTextureList;
     std::map<std::string, uint32_t> mTextureNames;
+    std::map<std::string, uint32_t> mMaterialNames;
+
     std::vector<Material> mMaterialList;
 };
 
