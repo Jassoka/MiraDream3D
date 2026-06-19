@@ -112,15 +112,87 @@ void Renderer::drawTemplate()
 
             break;
         }
-
-
-    }
+   }
     mGlFuncs->glDrawElements(drawMode, nIndices, GL_UNSIGNED_INT, nullptr);
     mVAO.release();
 
     //on dessine d'abord la grid
     drawGrid();
 }
+
+template <>
+void Renderer::drawTemplate<ViewportMode::MATERIAL>()
+{
+
+    // On choisit le programme du vertex shader
+    GLuint programID=ShaderManager::getShaderProgram(VIEWPORT_MATERIAL);
+
+    mGlFuncs->glUseProgram(programID);
+
+    // Arguments de la caméra
+    const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
+    mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera->computeViewMatrix()[0][0]);
+
+    const int projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
+    mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera->computePerspectiveMatrix()[0][0]);
+
+    mVAO.bind();
+    mVBO.bind();
+    mEBO.bind();
+
+
+    const int cameraPos= mGlFuncs->glGetUniformLocation(programID, "cameraPos");
+    const glm::vec3 cameraVec =  mEngineCamera->getPosition();
+    mGlFuncs->glUniform3f (cameraPos, cameraVec.x,cameraVec.y,cameraVec.z );
+
+    const int lightPos = mGlFuncs->glGetUniformLocation(programID, "lightPos");
+    const glm::vec3 lightVec =  mEngineCamera->getPosition();
+    mGlFuncs->glUniform3f (lightPos,lightVec.x,lightVec.y,lightVec.z);
+
+
+    const int Ks= mGlFuncs->glGetUniformLocation(programID, "Ks");
+    const int Ka= mGlFuncs->glGetUniformLocation(programID, "Ka");
+    const int Kd= mGlFuncs->glGetUniformLocation(programID, "Kd");
+    const int Ns= mGlFuncs->glGetUniformLocation(programID, "Ns");
+    const int alpha= mGlFuncs->glGetUniformLocation(programID, "alpha");
+
+
+
+    uint32_t startTriangle=0,endTriangle=0;
+    for (auto &mesh : mScene->getMeshes()) {
+        const Material* mat=mScene->getMaterial(mesh.getMaterialId());
+
+        mGlFuncs->glActiveTexture(GL_TEXTURE0);
+        GLint textureSlot = TextureManager::loadSceneTexture(mat->ColorTextureID, mScene);
+        mGlFuncs->glBindTexture(GL_TEXTURE_2D, textureSlot);  // ton ID de texture
+        int texLoc = mGlFuncs->glGetUniformLocation(programID, "colorTexture");
+        mGlFuncs->glUniform1i(texLoc, 0);
+
+
+        mGlFuncs->glUniform3f(Ks,mat->Ks.r,mat->Ks.g,mat->Ks.b);
+        mGlFuncs->glUniform3f(Ka,mat->Ka.r,mat->Ka.g,mat->Ka.b);
+        mGlFuncs->glUniform3f(Kd,mat->Kd.r,mat->Kd.g,mat->Kd.b);
+        mGlFuncs->glUniform1f(Ns,mat->shininess);
+        mGlFuncs->glUniform1f(alpha,mat->alpha);
+
+
+        endTriangle+= 3*mesh.getTriangles().size();
+        mGlFuncs->glDrawElements(
+        GL_TRIANGLES,
+            endTriangle - startTriangle,
+            GL_UNSIGNED_INT,
+                (void*)(startTriangle * sizeof(uint32_t))
+        );
+        startTriangle=endTriangle  ;
+    }
+
+
+    mVAO.release();
+
+    //on dessine apres la grid
+    drawGrid();
+}
+
 
 void Renderer::draw(const ViewportMode mode)
 {

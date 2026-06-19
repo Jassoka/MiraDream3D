@@ -26,11 +26,12 @@ GLuint TextureManager::loadSceneTexture(const uint32_t sceneTextureID, const Sce
     }
     if (mNbLoadedTextures < MAX_GPU_TEXTURE_LOAD) // Il y a encore de la place
     {
-        GLtextureID = mNbLoadedTextures;
+        GLtextureID = mTextureArrayID[mNbLoadedTextures++];
         mGlFuncs->glBindTexture(GL_TEXTURE_2D, GLtextureID);
         mGlFuncs->glTexImage2D(GL_TEXTURE_2D,
             0, GL_RGBA8, TEXTURE_SIZE, TEXTURE_SIZE,
             0, GL_RGBA, GL_UNSIGNED_BYTE, scene->getTextureData(sceneTextureID));
+        mGlFuncs->glGenerateMipmap(GL_TEXTURE_2D);
     }
     return GLtextureID;
 }

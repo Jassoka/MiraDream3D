@@ -28,10 +28,11 @@ Scene::Scene():
 {
     std::string name="Root node";
     mRootNode =static_cast<Node*>(new HierarchyNode(name));
-    auto defaultTextureData = std::array<uint8_t, TEXTURE_SIZE*TEXTURE_SIZE*4>();
-    defaultTextureData.fill(255);
-    mTextureList.emplace_back(defaultTextureData.data());
-    mMaterialList.push_back({"", 0, glm::vec3(0.3), glm::vec3(0.9), glm::vec3(0.3)});
+    //auto defaultTextureData = std::array<uint8_t, TEXTURE_SIZE*TEXTURE_SIZE*4>();
+    //defaultTextureData.fill(255);
+    loadQTImageAsTexture(":/assets/default_texture.png");
+    //mTextureList.emplace_back(defaultTextureData.data());
+    mMaterialList.push_back({"", 0, glm::vec3(0.3), glm::vec3(0.9), glm::vec3(0.3), 1.0, 1.0});
 }
 
 Scene::~Scene() {
@@ -55,8 +56,16 @@ void Scene::addMesh(const Mesh &mesh) {
 void Scene::addTexture(const Texture &texture) {
     this->mTextureList.push_back(texture);
 }*/
-void Scene::addMaterial(const Material &material) {
-    this->mMaterialList.push_back(material);
+
+Material* Scene::giveNewMaterial(std::string &name) {
+    mMaterialList.push_back(Material());
+    Material* material= &mMaterialList.back();
+    material->name=name;
+    mMaterialNames[name]=mMaterialList.size()-1;//TODO bien initialiser la map pour la etxture par defaut aussiiii
+    return material;
+}
+uint32_t Scene::getMaterialID(std::string &name) {
+    return mMaterialNames[name];
 }
 
 const std::vector<Mesh> &Scene::getMeshes() const
@@ -81,8 +90,10 @@ int32_t Scene::loadQTImageAsTexture(const QString &path)
     }
     QImage image(path);
     if (image.isNull()) return -1;
+    const int width = image.width();
+    const int height = image.height();
+    assert(width == height && height == TEXTURE_SIZE); //TODO un peu violent
     image = image.convertToFormat(QImage::Format_RGBA8888);
-    assert(image.width() == image.height() == TEXTURE_SIZE); //TODO un peu violent
 
     const uint32_t textureID = mTextureList.size();
     mTextureList.push_back(Texture(image.constBits()));
