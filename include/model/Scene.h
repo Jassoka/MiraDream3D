@@ -12,6 +12,19 @@
 
 class Node;
 
+const Material defaultMaterial {
+    .name="defaultmaterial",
+    .ColorTextureID = 0 ,
+    .Ka        = {0.2f, 0.2f, 0.2f},
+    .Kd        = {0.8f, 0.8f, 0.8f},
+    .Ks        = {0.5f, 0.5f, 0.5f},
+     // sera remplacé par ta texture de test
+    .alpha     = 1.0f,
+    .shininess        = 32.0f
+
+
+};
+
 class Scene
 {
 public:
@@ -34,6 +47,7 @@ public:
 
     Material* giveNewMaterial(std::string &name);
     uint32_t getMaterialID(std::string &name) ;
+    const Material* getMaterial(uint32_t id) const {return &mMaterialList[id];}
 private:
     Camera mSceneCamera; //TODO: plusieurs caméras
     glm::vec3 mLight; //TODO: plusieurs lumières

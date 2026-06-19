@@ -9,5 +9,7 @@
         <file>assets/shaders/viewport_test_halfedges.frag</file>
         <file>assets/shaders/grid.vert</file>
         <file>assets/shaders/grid.frag</file>
+        <file>assets/shaders/viewport_material.vert</file>
+        <file>assets/shaders/viewport_material.frag</file>
     </qresource>
 </RCC>

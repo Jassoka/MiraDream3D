@@ -28,6 +28,7 @@ private:
     void parseKa();
     void parseD();
     void parseTr();
+    void parseNs();
     glm::vec3 parseVec3();
     void next(){mCurrent=mLexer.next();}
 

@@ -16,6 +16,7 @@
 
 const std::string VIEWPORT_SOLID = "viewport_solid";
 const std::string VIEWPORT_WIREFRAME = "viewport_wireframe";
+const std::string VIEWPORT_MATERIAL = "viewport_material";
 const std::string GRID = "grid";
 
 static constexpr glm::vec3 worldOrigin {0.0f, 0.0f, 0.0f};
@@ -120,15 +121,170 @@ void Renderer::drawTemplate()
     drawGrid();
 }
 
+
+// Génère un damier rouge/blanc 1024x1024
+GLuint createTestTexture(QOpenGLFunctions* glFuncs) {//TODO enlever test
+    const int SIZE = 1024;
+    const int TILE = 64; // taille d'une case
+
+    std::vector<uint8_t> pixels(SIZE * SIZE * 4);
+
+    for (int y = 0; y < SIZE; y++) {
+        for (int x = 0; x < SIZE; x++) {
+            int idx = (y * SIZE + x) * 4;
+            bool white = ((x / TILE) + (y / TILE)) % 2 == 0;
+            pixels[idx + 0] = white ? 255 : 155; // R
+            pixels[idx + 1] = white ? 255 : 0;   // G
+            pixels[idx + 2] = white ? 255 : 0;   // B
+            pixels[idx + 3] = 255;               // A
+        }
+    }
+
+    GLuint textureID;
+    glFuncs->glGenTextures(1, &textureID);
+    glFuncs->glBindTexture(GL_TEXTURE_2D, textureID);
+    glFuncs->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SIZE, SIZE,
+                          0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    glFuncs->glGenerateMipmap(GL_TEXTURE_2D);
+
+    return textureID;
+}
+
+GLuint createRainbowGridTexture(QOpenGLFunctions* glFuncs) {
+    const int SIZE = 1024;
+    const int GRID = 8; // nombre de cases
+
+    std::vector<uint8_t> pixels(SIZE * SIZE * 4);
+
+    for (int y = 0; y < SIZE; y++) {
+        for (int x = 0; x < SIZE; x++) {
+            int idx = (y * SIZE + x) * 4;
+
+            float u = (float)x / SIZE;
+            float v = (float)y / SIZE;
+
+            bool on_grid = ((x % (SIZE/GRID)) == 0) || ((y % (SIZE/GRID)) == 0);
+
+            if (on_grid) {
+                pixels[idx + 0] = 255;
+                pixels[idx + 1] = 255;
+                pixels[idx + 2] = 255;
+            } else {
+                // dégradé arc-en-ciel selon U
+                float h = u * 6.0f;
+                int i = (int)h;
+                float f = h - i;
+                float r_f, g_f, b_f;
+                switch (i % 6) {
+                    case 0: r_f=1;   g_f=f;   b_f=0;   break;
+                    case 1: r_f=1-f; g_f=1;   b_f=0;   break;
+                    case 2: r_f=0;   g_f=1;   b_f=f;   break;
+                    case 3: r_f=0;   g_f=1-f; b_f=1;   break;
+                    case 4: r_f=f;   g_f=0;   b_f=1;   break;
+                    default:r_f=1;   g_f=0;   b_f=1-f; break;
+                }
+                pixels[idx + 0] = (uint8_t)(r_f * 200);
+                pixels[idx + 1] = (uint8_t)(g_f * 200);
+                pixels[idx + 2] = (uint8_t)(b_f * 200);
+            }
+            pixels[idx + 3] = 255;
+        }
+    }
+
+    GLuint textureID;
+    glFuncs->glGenTextures(1, &textureID);
+    glFuncs->glBindTexture(GL_TEXTURE_2D, textureID);
+    glFuncs->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SIZE, SIZE,
+                          0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    glFuncs->glGenerateMipmap(GL_TEXTURE_2D);
+
+    return textureID;
+}
+
+static GLuint testID;//TODO enlever test
+template <>
+void Renderer::drawTemplate<ViewportMode::MATERIAL>()
+{
+
+    // On choisit le programme du vertex shader
+    GLuint programID=ShaderManager::getShaderProgram(VIEWPORT_MATERIAL);
+
+    mGlFuncs->glUseProgram(programID);
+
+    // Arguments de la caméra
+    const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
+    mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera->computeViewMatrix()[0][0]);
+
+    const int projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
+    mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera->computePerspectiveMatrix()[0][0]);
+
+    mVAO.bind();
+    mVBO.bind();
+    mEBO.bind();
+
+
+    const int cameraPos= mGlFuncs->glGetUniformLocation(programID, "cameraPos");
+    const glm::vec3 cameraVec =  mEngineCamera->getPosition();
+    mGlFuncs->glUniform3f (cameraPos, cameraVec.x,cameraVec.y,cameraVec.z );
+
+    const int lightPos = mGlFuncs->glGetUniformLocation(programID, "lightPos");
+    const glm::vec3 lightVec =  mEngineCamera->getPosition();
+    mGlFuncs->glUniform3f (lightPos,lightVec.x,lightVec.y,lightVec.z);
+
+
+    const int Ks= mGlFuncs->glGetUniformLocation(programID, "Ks");
+    const int Ka= mGlFuncs->glGetUniformLocation(programID, "Ka");
+    const int Kd= mGlFuncs->glGetUniformLocation(programID, "Kd");
+    const int Ns= mGlFuncs->glGetUniformLocation(programID, "Ns");
+    const int alpha= mGlFuncs->glGetUniformLocation(programID, "alpha");
+
+
+
+    uint32_t startTriangle=0,endTriangle=0;
+    for (auto &mesh : mScene->getMeshes()) {
+        const Material* mat=mScene->getMaterial(mesh.getMaterialId());
+
+        mGlFuncs->glActiveTexture(GL_TEXTURE0);
+        mGlFuncs->glBindTexture(GL_TEXTURE_2D, testID);  // ton ID de texture
+        int texLoc = mGlFuncs->glGetUniformLocation(programID, "colorTexture");
+        mGlFuncs->glUniform1i(texLoc, 0);
+
+
+        mGlFuncs->glUniform3f(Ks,mat->Ks.r,mat->Ks.g,mat->Ks.b);
+        mGlFuncs->glUniform3f(Ka,mat->Ka.r,mat->Ka.g,mat->Ka.b);
+        mGlFuncs->glUniform3f(Kd,mat->Kd.r,mat->Kd.g,mat->Kd.b);
+        mGlFuncs->glUniform1f(Ns,mat->shininess);
+        mGlFuncs->glUniform1f(alpha,mat->alpha);
+
+
+        endTriangle+= 3*mesh.getTriangles().size();
+        mGlFuncs->glDrawElements(
+        GL_TRIANGLES,
+            endTriangle - startTriangle,
+            GL_UNSIGNED_INT,
+                (void*)(startTriangle * sizeof(uint32_t))
+        );
+        startTriangle=endTriangle  ;
+    }
+
+
+    mVAO.release();
+
+    //on dessine apres la grid
+    drawGrid();
+}
+
 void Renderer::draw(const ViewportMode mode)
 {
     if (mode == ViewportMode::SOLID)
         drawTemplate<ViewportMode::SOLID>();
 
-    if (mode == ViewportMode::WIREFRAME)
+    else if (mode == ViewportMode::WIREFRAME)
         drawTemplate<ViewportMode::WIREFRAME>();
-}
 
+    else if (mode == ViewportMode::MATERIAL)
+        drawTemplate<ViewportMode::MATERIAL>();
+}
 template <ViewportMode m>
 void Renderer::geometryRedrawTemplate()
 {
@@ -146,7 +302,7 @@ void Renderer::geometryRedrawTemplate()
         vertices.reserve(vertices.size() + meshVertices.size());
         vertices.insert(vertices.end(), meshVertices.begin(), meshVertices.end());
 
-        if (m == ViewportMode::SOLID)
+        if (m == ViewportMode::SOLID || m == ViewportMode::MATERIAL)
         {
             // Buffer des faces
             const auto triangles = mesh.getTriangles();
@@ -190,8 +346,12 @@ void Renderer::geometryRedraw(const ViewportMode mode)
     if (mode == ViewportMode::SOLID)
         geometryRedrawTemplate<ViewportMode::SOLID>();
 
-    if (mode == ViewportMode::WIREFRAME)
+    else if (mode == ViewportMode::WIREFRAME)
         geometryRedrawTemplate<ViewportMode::WIREFRAME>();
+
+    else if (mode == ViewportMode::MATERIAL)
+        geometryRedrawTemplate<ViewportMode::MATERIAL>();
+
 }
 
 void Renderer::initShaders()
@@ -207,6 +367,12 @@ void Renderer::initShaders()
     shaders = {vertexShader, fragmentShader};
     ShaderManager::createProgram(VIEWPORT_WIREFRAME, shaders);
 
+    vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_material.vert", GL_VERTEX_SHADER);
+    fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_material.frag", GL_FRAGMENT_SHADER);
+    shaders = {vertexShader, fragmentShader};
+    ShaderManager::createProgram(VIEWPORT_MATERIAL, shaders);
+
+
 #ifdef TEST_HALFEDGES
     vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_test_halfedges.vert", GL_VERTEX_SHADER);
     fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_test_halfedges.frag", GL_FRAGMENT_SHADER);
@@ -219,6 +385,9 @@ void Renderer::initShaders()
     fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/grid.frag", GL_FRAGMENT_SHADER);
     shaders = {vertexShader, fragmentShader};
     ShaderManager::createProgram(GRID, shaders);
+
+
+
 }
 
 void Renderer::initialize(QOpenGLFunctions* glFuncs)
@@ -252,6 +421,8 @@ void Renderer::initialize(QOpenGLFunctions* glFuncs)
     mVAO.release();
 
     initShaders();
+
+    testID=createRainbowGridTexture(mGlFuncs);//TODO enlever test
 }
 
 void Renderer::resize(const int width, int height) const
@@ -264,9 +435,7 @@ void Renderer::resize(const int width, int height) const
 
 template void Renderer::drawTemplate<ViewportMode::SOLID>();
 template void Renderer::drawTemplate<ViewportMode::WIREFRAME>();
-
-
-
+template void Renderer::drawTemplate<ViewportMode::MATERIAL>();
 
 void Renderer::drawGrid() {
 

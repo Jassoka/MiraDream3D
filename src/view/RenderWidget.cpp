@@ -113,6 +113,9 @@ void RenderWidget::keyPressEvent(QKeyEvent *event) {
     case(Qt::Key_2):
         emit setViewportMode(ViewportMode::WIREFRAME);
         break;
+    case(Qt::Key_3):
+        emit setViewportMode(ViewportMode::MATERIAL);
+        break;
 #ifdef TEST_HALFEDGES
     case (Qt::Key_N): // Next half edge
         emit addTestHalfEdgeSignal(1);

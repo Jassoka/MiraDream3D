@@ -21,6 +21,7 @@ struct Material
     /** @brief Transparency coefficient
      */
     float alpha;
+    float shininess;
 };
 
 /**

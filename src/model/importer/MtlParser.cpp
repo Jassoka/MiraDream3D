@@ -54,6 +54,9 @@ void MtlParser::parseImpl() {
         else if (mCurrent.identifier=="Tr") {
             parseTr();
         }
+        else if (mCurrent.identifier=="Ns") {
+            parseNs();
+        }
         else {
             while (mCurrent.type !=NEWLINE) {
                 next();
@@ -115,6 +118,20 @@ void MtlParser::parseTr() {
     }
     next();
 }
+void MtlParser::parseNs() {
+    next();
+    if (mCurrent.type == FLOAT ) {
+        mCurrentMaterial->shininess=mCurrent.value.floatValue;
+    }
+    else if (mCurrent.type == INT ) {
+        mCurrentMaterial->shininess=mCurrent.value.intValue;
+    }
+    else {
+        //TODO explosion
+    }
+    next();
+}
+
 
 
 glm::vec3 MtlParser::parseVec3() {

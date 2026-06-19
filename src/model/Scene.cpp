@@ -28,6 +28,8 @@ Scene::Scene():
 {
     std::string name="Root node";
     mRootNode =static_cast<Node*>(new HierarchyNode(name));
+    mMaterialList.push_back(defaultMaterial);
+    mMaterialNames[defaultMaterial.name]=0;//TODO changer ca peut etre
 }
 
 Scene::~Scene() {
