@@ -9,6 +9,7 @@
 
 #include "Scene.h"
 
+class TextureManager;
 class Scene;
 class Camera;
 class ShaderManager;
@@ -88,6 +89,7 @@ private:
 
     Camera *mEngineCamera = initEngineCamera();
     ShaderManager *mShaderManager;
+    TextureManager *mTextureManager;
     const Scene *mScene = nullptr;
     QOpenGLFunctions *mGlFuncs = nullptr;
     QOpenGLVertexArrayObject mVAO;

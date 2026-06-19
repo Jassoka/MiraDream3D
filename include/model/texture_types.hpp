@@ -31,13 +31,13 @@ class Texture {
 public:
     explicit Texture(const uint8_t* data)
     {
-        std::memcpy(mPixels.begin(), data, TEXTURE_SIZE*TEXTURE_SIZE*4);
+        std::memcpy(mPixels.data(), data, mPixels.size());
     }
     //TODO: on pourra peut etre surcharger l'opérateur []
     /**
      * @return Pixel (RGBA) Pointer usable by OpenGL
      */
-    uint8_t* data() {
+    const uint8_t* data() const {
         return mPixels.data();
     }
 

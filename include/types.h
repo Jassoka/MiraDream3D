@@ -8,7 +8,8 @@
 enum class ViewportMode
 {
     SOLID,
-    WIREFRAME
+    WIREFRAME,
+    TEXTURES
 };
 
 #endif //MIRADREAM3D_TYPES_H

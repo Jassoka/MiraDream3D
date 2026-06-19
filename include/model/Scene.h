@@ -28,6 +28,7 @@ public:
      * @return New texture ID, old texture ID if already exists, -1 if import failed
      */
     int32_t loadQTImageAsTexture(const QString &path);
+    const uint8_t *getTextureData(const uint32_t textureID) const {return mTextureList[textureID].data();}
     void addMaterial(const Material &material);
     Mesh *newMesh();
     void removeLastMesh();

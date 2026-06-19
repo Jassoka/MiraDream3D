@@ -41,6 +41,7 @@ set(PROJECT_SOURCES
         src/main.cpp
         include/model/MeshTopologyBuilder.h
         include/model/MeshBuilder.h
+        include/model/TextureManager.h
 )
 
 qt_add_executable(MiraDream3D

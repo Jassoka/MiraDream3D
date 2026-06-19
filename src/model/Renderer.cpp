@@ -14,8 +14,11 @@
 
 #include <iostream>
 
+#include "model/TextureManager.h"
+
 const std::string VIEWPORT_SOLID = "viewport_solid";
 const std::string VIEWPORT_WIREFRAME = "viewport_wireframe";
+const std::string VIEWPORT_TEXTURES = "viewport_textures";
 const std::string GRID = "grid";
 
 static constexpr glm::vec3 worldOrigin {0.0f, 0.0f, 0.0f};
@@ -60,6 +63,9 @@ void Renderer::drawTemplate()
             programID = ShaderManager::getShaderProgram("viewport_test_halfedges");
             #endif
             break;
+    case ViewportMode::TEXTURES:
+        programID = ShaderManager::getShaderProgram(VIEWPORT_TEXTURES);
+        break;
     default:
         programID = 0;
     }
@@ -78,6 +84,14 @@ void Renderer::drawTemplate()
     GLuint drawMode;
     switch (m)
     {
+    case ViewportMode::TEXTURES:
+        {
+            mGlFuncs->glActiveTexture(GL_TEXTURE0);
+            mGlFuncs->glBindTexture(GL_TEXTURE_2D, TextureManager::loadSceneTexture(0, mScene));
+            const int uTexture = mGlFuncs->glGetUniformLocation(programID,"uTexture");
+            mGlFuncs->glUniform1i(uTexture, 0);
+            drawMode = GL_TRIANGLES;
+        }
     case ViewportMode::SOLID:
         {
             const int cameraPos= mGlFuncs->glGetUniformLocation(programID, "cameraPos");
@@ -146,7 +160,7 @@ void Renderer::geometryRedrawTemplate()
         vertices.reserve(vertices.size() + meshVertices.size());
         vertices.insert(vertices.end(), meshVertices.begin(), meshVertices.end());
 
-        if (m == ViewportMode::SOLID)
+        if (m == ViewportMode::SOLID || m == ViewportMode::TEXTURES)
         {
             // Buffer des faces
             const auto triangles = mesh.getTriangles();
@@ -207,6 +221,12 @@ void Renderer::initShaders()
     shaders = {vertexShader, fragmentShader};
     ShaderManager::createProgram(VIEWPORT_WIREFRAME, shaders);
 
+
+    vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_textures.vert", GL_VERTEX_SHADER);
+    fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_textures.frag", GL_FRAGMENT_SHADER);
+    shaders = {vertexShader, fragmentShader};
+    ShaderManager::createProgram(VIEWPORT_TEXTURES, shaders);
+
 #ifdef TEST_HALFEDGES
     vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_test_halfedges.vert", GL_VERTEX_SHADER);
     fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_test_halfedges.frag", GL_FRAGMENT_SHADER);
@@ -223,9 +243,9 @@ void Renderer::initShaders()
 
 void Renderer::initialize(QOpenGLFunctions* glFuncs)
 {
-    //3D
     mGlFuncs = glFuncs;
     ShaderManager::initialize(glFuncs);
+    TextureManager::initialize(glFuncs);
 
     if (!mVAO.create()) exit(1);
     if (!mVBO.create()) exit(1);

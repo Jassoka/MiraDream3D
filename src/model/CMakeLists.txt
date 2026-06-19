@@ -20,6 +20,7 @@ add_library(Model STATIC
         PrimitiveMeshes.cpp
         MeshTopologyBuilder.cpp
         MeshBuilder.cpp
+        TextureManager.cpp
 )
 
 target_include_directories(Model PUBLIC
