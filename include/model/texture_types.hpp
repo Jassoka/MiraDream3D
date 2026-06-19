@@ -28,20 +28,11 @@ struct Material
 using PixelBuffer = std::array<uint8_t, TEXTURE_SIZE*TEXTURE_SIZE*4>;
 
 class Texture {
-private:
-     PixelBuffer mPixels;
 public:
-    /*
-    explicit Texture(QImage &img) : mPixels{} {
-        //TODO: supprimer, model n'a pas besoin de fonctions de qt,
-        // c'est controller qui doit se charger de la traduction en char* ou autre structure convenable
-        assert(img.width() == TEXTURE_SIZE && img.height() == TEXTURE_SIZE); // Texture de taille fixe
-        img = img.convertToFormat(QImage::Format_RGBA8888);
-        img = img.mirrored();
-        std::copy_n(img.constBits(), mPixels.size(), mPixels.begin());
+    explicit Texture(const uint8_t* data)
+    {
+        std::memcpy(mPixels.begin(), data, TEXTURE_SIZE*TEXTURE_SIZE*4);
     }
-    */
-
     //TODO: on pourra peut etre surcharger l'opérateur []
     /**
      * @return Pixel (RGBA) Pointer usable by OpenGL
@@ -49,6 +40,9 @@ public:
     uint8_t* data() {
         return mPixels.data();
     }
+
+private:
+    PixelBuffer mPixels;
 };
 
 #endif //MIRADREAM3D_TEXTURE_TYPES_H
