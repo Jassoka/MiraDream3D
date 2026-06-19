@@ -31,7 +31,7 @@ Scene::Scene():
     auto defaultTextureData = std::array<uint8_t, TEXTURE_SIZE*TEXTURE_SIZE*4>();
     defaultTextureData.fill(255);
     mTextureList.emplace_back(defaultTextureData.data());
-    mMaterialList.push_back({0, 0.3, 0.9, 0.3});
+    mMaterialList.push_back({"", 0, glm::vec3(0.3), glm::vec3(0.9), glm::vec3(0.3)});
 }
 
 Scene::~Scene() {

@@ -57,7 +57,6 @@ void Renderer::drawTemplate()
             programID = ShaderManager::getShaderProgram(VIEWPORT_SOLID);
             break;
     case ViewportMode::WIREFRAME:
-
             programID = ShaderManager::getShaderProgram(VIEWPORT_WIREFRAME);
             #ifdef TEST_HALFEDGES
             programID = ShaderManager::getShaderProgram("viewport_test_halfedges");
