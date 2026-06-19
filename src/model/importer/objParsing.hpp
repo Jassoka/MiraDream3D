@@ -7,7 +7,6 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <bits/parse_numbers.h>
 
 #include "util/file_funcs.hpp"
 #include "glm/vec2.hpp"

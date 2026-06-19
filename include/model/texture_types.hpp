@@ -16,7 +16,7 @@ struct Material
     uint32_t ColorTextureID;
     /** @brief Ambiant, Diffuse and Specular coefficients
      */
-    float Ka, Kd, Ks;
+    glm::vec3 Ka, Kd, Ks;
     /** @brief Transparency coefficient
      */
     float alpha;
