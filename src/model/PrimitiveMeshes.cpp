@@ -3,6 +3,8 @@
 //
 
 #include "model/PrimitiveMeshes.h"
+
+#include "defs.h"
 #include "model/Mesh.h"
 #include "glm/mat4x4.hpp"
 

@@ -22,8 +22,6 @@ public:
 
 private:
     //static PrimitiveMeshes& getInstance();
-
-    static constexpr uint32_t DEFAULT_TEXTURE = 0;
     static const PrimitiveMesh cube;
 };
 

@@ -99,7 +99,7 @@ void Mesh::triangulate()
         }
     }
 #ifdef ENABLE_DEBUG
-    std::cout << *this << std::endl;
+    //std::cout << *this << std::endl;
 #endif
 }
 

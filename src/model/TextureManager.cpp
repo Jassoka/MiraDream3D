@@ -3,14 +3,15 @@
 //
 #include "model/TextureManager.h"
 
+#include <fcntl.h>
 #include <iostream>
 
 #include "model/Scene.h"
 
 
-std::list<uint32_t> TextureManager::mTextureCache{};
+TextureManager::TextureStack TextureManager::mTextureCache{};
 
-std::unordered_map<uint32_t, std::list<uint32_t>::iterator> TextureManager::mCacheIteratorsMap{};
+std::unordered_map<uint32_t, TextureManager::TextureStack::iterator> TextureManager::mCacheIteratorsMap{};
 
 std::array<
     GLuint,
@@ -23,25 +24,20 @@ GLuint TextureManager::loadSceneTexture(const uint32_t sceneTextureID, const Sce
     const auto mapIt = mCacheIteratorsMap.find(sceneTextureID);
     if (mapIt != mCacheIteratorsMap.end()) // existe déjà
     {
-#ifdef DEBUG
-        std::cout << "texture est déjà chargée ";
-#endif
         const auto it = mapIt->second;
         moveToFront(it);
-        return mOpenGLSlotIDs[*it]; // valeur de l'itérateur
+        return mOpenGLSlotIDs[it->openGLSlotID]; // valeur de l'itérateur
     }
     if (mUsedCache < MAX_GPU_TEXTURE_LOAD) // Il y a encore de la place
     {
-
-#ifdef DEBUG
-        std::cout << "texture jamais chargée ";
-#endif
         GLtextureID = mOpenGLSlotIDs[mUsedCache];
-        pushToFront(sceneTextureID);
+        pushToFront(sceneTextureID, mUsedCache);
     }
     else
     {
-        //TODO: cas ou la stack est remplie
+        const uint32_t glAvailableSlot = popBack();
+        pushToFront(sceneTextureID, glAvailableSlot);
+        GLtextureID = mOpenGLSlotIDs[glAvailableSlot];
     }
 
     mGlFuncs->glBindTexture(GL_TEXTURE_2D, GLtextureID);
@@ -61,22 +57,24 @@ void TextureManager::initialize(QOpenGLFunctions* glFuncs)
     }
 }
 
-void TextureManager::pushToFront(const uint32_t sceneTextureID)
+void TextureManager::pushToFront(const uint32_t sceneTextureID, const uint32_t availableOpenGLSlot)
 {
-    mTextureCache.push_front(sceneTextureID);
+    mTextureCache.push_front(TextureStackElement{availableOpenGLSlot, sceneTextureID});
     mCacheIteratorsMap[sceneTextureID] = mTextureCache.begin();
     mUsedCache++;
 }
 
-void TextureManager::popBack()
+uint32_t TextureManager::popBack()
 {
-    const uint32_t id = mTextureCache.back();
+    const uint32_t textureID = mTextureCache.back().textureID;
+    const uint32_t openGLSlotID = mTextureCache.back().openGLSlotID;
     mTextureCache.pop_back();
-    mCacheIteratorsMap.erase(id);
+    mCacheIteratorsMap.erase(textureID);
     mUsedCache--;
+    return openGLSlotID;
 }
 
-void TextureManager::moveToFront(const std::list<uint32_t>::iterator listIt)
+void TextureManager::moveToFront(const TextureStack::iterator listIt)
 {
     mTextureCache.splice(mTextureCache.begin(), mTextureCache,listIt);
 }

@@ -22,6 +22,6 @@ void main()
     vec3 ambiant = Ka;
     vec3 r = 2.0 * dot(N,L)*N-L;
     float specular = pow(max(dot(r,V),0.0),Ns);
-    vec3 phong = ambiant + Kd * diffuse*textureColor.rgb + Ks * specular;
+    vec3 phong = ambiant * Kd * diffuse*textureColor.rgb + Ks * specular;
     fragColor = vec4( phong , alpha*textureColor.a );
 }

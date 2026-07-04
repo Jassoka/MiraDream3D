@@ -11,6 +11,7 @@
 class Scene;
 static constexpr uint32_t MAX_GPU_TEXTURE_LOAD = 10;
 
+
 class TextureManager
 {
 public:
@@ -20,12 +21,18 @@ public:
      */
     static GLuint loadSceneTexture(uint32_t sceneTextureID, const Scene *scene);
 private:
-    static void pushToFront(uint32_t sceneTextureID);
-    static void popBack();
-    static void moveToFront(const std::list<uint32_t>::iterator listIt);
+    struct TextureStackElement
+    {
+        uint32_t openGLSlotID;
+        uint32_t textureID;
+    };
+    using TextureStack = std::list<TextureStackElement>;
+    static void pushToFront(uint32_t sceneTextureID, uint32_t availableOpenGLSlot);
+    [[nodiscard]] static uint32_t popBack();
+    static void moveToFront(TextureStack::iterator listIt);
     inline static QOpenGLFunctions *mGlFuncs = nullptr;
-    static std::list<uint32_t> mTextureCache; // stack for the indexes of mOpenGLSlotIDs
-    static std::unordered_map<uint32_t, std::list<uint32_t>::iterator> mCacheIteratorsMap; // texture ID -> iterator of mTextureCache
+    static TextureStack mTextureCache; // stack for the indexes of mOpenGLSlotIDs and texture IDs
+    static std::unordered_map<uint32_t, TextureStack::iterator> mCacheIteratorsMap; // texture ID -> iterator of mTextureCache
     inline static uint32_t mUsedCache = 0; // top of stack
     static std::array<GLuint, MAX_GPU_TEXTURE_LOAD> mOpenGLSlotIDs; // array for storing available OpenGL slots
 };

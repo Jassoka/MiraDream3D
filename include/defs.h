@@ -6,5 +6,6 @@
 #define MIRADREAM3D_DEFINES_H
 
 #define WORLD_ORIGIN glm::vec3(0.0)
+#define DEFAULT_TEXTURE 0
 
 #endif //MIRADREAM3D_DEFINES_H

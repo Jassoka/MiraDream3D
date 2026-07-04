@@ -57,7 +57,7 @@ void MtlParser::parseImpl() {
         else if (mCurrent.identifier=="Ns") {
             parseNs();
         }
-        else if (mCurrent.identifier=="Map_Kd") {
+        else if (mCurrent.identifier=="map_Kd") {
             parseMap_Kd();
         }
         else {
@@ -143,7 +143,11 @@ void MtlParser::parseMap_Kd() {
         next();
     }
 
-   mCurrentMaterial->ColorTextureID = mScene->getTextureId(mDir + filename);
+    const std::string path = mDir + filename;
+    const int32_t colorTextureID = mScene->getTextureId(path);
+    if  (colorTextureID == -1)
+        throw ObjParserException("can't load texture " + path ,mLexer.getLine(),mLexer.getLine());
+    mCurrentMaterial->ColorTextureID = colorTextureID;
     next();
 }
 

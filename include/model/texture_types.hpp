@@ -13,7 +13,6 @@ constexpr int TEXTURE_SIZE = 1024;
 
 struct Material
 {
-    std::string name;
     uint32_t ColorTextureID;
     /** @brief Ambiant, Diffuse and Specular coefficients
      */

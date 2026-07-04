@@ -7,22 +7,20 @@
 #include <map>
 
 #include "Camera.h"
+#include "defs.h"
 #include "Mesh.h"
 #include "texture_types.hpp"
 
 class Node;
 
-const Material defaultMaterial {
-    .name="defaultmaterial",
-    .ColorTextureID = 0 ,
-    .Ka        = {0.2f, 0.2f, 0.2f},
-    .Kd        = {0.8f, 0.8f, 0.8f},
-    .Ks        = {0.5f, 0.5f, 0.5f},
+constexpr Material defaultMaterial {
+    .ColorTextureID = DEFAULT_TEXTURE,
+    .Ka        = {1.0f, 1.0f, 1.0f},
+    .Kd        = {1.0f, 1.0f, 1.0f},
+    .Ks        = {0.05f, 0.05f, 0.05f},
      // sera remplacé par ta texture de test
     .alpha     = 1.0f,
     .shininess        = 32.0f
-
-
 };
 
 class Scene
@@ -50,7 +48,7 @@ public:
     uint32_t getMaterialID(std::string &name) ;
     const Material* getMaterial(uint32_t id) const {return &mMaterialList[id];}
 
-    uint32_t getTextureId(const std::string & path);
+    int32_t getTextureId(const std::string & path);
 
 private:
     Camera mSceneCamera; //TODO: plusieurs caméras

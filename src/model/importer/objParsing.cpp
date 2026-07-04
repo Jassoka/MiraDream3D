@@ -61,7 +61,7 @@ ObjToken ObjLexer::next() {
     }
     if (c=='/') {
         mPos++; mCol++;
-        return ObjToken{.type=SLASH};
+        return ObjToken{.type=SLASH, .identifier = "/"};
     }
     if (c=='#') {
         skipLine();
@@ -526,7 +526,7 @@ void ObjParser::parseUsemtl() {
             name += mCurrent.identifier;   // accumule tous les tokens
             next();
         }
-        mMeshBuildData->materialID=mScene->getMaterialID(mCurrent.identifier);
+        mMeshBuildData->materialID=mScene->getMaterialID(name);
     }
 }
 //TODO implemeter pour de vrai

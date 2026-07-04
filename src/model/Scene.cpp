@@ -28,11 +28,11 @@ Scene::Scene():
 {
     std::string name="Root node";
     mRootNode =static_cast<Node*>(new HierarchyNode(name));
-    //auto defaultTextureData = std::array<uint8_t, TEXTURE_SIZE*TEXTURE_SIZE*4>();
-    //defaultTextureData.fill(255);
-    loadQTImageAsTexture(":/assets/default_texture.png");
-    //mTextureList.emplace_back(defaultTextureData.data());
-    mMaterialList.push_back({"", 0, glm::vec3(0.3), glm::vec3(0.9), glm::vec3(0.3), 1.0, 1.0});
+    auto defaultTextureData = std::array<uint8_t, TEXTURE_SIZE*TEXTURE_SIZE*4>();
+    defaultTextureData.fill(255);
+    //loadQTImageAsTexture(":/assets/default_texture.png");
+    mTextureList.emplace_back(defaultTextureData.data());
+    mMaterialList.push_back(defaultMaterial);
 }
 
 Scene::~Scene() {
@@ -58,9 +58,8 @@ void Scene::addTexture(const Texture &texture) {
 }*/
 
 Material* Scene::giveNewMaterial(std::string &name) {
-    mMaterialList.push_back(Material());
+    mMaterialList.push_back(defaultMaterial);
     Material* material= &mMaterialList.back();
-    material->name=name;
     mMaterialNames[name]=mMaterialList.size()-1;//TODO bien initialiser la map pour la etxture par defaut aussiiii
     return material;
 }
@@ -68,9 +67,9 @@ uint32_t Scene::getMaterialID(std::string &name) {
     return mMaterialNames[name];
 }
 
-uint32_t Scene::getTextureId(const std::string & path) {
+int32_t Scene::getTextureId(const std::string & path) {
     if (mTextureNames.find(path)== mTextureNames.end()) {
-        loadQTImageAsTexture(QString::fromStdString(path));
+        return loadQTImageAsTexture(QString::fromStdString(path));
     }
     return mTextureNames[path];
 }
@@ -100,7 +99,13 @@ int32_t Scene::loadQTImageAsTexture(const QString &path)
     if (image.isNull()) return -1;
     const int width = image.width();
     const int height = image.height();
-    assert(width == height && height == TEXTURE_SIZE); //TODO un peu violent
+    assert(width == height); //TODO un peu violent
+
+    if (width != TEXTURE_SIZE)
+    {
+        image = image.scaled(TEXTURE_SIZE, TEXTURE_SIZE ,Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+
     image = image.convertToFormat(QImage::Format_RGBA8888);
 
     const uint32_t textureID = mTextureList.size();
