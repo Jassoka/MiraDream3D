@@ -25,9 +25,19 @@ bool Mesh::operator==(const Mesh& other) const
 }
 
 std::ostream& operator<<(std::ostream& os, const Mesh &mesh) {
-    os << "Vertices:" << '\n' << "{ ";
+    os << "Render Vertices:" << '\n' << "{ ";
     for (const auto vertex : mesh.getRenderVertices()) {
         os << "(" << vertex.x <<", "<< vertex.y <<", "<< vertex.z<<") ";
+    }
+    os << "}" << '\n';
+    os << "Geometric Vertices:" << '\n' << "{ ";
+    for (const auto gVertex : mesh.getGeometricVertices()) {
+        os << "( ";
+        for (const auto rVertex : gVertex.vertices)
+        {
+           os << rVertex << " ";
+        }
+        os << ")";
     }
     os << "}" << '\n';
     os << "Render faces: " << '\n' << "{ ";
@@ -39,7 +49,19 @@ std::ostream& operator<<(std::ostream& os, const Mesh &mesh) {
         os << "| ";
     }
     os << "}" << '\n';
+
+
+    os << "Geometric faces: " << '\n' << "{ ";
+    for (const auto face : mesh.getGeometricFaces()) {
+
+        for (const auto vertex : face) {
+            os << vertex << " ";
+        }
+        os << "| ";
+    }
+    os << "}" << '\n';
     return os;
+
 }
 #endif
 

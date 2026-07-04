@@ -39,7 +39,7 @@ struct MeshBuildData
     uint32_t materialID=0;
 
 
-    void addFace(const Face &geomFace,const Face &renderFace, const uint8_t size)
+    void addFace(const Face &geomFace, const Face &renderFace, const uint8_t size)
     {
         renderFaces.push_back(renderFace);
         geometricFaces.push_back(geomFace);

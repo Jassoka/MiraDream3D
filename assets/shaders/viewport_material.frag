@@ -10,7 +10,6 @@ uniform vec3 Ks,Ka,Kd;
 uniform float alpha;
 uniform float Ns;
 uniform sampler2D colorTexture;
-
 void main()
 {
     vec3 N = normalize(n);
