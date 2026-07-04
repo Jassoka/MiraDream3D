@@ -574,7 +574,7 @@ void ObjParser::parseS() {
 void ObjParser::removeDefaultMesh() {
     // retirer le MeshNode du parent
     auto* parent = dynamic_cast<HierarchyNode*>(mCurrentNode);
-    parent->removeLastChild();   // à ajouter dans HierarchyNode
+    //parent->removeLastChild();   // à ajouter dans HierarchyNode
     delete dynamic_cast<MeshNode*>(mDefaultMeshNode);
 
     // retirer le mesh de la scène
