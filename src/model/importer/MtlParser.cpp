@@ -5,24 +5,19 @@
 #include "MtlParser.hpp"
 #include <filesystem>
 
+#include "glm/vec3.hpp"
 #include "model/Scene.h"
 
 
 MtlParser::MtlParser(const std::string &file,Scene* scene):
-    mLexer(ObjLexer( readFileToString(file))),
-    mScene(scene),
-    mDir(std::filesystem::path(file).parent_path().string() + "/")
+    Parser(file, scene)
 {}
-
-
 
 void MtlParser::parse(const std::string& file, Scene* scene){
     auto instance = MtlParser(file, scene);
     instance.parseImpl();
 
 }
-
-
 
 void MtlParser::parseImpl() {
     next();
@@ -73,7 +68,6 @@ void MtlParser::parseImpl() {
 
 
 void MtlParser::parseNewmtl() {
-
     next();
     if (mCurrent.type != IDENTIFIER) {
         //TODO erreur
@@ -146,7 +140,7 @@ void MtlParser::parseMap_Kd() {
     const std::string path = mDir + filename;
     const int32_t colorTextureID = mScene->getTextureId(path);
     if  (colorTextureID == -1)
-        throw ObjParserException("can't load texture " + path ,mLexer.getLine(),mLexer.getLine());
+        throwError("can't load texture " + path);
     mCurrentMaterial->ColorTextureID = colorTextureID;
     next();
 }

@@ -14,8 +14,8 @@ add_library(Model STATIC
         Mesh.cpp
         importer/AssetImporter.cpp
         ../../include/model/AssetImporter.h
-        importer/objParsing.cpp
-        importer/objParsing.hpp
+        importer/ObjParser.cpp
+        importer/ObjParser.hpp
         ../../include/model/PrimitiveMeshes.h
         PrimitiveMeshes.cpp
         MeshTopologyBuilder.cpp
@@ -23,6 +23,10 @@ add_library(Model STATIC
         TextureManager.cpp
         importer/MtlParser.cpp
         importer/MtlParser.hpp
+        importer/Parser.cpp
+        importer/Parser.h
+        importer/Lexer.cpp
+        importer/Lexer.h
 )
 
 target_include_directories(Model PUBLIC

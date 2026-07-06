@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <algorithm>
 #include <QtGui/QImage>
+#include <glm/vec3.hpp>
 constexpr int TEXTURE_SIZE = 1024;
 
 

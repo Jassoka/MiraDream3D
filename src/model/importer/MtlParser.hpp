@@ -5,23 +5,17 @@
 #ifndef MIRADREAM3D_MTLPARSER_HPP
 #define MIRADREAM3D_MTLPARSER_HPP
 
-#include "objParsing.hpp"
+#include "Parser.h"
+#include "glm/fwd.hpp"
 #include "model/texture_types.hpp"
 
-class MtlParser {
+class MtlParser: Parser {
 public:
     MtlParser(const std::string &file,Scene* scene);
+
     static void parse(const std::string &file,Scene* scene);
 private:
-
-    void parseImpl();
-
-    ObjLexer mLexer;
-    ObjToken mCurrent;
-    Material* mCurrentMaterial=nullptr;
-    Scene* mScene;
-    std::string mDir;
-
+    void parseImpl() override;
     void parseNewmtl();
     void parseKs();
     void parseKd();
@@ -31,10 +25,8 @@ private:
     void parseNs();
     void parseMap_Kd();
     glm::vec3 parseVec3();
-    void next(){mCurrent=mLexer.next();}
 
-
-
+    Material* mCurrentMaterial=nullptr;
 };
 
 

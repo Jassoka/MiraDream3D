@@ -2,7 +2,7 @@
 #include "model/Node.h"
 #include "model/AssetImporter.h"
 
-#include "objParsing.hpp"
+#include "ObjParser.hpp"
 
 
 void AssetImporter::loadObjFile(const std::string &path, Scene* scene) {

@@ -2,12 +2,9 @@
 // Created by Mathis Pean on 09/06/2026.
 //
 
-#include "objParsing.hpp"
+#include "ObjParser.hpp"
 
 #include <array>
-#include <iostream>
-#include <cctype>
-
 #include "glm/vec2.hpp"
 #include "model/Scene.h"
 #include "model/Node.h"
@@ -21,12 +18,7 @@ glm::vec3 xzy(const glm::vec3 v)
     return glm::vec3(v.x, v.z, v.y);
 }
 
-ObjParser::ObjParser(const std::string &file,Scene* scene):
-    mLexer(ObjLexer( readFileToString(file))),
-    mScene(scene),
-    mMeshBuildFlags(new MeshBuildFlags{}),
-    mMeshBuildData(new MeshBuildData{}),
-    mDir(file.substr(0, file.find_last_of('/') + 1))
+ObjParser::ObjParser(const std::string &file,Scene* scene) : Parser(file, scene)
 {
     mMeshBuildFlags->computedFacesAndVertices = true;
     mMeshBuildFlags->computedFacesPerVertex = true;
@@ -38,193 +30,12 @@ ObjParser::~ObjParser()
     delete mMeshBuildData;
 }
 
-
-//accepte 1 à 9, ., - ;
-bool isNumber(const char c) {
-    return '0'<=c && c<='9' ;
-}
-//accepte les lettres maj/min et le _
-bool isLetter(const char c) {
-    return ('a'<=c && c<='z') || ('A'<=c && c<='Z')  ;
-}
-
-
-ObjToken ObjLexer::next() {
-    readSpace();
-    if (mPos>=mSrc.size()) {
-        return ObjToken{.type=END};
-    }
-    char c=mSrc[mPos];
-    if (c=='\n') {
-        skipLine();
-        return(ObjToken{.type=NEWLINE});
-    }
-    if (c=='/') {
-        mPos++; mCol++;
-        return ObjToken{.type=SLASH, .identifier = "/"};
-    }
-    if (c=='#') {
-        skipLine();
-        return next();
-    }
-    if (isLetter(c)|| c=='_'){return readIdentifier();}
-    if (isNumber(c) || c=='-' || c=='.'||c=='+' ){return readNumber();}
-
-    std::cout << "error char :" << c << std::endl;
-    error("Unknown grammar");
-
-}
-ObjToken ObjLexer::readIdentifier() {
-    char c=mSrc[mPos];
-
-    ObjToken token;
-    token.type=IDENTIFIER;
-
-    uint32_t stringPos=0;
-    while (mPos < mSrc.size() &&
-       (isLetter(mSrc[mPos]) || isNumber(mSrc[mPos]) || mSrc[mPos]=='_'))
-    {
-        token.identifier += mSrc[mPos];
-        ++mPos;
-        ++mCol;
-    }
-    return token;
-}
-//voir grammaire discord
-ObjToken ObjLexer::readNumber(){
-    char c=mSrc[mPos];
-    ObjToken token;
-
-    bool isValid=false;
-    bool isFloat=false;
-    bool isNegative=false;
-    bool hasSign=false;
-    bool hasExp=false;
-    bool isExpNeg=false;
-    int exponent=0;
-    int distanceFromComma=1;
-
-    float number=0;
-    while (mPos<mSrc.size() && (isNumber(c) || c=='E' || c=='e' || c=='-'||c=='+'||c=='.')) {
-        token.identifier+=c;
-        if (c=='.') {
-            isValid=false;
-            if (isFloat) {
-                break;
-            }
-            isFloat = true;
-        }
-        else if (c=='-') {
-            isValid=false;
-            if (hasSign) {
-                break;
-            }
-            if (hasExp) {
-                isExpNeg=true;
-            }
-            else {
-                isNegative=true;
-            }
-            hasSign=true;
-
-        }
-        else if (c=='+') {
-            isValid=false;
-            if (hasSign) {
-                break;
-            }
-            hasSign=true;
-        }
-        else if (c=='e' || c=='E') {
-            isValid=false;
-            if (hasExp) {
-                break;
-            }
-            isFloat=true;
-            hasSign=false;
-            hasExp=true;
-        }
-        else {
-            isValid=true;
-            const int chiffre=c-'0';
-            if (hasExp) {
-                exponent*=10;
-                exponent+=chiffre;
-            }
-            else if (isFloat) {
-                number+=chiffre/std::pow(10,distanceFromComma);
-                distanceFromComma++;
-            }
-            else {
-                number*=10;
-                number+=chiffre;
-            }
-        }
-
-
-        mPos++;
-        mCol++;
-        c=mSrc[mPos];
-    }
-    if (!isValid) {
-
-        while (mPos<mSrc.size() && c!='\n') {
-            token.identifier+=c;
-            mPos++;
-            mCol++;
-            c=mSrc[mPos];
-        }
-
-        token.type=IDENTIFIER;
-        return(token);
-
-        //error("Not a number ");
-    }
-    if (hasExp) {
-        if (isExpNeg) exponent=-exponent;
-        number*=std::pow(10,exponent);
-    }
-    if (isNegative) number=-number;
-    if (isFloat) {
-        token.value.floatValue=number;
-        token.type=FLOAT;
-    }
-    else {
-        token.value.intValue=static_cast<int>(number);
-        token.type=INT;
-    }
-    return token;
-}
-
-
-void ObjLexer::readSpace() {
-    while (mPos < mSrc.size() &&
-           std::isspace(static_cast<unsigned char>(mSrc[mPos])) &&
-           mSrc[mPos] != '\n') {
-        mPos++;
-        mCol++;
-           }
-}
-
-void ObjLexer::skipLine() {
-    while (mPos < mSrc.size() && mSrc[mPos] != '\n')
-        mPos++;
-    mLin++;
-    mCol=0;
-    mPos++;
-}
-
-
-
-void ObjLexer::error(const std::string &msg) const {
-    throw ObjLexerException(msg,mLin,mCol);
-}
-
 void ObjParser::parse(const std::string& file, Scene* scene)
 {
     auto instance = ObjParser(file, scene);
     instance.parseImpl();
 }
+
 
 void ObjParser::parseImpl() {
     next();
@@ -244,7 +55,7 @@ void ObjParser::parseImpl() {
     while (mCurrent.type != END ) {
         if (mCurrent.type != IDENTIFIER) {
             if (mCurrent.type!=NEWLINE){
-                error((std::stringstream() << "Token non attendu : " << mCurrent.type ).str());
+                throwError((std::stringstream() << "Token non attendu : " << mCurrent.type ).str());
                 return;}
             next();
             continue;
@@ -297,7 +108,7 @@ void ObjParser::parseImpl() {
             next();
         }
         else {
-            error((std::stringstream() << "Identifiant inconnu : " << mCurrent.identifier ).str());
+            throwError((std::stringstream() << "Identifiant inconnu : " << mCurrent.identifier ).str());
             return;
         }
     }
@@ -305,7 +116,7 @@ void ObjParser::parseImpl() {
 }
 
 void ObjParser::notEnoughComponentsError(int i) const {
-    error((std::stringstream() << " Nombre de composantes incorrect : " << i ).str());
+    throwError((std::stringstream() << " Nombre de composantes incorrect : " << i ).str());
 }
 
 void ObjParser::parseV() {
@@ -321,7 +132,7 @@ void ObjParser::parseV() {
                 v[coord]= mCurrent.value.intValue;
             }
             else {
-                error("Expected a number");
+                throwError("Expected a number");
             }
         }
         else {
@@ -350,7 +161,7 @@ void ObjParser::parseVN() {
                 vn[coord]= mCurrent.value.intValue;
             }
             else {
-                error("Expected a number");
+                throwError("Expected a number");
             }
         }
         else {
@@ -379,7 +190,7 @@ void ObjParser::parseVT() {
                 vt[coord]= mCurrent.value.intValue;
             }
             else {
-                error("Expected a number");
+                throwError("Expected a number");
             }
         }
         else {
@@ -504,7 +315,7 @@ void ObjParser::parseF() {
             mMeshBuildData->addFace(geomFace, renderFace, nVertex);
             break;
         default:
-            error((std::stringstream() << " Nombre de sommets incorrect : " << nVertex ).str());
+            throwError((std::stringstream() << " Nombre de sommets incorrect : " << nVertex ).str());
             break;
     }
 }
@@ -549,11 +360,11 @@ void ObjParser::parseS() {
                 mMeshBuildData->nbSmoothingGroups=0;
             }
         }
-        else error("smoothing group error");
+        else throwError("smoothing group error");
     }
     else if (mCurrent.type == INT) {
         if (mCurrent.value.intValue>255  ||mCurrent.value.intValue<0) {
-            error("too high smoothing group (>255), changed to 0.");//TODO warning
+            throwError("too high smoothing group (>255), changed to 0.");//TODO warning
             mCurrent.value.intValue=0;
 
         }
@@ -566,7 +377,7 @@ void ObjParser::parseS() {
 
 
     }
-    else error("smoothing group error");
+    else throwError("smoothing group error");
     next();
 }
 
@@ -607,6 +418,3 @@ void ObjParser::createMesh(std::string name) {
     }
 }
 
-void ObjParser::error(const std::string &msg) const {
-    throw ObjParserException(msg,mLexer.getLine(),mLexer.getLine());
-}
