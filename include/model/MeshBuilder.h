@@ -15,6 +15,7 @@ struct MeshBuildFlags
     bool hasUserNormals = false;
     bool computedFacesPerVertex = false;
     bool computedFacesAndVertices = false;
+    bool assignedMaterials = false;
 };
 
 struct MeshBuildData
@@ -34,9 +35,10 @@ struct MeshBuildData
     int nbSmoothingGroups = 0;
     std::vector<uint8_t> smoothingGroups = {};
 
+    std::vector<uint32_t> subMeshFaceIndices = {};
+    std::vector<uint32_t> materials = {};
 
     std::vector<glm::vec3> userNormals = {};
-    uint32_t materialID=0;
 
 
     void addFace(const Face &geomFace, const Face &renderFace, const uint8_t size)
@@ -52,6 +54,13 @@ struct MeshBuildData
     }
     void addGeometricVertex(const GeometricVertex &vertex) {
         geometricVertices.push_back(vertex);
+    }
+
+    uint32_t newSubMesh(const uint32_t materialID)
+    {
+        subMeshFaceIndices.push_back(renderFaces.size());
+        materials.push_back(materialID);
+        return subMeshFaceIndices.size()-1;
     }
 };
 

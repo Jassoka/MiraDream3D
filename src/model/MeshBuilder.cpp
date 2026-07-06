@@ -22,11 +22,19 @@ void MeshBuilder::buildImpl() const
 {
     if (!mFlags.computedFacesAndVertices)
         computeFacesAndVertices();
+    if (!mFlags.assignedMaterials)
+    {
+        mData.materials = {0};
+        mData.subMeshFaceIndices = {0};
+    }
     mMesh->mRenderVertices = std::move(mData.renderVertices);
     mMesh->mGeometricVertices = std::move(mData.geometricVertices);
     mMesh->mRenderFaces = std::move(mData.renderFaces);
     mMesh->mGeometricFaces = std::move(mData.geometricFaces);
     mMesh->mVertexCountPerFace = std::move(mData.geometricVertexCountPerFace);
+
+    mMesh->mMaterials = std::move(mData.materials);
+    mMesh->mSubMeshIndices = std::move(mData.subMeshFaceIndices);
 
     mMesh->mHasUserNormals = mFlags.hasUserNormals;
     if (mFlags.hasUserNormals)
@@ -37,9 +45,6 @@ void MeshBuilder::buildImpl() const
     mMesh->mSmoothingGroups = mData.smoothingGroups;
     mMesh->triangulate();
     MeshTopologyBuilder::build(mMesh, mFlags.computedFacesPerVertex?&mData.facesPerVertex:nullptr); //TODO changer DES QUE POSSIBLE
-
-    mMesh->mMaterialID=mData.materialID;
-
 }
 
 

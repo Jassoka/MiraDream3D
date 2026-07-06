@@ -28,6 +28,7 @@ private:
     void parseImpl() override;
     Node* mCurrentNode=nullptr;
     Mesh *mCurrentMesh;
+    uint32_t mCurrentSubMesh;
     Node* mDefaultMeshNode=nullptr;
     uint32_t mCurrentMeshOriginVId=0;
     bool mCurrentMeshHasUVCoords=true;

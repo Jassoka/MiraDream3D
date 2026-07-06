@@ -81,7 +81,7 @@ const std::vector<Mesh> &Scene::getMeshes() const
 }
 
 Mesh *Scene::newMesh() {
-    addMesh(Mesh(0));
+    addMesh(Mesh());
     return &mMeshList[mMeshList.size()-1];
 }
 void Scene::removeLastMesh() {
@@ -107,6 +107,7 @@ int32_t Scene::loadQTImageAsTexture(const QString &path)
     }
 
     image = image.convertToFormat(QImage::Format_RGBA8888);
+    image = image.mirrored(false, true);
 
     const uint32_t textureID = mTextureList.size();
     mTextureList.push_back(Texture(image.constBits()));

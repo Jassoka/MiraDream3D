@@ -160,30 +160,34 @@ void Renderer::drawTemplate<ViewportMode::MATERIAL>()
 
     uint32_t startTriangle=0,endTriangle=0;
     for (auto &mesh : mScene->getMeshes()) {
-        const Material* mat=mScene->getMaterial(mesh.getMaterialId());
+        auto &subMeshes = mesh.getSubMeshes();
+        for (uint32_t submeshIndex = 0; submeshIndex < subMeshes.size(); submeshIndex++)
+        {
+            const Material* mat=mScene->getMaterial(mesh.getMaterialId(submeshIndex));
 
-        mGlFuncs->glActiveTexture(GL_TEXTURE0);
-        GLint textureSlot = TextureManager::loadSceneTexture(mat->ColorTextureID, mScene);
-        mGlFuncs->glBindTexture(GL_TEXTURE_2D, textureSlot);  // ton ID de texture
-        int texLoc = mGlFuncs->glGetUniformLocation(programID, "colorTexture");
-        mGlFuncs->glUniform1i(texLoc, 0);
-
-
-        mGlFuncs->glUniform3f(Ks,mat->Ks.r,mat->Ks.g,mat->Ks.b);
-        mGlFuncs->glUniform3f(Ka,mat->Ka.r,mat->Ka.g,mat->Ka.b);
-        mGlFuncs->glUniform3f(Kd,mat->Kd.r,mat->Kd.g,mat->Kd.b);
-        mGlFuncs->glUniform1f(Ns,mat->shininess);
-        mGlFuncs->glUniform1f(alpha,mat->alpha);
+            mGlFuncs->glActiveTexture(GL_TEXTURE0);
+            GLint textureSlot = TextureManager::loadSceneTexture(mat->ColorTextureID, mScene);
+            mGlFuncs->glBindTexture(GL_TEXTURE_2D, textureSlot);  // ton ID de texture
+            int texLoc = mGlFuncs->glGetUniformLocation(programID, "colorTexture");
+            mGlFuncs->glUniform1i(texLoc, 0);
 
 
-        endTriangle+= 3*mesh.getTriangles().size();
-        mGlFuncs->glDrawElements(
-        GL_TRIANGLES,
-            endTriangle - startTriangle,
-            GL_UNSIGNED_INT,
-                (void*)(startTriangle * sizeof(uint32_t))
-        );
-        startTriangle=endTriangle  ;
+            mGlFuncs->glUniform3f(Ks,mat->Ks.r,mat->Ks.g,mat->Ks.b);
+            mGlFuncs->glUniform3f(Ka,mat->Ka.r,mat->Ka.g,mat->Ka.b);
+            mGlFuncs->glUniform3f(Kd,mat->Kd.r,mat->Kd.g,mat->Kd.b);
+            mGlFuncs->glUniform1f(Ns,mat->shininess);
+            mGlFuncs->glUniform1f(alpha,mat->alpha);
+
+
+            endTriangle+= 3*mesh.getTriangles(submeshIndex).size();
+            mGlFuncs->glDrawElements(
+            GL_TRIANGLES,
+                endTriangle - startTriangle,
+                GL_UNSIGNED_INT,
+                    (void*)(startTriangle * sizeof(uint32_t))
+            );
+            startTriangle=endTriangle  ;
+        }
     }
 
 
@@ -225,7 +229,12 @@ void Renderer::geometryRedrawTemplate()
         if (m == ViewportMode::SOLID || m == ViewportMode::MATERIAL)
         {
             // Buffer des faces
-            const auto triangles = mesh.getTriangles();
+            std::vector<Triangle> triangles;
+            for (uint32_t i = 0; i < mesh.getSubMeshes().size(); i++)
+            {
+                const auto currentTriangles = mesh.getTriangles(i);
+                triangles.insert(triangles.end(), currentTriangles.begin(), currentTriangles.end());
+            }
             indices.reserve(indices.size() + triangles.size()*3);
             for (const auto& t: triangles)
             {

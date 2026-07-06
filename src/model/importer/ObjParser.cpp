@@ -22,6 +22,7 @@ ObjParser::ObjParser(const std::string &file,Scene* scene) : Parser(file, scene)
 {
     mMeshBuildFlags->computedFacesAndVertices = true;
     mMeshBuildFlags->computedFacesPerVertex = true;
+    mMeshBuildFlags->assignedMaterials = true;
 }
 
 ObjParser::~ObjParser()
@@ -337,7 +338,7 @@ void ObjParser::parseUsemtl() {
             name += mCurrent.identifier;   // accumule tous les tokens
             next();
         }
-        mMeshBuildData->materialID=mScene->getMaterialID(name);
+        mCurrentSubMesh = mMeshBuildData->newSubMesh(mScene->getMaterialID(name));
     }
 }
 //TODO implemeter pour de vrai
@@ -410,6 +411,7 @@ void ObjParser::createMesh(std::string name) {
     mCurrentMeshHasUVCoords=true;
     mMeshBuildFlags->computedFacesAndVertices = true;
     mMeshBuildFlags->computedFacesPerVertex = true;
+    mMeshBuildFlags->assignedMaterials = true;
     mCurrentMeshSmoothGroupsMap[0]=0;
     mMeshBuildData->nbSmoothingGroups=0;
     if (mCurrentSmoothGroup!=0) {

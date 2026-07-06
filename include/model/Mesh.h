@@ -8,7 +8,6 @@
 #include "geometry.hpp"
 #include "glm/fwd.hpp"
 
-struct aiMesh;
 class MeshTopologyBuilder;
 
 enum halfEdgeDirection {ABC,ACB};
@@ -23,17 +22,16 @@ public:
     /**
      * @brief Default constructor for Mesh
      */
-    Mesh(const uint32_t materialID): mMaterialID(materialID) {}
+    Mesh() {}
 
-    Mesh(uint32_t materialID,
-        const std::vector<glm::vec3> &positions,
+    Mesh(const std::vector<glm::vec3> &positions,
         const std::vector<SizedFace> &faces,
         const glm::mat4 &translationRotationMatrix,
         float scale);
 
-    uint32_t getMaterialId() const
+    uint32_t getMaterialId(const uint32_t subMeshIndex) const
     {
-        return mMaterialID;
+        return mMaterials[subMeshIndex];
     }
 
     const std::vector<RenderVertex>& getRenderVertices() const
@@ -75,11 +73,15 @@ public:
         return mRenderFaces;
     }
 
-    const std::vector<Triangle>& getTriangles() const
+    const std::vector<Triangle>& getTriangles(const uint32_t subMeshIndex) const
     {
-        return mTriangles;
+        return mTriangles[subMeshIndex];
     }
 
+    const std::vector<uint32_t>& getSubMeshes() const
+    {
+        return mSubMeshIndices;
+    }
 
     const std::vector<uint32_t>& getComponents() const
     {
@@ -103,7 +105,9 @@ public:
     }
 
 private:
+
     void triangulate();
+    void triangulateSubMesh(uint32_t subMeshIndex);
 
     uint8_t getNbVertex(const uint32_t faceID) const
     {
@@ -130,14 +134,23 @@ private:
 
     bool isSmooth() const { return mNbSmoothingGroups != 0; }
 
-    uint32_t mMaterialID=0;
+    std::vector<uint32_t> mMaterials;
     std::vector<RenderVertex> mRenderVertices;
     std::vector<GeometricVertex> mGeometricVertices;
+
+    /**
+     * @brief List of render face indices at which starts each sub-mesh
+     */
+    std::vector<uint32_t> mSubMeshIndices;
+
     std::vector<Edge> mEdges;
     std::vector<HalfEdge> mHalfEdges;
     std::vector<Face> mRenderFaces;
     std::vector<Face> mGeometricFaces;
-    std::vector<Triangle> mTriangles;
+    /**
+     * @brief List of triangle arrays for each sub-mesh
+     */
+    std::vector<std::vector<Triangle>> mTriangles;
     std::vector<uint8_t> mVertexCountPerFace;
     std::vector<uint8_t> mSmoothingGroups;
     bool mIsManifold = true;

@@ -31,7 +31,6 @@ void MtlParser::parseImpl() {
         }
         if (mCurrent.identifier=="newmtl") {
             parseNewmtl();
-            next();
         }
         else if (mCurrentMaterial==nullptr){return;}//TODO explosion
         else if (mCurrent.identifier=="Ks") {
@@ -69,10 +68,15 @@ void MtlParser::parseImpl() {
 
 void MtlParser::parseNewmtl() {
     next();
-    if (mCurrent.type != IDENTIFIER) {
-        //TODO erreur
+    if (mCurrent.type == IDENTIFIER)
+    {
+        std::string name="";
+        while (mCurrent.type != NEWLINE && mCurrent.type != END) {
+            name += mCurrent.identifier;   // accumule tous les tokens
+            next();
+        }
+        mCurrentMaterial=mScene->giveNewMaterial(name);
     }
-    mCurrentMaterial=mScene->giveNewMaterial(mCurrent.identifier);
     next();
 }
 

@@ -7,8 +7,7 @@
 #include "model/MeshBuilder.h"
 
 
-Mesh::Mesh(const uint32_t materialID,const std::vector<glm::vec3> &positions,const std::vector<SizedFace> &faces, const glm::mat4 &translationRotationMatrix, const float scale):
-mMaterialID(materialID)
+Mesh::Mesh(const std::vector<glm::vec3> &positions,const std::vector<SizedFace> &faces, const glm::mat4 &translationRotationMatrix, const float scale)
 {
     MeshBuildData data;
     data.positions = positions;
@@ -17,13 +16,6 @@ mMaterialID(materialID)
 }
 
 #ifdef ENABLE_DEBUG
-bool Mesh::operator==(const Mesh& other) const
-{
-    const bool sameVertices = mRenderVertices == other.mRenderVertices;
-    const bool sameFaces = mRenderFaces == other.mRenderFaces;
-    return sameFaces && sameVertices; //TODO: same edges and half edges
-}
-
 std::ostream& operator<<(std::ostream& os, const Mesh &mesh) {
     os << "Render Vertices:" << '\n' << "{ ";
     for (const auto vertex : mesh.getRenderVertices()) {
@@ -67,13 +59,23 @@ std::ostream& operator<<(std::ostream& os, const Mesh &mesh) {
 
 void Mesh::triangulate()
 {
-    mTriangles.clear();
-    for (int i = 0; i < mRenderFaces.size(); i++)
+    mTriangles.resize(mSubMeshIndices.size());
+    for (uint32_t i = 0; i < mSubMeshIndices.size(); i++)
+        triangulateSubMesh(i);
+}
+
+void Mesh::triangulateSubMesh(const uint32_t subMeshIndex)
+{
+    std::vector<Triangle> &triangles = mTriangles[subMeshIndex];
+    triangles.clear();
+    uint32_t firstFaceIndex = mSubMeshIndices[subMeshIndex],
+    lastFameIndex = (subMeshIndex + 1 < mSubMeshIndices.size())? mSubMeshIndices[subMeshIndex+1] : mRenderFaces.size();
+    for (int i = firstFaceIndex; i < lastFameIndex; i++)
     {
         Face &f = mRenderFaces[i];
         if (mVertexCountPerFace[i] == 3)
         {
-            mTriangles.push_back(Triangle {f[0], f[1], f[2]});
+            triangles.push_back(Triangle {f[0], f[1], f[2]});
         }
         else
         {
@@ -87,12 +89,12 @@ void Mesh::triangulate()
             //la diagonale AC sort du quad, on divise donc selon BD
             //Car si mid etait dans le carre, B et D seraient dans la meme direction et sens opposés
             if (glm::dot(mid-B,mid-D)>0) {
-                mTriangles.push_back(Triangle {f[0], f[1], f[3]});
-                mTriangles.push_back(Triangle {f[1], f[2], f[3]});
+                triangles.push_back(Triangle {f[0], f[1], f[3]});
+                triangles.push_back(Triangle {f[1], f[2], f[3]});
             }
             else {
-                mTriangles.push_back(Triangle {f[0], f[1], f[2]});
-                mTriangles.push_back(Triangle {f[0], f[2], f[3]});
+                triangles.push_back(Triangle {f[0], f[1], f[2]});
+                triangles.push_back(Triangle {f[0], f[2], f[3]});
             }
 
             //DONE MARCHE meme SI pas CONVEXE pourtant c'est LA MEILLEURE PROPRIÉTÉ DU MONDE !!!!!!!1§§1§§

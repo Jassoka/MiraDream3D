@@ -16,7 +16,7 @@ struct PrimitiveMesh
 
 Mesh PrimitiveMeshes::generateCube()
 {
-        return Mesh(DEFAULT_TEXTURE, cube.positions, cube.faces, glm::mat4(1.0), 1.0 );
+        return Mesh(cube.positions, cube.faces, glm::mat4(1.0), 1.0 );
 }
 
 /*
