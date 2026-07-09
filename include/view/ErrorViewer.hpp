@@ -8,7 +8,7 @@
 
 class ErrorViewer {
 public:
-    static void showErrorMsg(const std::runtime_error &e,const std::string& title);
+    static void showErrorMsg(const std::string &msg,const std::string &title);
 };
 
 

@@ -15,7 +15,7 @@
 int main(int argc, char *argv[])
 {
 #ifdef TEST_HALFEDGES
-    qDebug() << "half edges test";
+    qDebug() << "Half edges test";
 #endif
 
 #ifdef Q_OS_LINUX

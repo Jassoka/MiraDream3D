@@ -20,7 +20,7 @@ LexerToken Lexer::next() {
     if (mPos>=mSrc.size()) {
         return LexerToken{.type=END};
     }
-    char c=mSrc[mPos];
+    const char c = mSrc[mPos];
     if (c=='\n') {
         skipLine();
         return(LexerToken{.type=NEWLINE});
@@ -31,7 +31,7 @@ LexerToken Lexer::next() {
     }
     if (c=='#') {
         skipLine();
-        return next();
+        return LexerToken{NEWLINE};
     }
     if (isLetter(c)|| c=='_'){return readIdentifier();}
     if (isNumber(c) || c=='-' || c=='.'||c=='+' ){return readNumber();}
@@ -42,7 +42,6 @@ LexerToken Lexer::next() {
 
 
 LexerToken Lexer::readIdentifier() {
-    char c=mSrc[mPos];
 
     LexerToken token;
     token.type=IDENTIFIER;
@@ -183,6 +182,6 @@ void Lexer::skipLine() {
 
 
 void Lexer::throwError(const std::string &msg) const {
-    throw LexerException(msg,mLin,mCol);
+    throw LexerException(msg, mFilePath,mLin,mCol);
 }
 

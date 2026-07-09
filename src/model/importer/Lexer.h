@@ -8,6 +8,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "util/parser_utils.hpp"
+
 enum LexerTokenType {
     IDENTIFIER,
     INT,
@@ -29,19 +31,19 @@ struct LexerToken {
 
 class LexerException : public std::runtime_error {
 public:
-    LexerException(const std::string& msg, const int line, const int col)
-        : std::runtime_error("[Lexer l." + std::to_string(line) +
-                       " c." + std::to_string(col) + "] " + msg) {}
+    LexerException(const std::string& msg, const std::string &fileLocation, const int line, const int col)
+        : std::runtime_error(parserMessageFormat(ERROR, "Lexer", fileLocation , msg, line, col)) {}
 };
 
 class Lexer
 {
 public:
-    explicit Lexer(const std::string &file):mSrc(file){};
+    explicit Lexer(const std::string &file, const std::string &path):mSrc(file), mFilePath(path){};
     [[noreturn]] void throwError(const std::string &msg) const;
     LexerToken next();
     uint32_t getLine() const {return mLin;}
     uint32_t getCol() const {return mCol;}
+    const std::string &getFilePath() const {return mFilePath;}
 private:
     LexerToken readIdentifier();
     LexerToken readNumber();
@@ -51,6 +53,7 @@ private:
     uint32_t mCol=0;
     uint32_t mPos=0;
     std::string mSrc;
+    std::string mFilePath;
 };
 
 

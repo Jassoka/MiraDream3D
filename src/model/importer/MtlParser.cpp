@@ -9,58 +9,40 @@
 #include "model/Scene.h"
 
 
-MtlParser::MtlParser(const std::string &file,Scene* scene):
-    Parser(file, scene)
-{}
-
-void MtlParser::parse(const std::string& file, Scene* scene){
-    auto instance = MtlParser(file, scene);
-    instance.parseImpl();
-
-}
-
 void MtlParser::parseImpl() {
     next();
     while (mCurrent.type != END ) {
         if (mCurrent.type != IDENTIFIER) {
-            if (mCurrent.type!=NEWLINE){
-                //TODO error((std::stringstream() << "Token non attendu : " << mCurrent.type ).str());
-                return;}
-            next();
-            continue;
+            if (mCurrent.type!=NEWLINE)
+                throwError(ParserMessages::UnexpectedToken);
         }
-        if (mCurrent.identifier=="newmtl") {
-            parseNewmtl();
-        }
-        else if (mCurrentMaterial==nullptr){return;}//TODO explosion
-        else if (mCurrent.identifier=="Ks") {
-            parseKs();
-        }
-        else if (mCurrent.identifier=="Ka") {
-            parseKa();
-        }
-        else if (mCurrent.identifier=="Kd") {
-            parseKd();
-        }
-        else if (mCurrent.identifier=="d") {
-            parseD();
-        }
-        else if (mCurrent.identifier=="Tr") {
-            parseTr();
-        }
-        else if (mCurrent.identifier=="Ns") {
-            parseNs();
-        }
-        else if (mCurrent.identifier=="map_Kd") {
-            parseMap_Kd();
-        }
-        else {
-            while (mCurrent.type !=NEWLINE) {
-                next();
+        else
+        {
+            if (mCurrent.identifier=="newmtl")
+                parseNewmtl();
+            else if (mCurrentMaterial==nullptr)
+                throwError("No material selected");
+            else if (mCurrent.identifier=="Ks")
+                parseKs();
+            else if (mCurrent.identifier=="Ka")
+                parseKa();
+            else if (mCurrent.identifier=="Kd")
+                parseKd();
+            else if (mCurrent.identifier=="d")
+                parseD();
+            else if (mCurrent.identifier=="Tr")
+                parseTr();
+            else if (mCurrent.identifier=="Ns")
+                parseNs();
+            else if (mCurrent.identifier=="map_Kd")
+                parseMap_Kd();
+            else {
+                while (mCurrent.type !=NEWLINE) {
+                    next();
+                }
             }
-            next();
         }
-
+        expectEOL();
     }
 }
 
@@ -70,107 +52,51 @@ void MtlParser::parseNewmtl() {
     next();
     if (mCurrent.type == IDENTIFIER)
     {
-        std::string name="";
-        while (mCurrent.type != NEWLINE && mCurrent.type != END) {
-            name += mCurrent.identifier;   // accumule tous les tokens
-            next();
-        }
+        std::string name = parseName();
         mCurrentMaterial=mScene->giveNewMaterial(name);
     }
-    next();
 }
 
-
-
 void MtlParser::parseKs() {
+    next();
     mCurrentMaterial->Ks=parseVec3();
 }
 
 void MtlParser::parseKd() {
+    next();
     mCurrentMaterial->Kd=parseVec3();
 }
 void MtlParser::parseKa() {
+    next();
     mCurrentMaterial->Ka=parseVec3();
 }
 void MtlParser::parseD() {
     next();
-    if (mCurrent.type == FLOAT ) {
-        mCurrentMaterial->alpha=mCurrent.value.floatValue;
-    }
-    else if (mCurrent.type == INT ) {
-        mCurrentMaterial->alpha=mCurrent.value.intValue;
-    }
-    else {
-        //TODO explosion
-    }
-    next();
+    mCurrentMaterial->alpha=parseNumber();
 }
 
 void MtlParser::parseTr() {
     next();
-    if (mCurrent.type == FLOAT ) {
-        mCurrentMaterial->alpha=1.0-mCurrent.value.floatValue;
-    }
-    else if (mCurrent.type == INT ) {
-        mCurrentMaterial->alpha=1-mCurrent.value.intValue;
-    }
-    else {
-        //TODO explosion
-    }
-    next();
+    mCurrentMaterial->alpha=parseNumber();
 }
 void MtlParser::parseNs() {
     next();
-    if (mCurrent.type == FLOAT ) {
-        mCurrentMaterial->shininess=mCurrent.value.floatValue;
-    }
-    else if (mCurrent.type == INT ) {
-        mCurrentMaterial->shininess=mCurrent.value.intValue;
-    }
-    else {
-        //TODO explosion
-    }
-    next();
+    mCurrentMaterial->shininess=parseNumber();
 }
 
 void MtlParser::parseMap_Kd() {
     next();
-    std::string filename="";
-    while (mCurrent.type != NEWLINE && mCurrent.type != END) {
-        filename += mCurrent.identifier;   // accumule tous les tokens
-        next();
-    }
-
+    const std::string filename = parseName();
     const std::string path = mDir + filename;
     const int32_t colorTextureID = mScene->getTextureId(path);
-    if  (colorTextureID == -1)
-        throwError("can't load texture " + path);
-    mCurrentMaterial->ColorTextureID = colorTextureID;
-    next();
-}
-
-glm::vec3 MtlParser::parseVec3() {
-    glm::vec3 v=glm::vec3(0.);
-    int coord=0;
-    next();
-    while (mCurrent.type != NEWLINE && mCurrent.type != END ){//TODO les commentaires en fin de ligne enculent cela
-        if (coord < 3 ) {
-            if (mCurrent.type==FLOAT) {
-                v[coord]= mCurrent.value.floatValue;
-            }
-            else if (mCurrent.type==INT) {
-                v[coord]= mCurrent.value.intValue;
-            }
-            else {
-                //error("Expected a number"); TODO erreurs
-            }
-        }
-        else {
-            //notEnoughComponentsError(4);
-        }
-        coord++;
-        next();
+    if (colorTextureID == -1)
+    {
+        throwWarning(ParserMessages::FileNotFound, path);
+        mCurrentMaterial->ColorTextureID = DEFAULT_TEXTURE;
     }
-
-    return v;
+    else
+    {
+        mCurrentMaterial->ColorTextureID = colorTextureID;
+    }
+    next();
 }

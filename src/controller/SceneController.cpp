@@ -28,7 +28,10 @@ void SceneController::importScene(const std::string &path) const
     loadBlankScene();
     mRenderController->changedGeometry();
     try {
-        AssetImporter::loadObjFile(path, getScene());
+        std::string warnings;
+        AssetImporter::importFile(OBJ, path, getScene(), warnings);
+        if (!warnings.empty())
+            ErrorController::showWarnings(warnings);
     }
     catch (const std::runtime_error &e ) {
         ErrorController::showError(e);

@@ -18,7 +18,7 @@ glm::vec3 xzy(const glm::vec3 v)
     return glm::vec3(v.x, v.z, v.y);
 }
 
-ObjParser::ObjParser(const std::string &file,Scene* scene) : Parser(file, scene)
+void ObjParser::initFlags()
 {
     mMeshBuildFlags->computedFacesAndVertices = true;
     mMeshBuildFlags->computedFacesPerVertex = true;
@@ -30,13 +30,6 @@ ObjParser::~ObjParser()
     delete mMeshBuildFlags;
     delete mMeshBuildData;
 }
-
-void ObjParser::parse(const std::string& file, Scene* scene)
-{
-    auto instance = ObjParser(file, scene);
-    instance.parseImpl();
-}
-
 
 void ObjParser::parseImpl() {
     next();
@@ -54,154 +47,64 @@ void ObjParser::parseImpl() {
 
 
     while (mCurrent.type != END ) {
-        if (mCurrent.type != IDENTIFIER) {
-            if (mCurrent.type!=NEWLINE){
-                throwError((std::stringstream() << "Token non attendu : " << mCurrent.type ).str());
-                return;}
-            next();
-            continue;
+        if (mCurrent.type != IDENTIFIER)
+        {
+            if (mCurrent.type != NEWLINE)
+                throwError(ParserMessages::UnexpectedToken);
         }
-        if (mCurrent.identifier=="v") {
-            parseV();
-            next();
-        }
-        else if (mCurrent.identifier=="f"){
-            parseF();
-            next();
-        }
-        else if (mCurrent.identifier=="vn"){
-            parseVN();
-            next();
-        }
-        else if (mCurrent.identifier=="vt"){
-            parseVT();
-            next();
-        }
-        else if (mCurrent.identifier=="l"){
-            parseL();
-            next();
-        }
-        else if (mCurrent.identifier=="s"){
-            parseS();
-            next();
-        }
-        else if (mCurrent.identifier=="mtllib"){
-            parseMtllib();
-            next();
-        }
-        else if (mCurrent.identifier=="usemtl"){
-            parseUsemtl();
-            next();
-        }
-        else if (mCurrent.identifier=="g"){
-            if (!gEncountered) {
-                if ( mMeshBuildData->renderVertices.empty()) {
-                    removeDefaultMesh();   // ← le 1er g supprime le mesh par défaut
+        else
+        {
+            if (mCurrent.identifier=="v")
+                parseV();
+            else if (mCurrent.identifier=="f")
+                parseF();
+            else if (mCurrent.identifier=="vn")
+                parseVN();
+            else if (mCurrent.identifier=="vt")
+                parseVT();
+            else if (mCurrent.identifier=="l")
+                parseL();
+            else if (mCurrent.identifier=="s")
+                parseS();
+            else if (mCurrent.identifier=="mtllib")
+                parseMtllib();
+            else if (mCurrent.identifier=="usemtl")
+                parseUsemtl();
+            else if (mCurrent.identifier=="g"){
+                if (!gEncountered) {
+                    if ( mMeshBuildData->renderVertices.empty()) {
+                        removeDefaultMesh();   // ← le 1er g supprime le mesh par défaut
+                    }
+                    else {mDefaultMeshNode=nullptr;}
+                    gEncountered = true;
                 }
-                else {mDefaultMeshNode=nullptr;}
-                gEncountered = true;
+                parseG();
             }
-            parseG();
-            next();
+            else if (mCurrent.identifier=="o"){
+                parseO();
+            }
+            else {
+                throwError(ParserMessages::UnexpectedIdentifier, mCurrent.identifier);
+            }
         }
-        else if (mCurrent.identifier=="o"){
-            parseO();
-            next();
-        }
-        else {
-            throwError((std::stringstream() << "Identifiant inconnu : " << mCurrent.identifier ).str());
-            return;
-        }
+        expectEOL();
     }
     finishMesh();
 }
 
-void ObjParser::notEnoughComponentsError(int i) const {
-    throwError((std::stringstream() << " Nombre de composantes incorrect : " << i ).str());
-}
-
 void ObjParser::parseV() {
-    glm::vec3 v;
-    int coord=0;
     next();
-    while (mCurrent.type != NEWLINE && mCurrent.type != END ){//TODO les commentaires en fin de ligne enculent cela
-        if (coord < 3) {
-            if (mCurrent.type==FLOAT) {
-                v[coord]= mCurrent.value.floatValue;
-            }
-            else if (mCurrent.type==INT) {
-                v[coord]= mCurrent.value.intValue;
-            }
-            else {
-                throwError("Expected a number");
-            }
-        }
-        else {
-            notEnoughComponentsError(4);
-        }
-        coord++;
-        next();
-    }
-    if (coord!=3) {
-        notEnoughComponentsError(coord);
-        return;
-    }
-    mV.push_back(xzy(v));
+    mV.push_back(xzy(parseVec3()));
 }
 
 void ObjParser::parseVN() {
-    glm::vec3 vn;
-    int coord=0;
     next();
-    while (mCurrent.type != NEWLINE && mCurrent.type != END ){//TODO les commentaires en fin de ligne enculent cela
-        if (coord < 3 ) {
-            if (mCurrent.type==FLOAT) {
-                vn[coord]= mCurrent.value.floatValue;
-            }
-            else if (mCurrent.type==INT) {
-                vn[coord]= mCurrent.value.intValue;
-            }
-            else {
-                throwError("Expected a number");
-            }
-        }
-        else {
-            notEnoughComponentsError(4);
-        }
-        coord++;
-        next();
-    }
-    if (coord!=3) {
-        notEnoughComponentsError(coord);
-        return;
-    }
-    mVN.push_back( xzy(glm::normalize(vn)));
+    mVN.push_back(xzy(glm::normalize(parseVec3())));
 }
 
 void ObjParser::parseVT() {
-    glm::vec3 vt;
-    int coord=0;
     next();
-    while (mCurrent.type != NEWLINE && mCurrent.type != END ){//TODO les commentaires en fin de ligne enculent cela
-        if (coord < 3 ) {
-            if (mCurrent.type==FLOAT) {
-                vt[coord]= mCurrent.value.floatValue;
-            }
-            else if (mCurrent.type==INT) {
-                vt[coord]= mCurrent.value.intValue;
-            }
-            else {
-                throwError("Expected a number");
-            }
-        }
-        else {
-            notEnoughComponentsError(4);
-        }
-        coord++;
-        next();
-    }
-
-    mVT.push_back(glm::vec2(vt));
+    mVT.push_back(parseVec2());
 }
 
 
@@ -209,8 +112,7 @@ void ObjParser::parseO() {
     next();
     std::string name="";
     if (mCurrent.type==IDENTIFIER) {
-        name=mCurrent.identifier;
-        next();
+        name = parseName();
     }
     auto* newNode = new HierarchyNode(name);
 
@@ -234,15 +136,17 @@ void ObjParser::parseO() {
 
 void ObjParser::parseG() {
     next();
-    std::string name="";
+    const std::string name= parseName();
+    /*
     while (mCurrent.type==IDENTIFIER)
     {
+
         if (name!="") {
             name+=" ";
-        }
+        } //TODO jsp ce que ça fait
         name+=mCurrent.identifier;
         next();
-    }
+    }*/
     if (mCurrentMesh) finishMesh();
     createMesh(name);
     dynamic_cast<HierarchyNode *>(mCurrentNode)->addChild(new MeshNode(name,mScene->getMeshes().size()-1));
@@ -256,29 +160,16 @@ void ObjParser::parseF() {
     Face geomFace{};
 
     while (mCurrent.type != NEWLINE && mCurrent.type != END ) {
-        int v=-1;
         int vn=-1;
         int vt=-1;
-        if (mCurrent.type!=INT) {
-            break;
+        const int v = parseInt()-1;
+        expectToken(SLASH);
+        if (mCurrent.type!=SLASH) {
+            vt = parseInt()-1;
         }
-        v=mCurrent.value.intValue-1;
-        next();
-        if (mCurrent.type==SLASH) {
-            next();
-            if (mCurrent.type==INT) {
-                vt=mCurrent.value.intValue-1;
-                next();
-            }
-
-            if (mCurrent.type==SLASH) {
-                next();
-                if (mCurrent.type==INT) {
-                    vn=mCurrent.value.intValue-1;
-                    next();
-                }
-            }
-
+        expectToken(SLASH);
+        if (mCurrent.type!=SLASH) {
+            vn = parseInt()-1;
         }
 
         //quand on a fini de parser le point
@@ -302,6 +193,10 @@ void ObjParser::parseF() {
         }
 
         mMeshBuildData->geometricVertices[mCurrentMeshGeometricVerticesMap[v]].vertices.push_back(mMeshBuildData->renderVertices.size() - 1);
+        if (nVertex > MAX_FACESIZE-1)
+        {
+            throwError((std::stringstream() << " N-gon face with more than " << MAX_FACESIZE << " vertices." ).str());
+        }
         renderFace[nVertex]=mMeshBuildData->renderVertices.size()-1;
         geomFace[nVertex] = mCurrentMeshGeometricVerticesMap[v];
         nVertex++;
@@ -315,29 +210,18 @@ void ObjParser::parseF() {
         case(4):
             mMeshBuildData->addFace(geomFace, renderFace, nVertex);
             break;
-        default:
-            throwError((std::stringstream() << " Nombre de sommets incorrect : " << nVertex ).str());
-            break;
     }
 }
 void ObjParser::parseMtllib() {
     next();
-    std::string filename="";
-    while (mCurrent.type != NEWLINE && mCurrent.type != END) {
-        filename += mCurrent.identifier;   // accumule tous les tokens
-        next();
-    }
-    MtlParser::parse(mDir + filename, mScene);
+    const std::string filename= parseName();
+    MtlParser::parse(mDir + filename, mScene, mWarnings);
 }
 
 void ObjParser::parseUsemtl() {
     next();
-    if (mCurrent.type   == IDENTIFIER) {
-        std::string name="";
-        while (mCurrent.type != NEWLINE && mCurrent.type != END) {
-            name += mCurrent.identifier;   // accumule tous les tokens
-            next();
-        }
+    if (mCurrent.type == IDENTIFIER) {
+        const std::string name = parseName();
         mCurrentSubMesh = mMeshBuildData->newSubMesh(mScene->getMaterialID(name));
     }
 }

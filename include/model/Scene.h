@@ -44,8 +44,8 @@ public:
     Mesh *newMesh();
     void removeLastMesh();
 
-    Material* giveNewMaterial(std::string &name);
-    uint32_t getMaterialID(std::string &name) ;
+    Material* giveNewMaterial(const std::string &name);
+    uint32_t getMaterialID(const std::string &name) ;
     const Material* getMaterial(uint32_t id) const {return &mMaterialList[id];}
 
     int32_t getTextureId(const std::string & path);

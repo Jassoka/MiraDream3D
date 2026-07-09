@@ -4,7 +4,14 @@
 
 #include "ObjParser.hpp"
 
-
-void AssetImporter::loadObjFile(const std::string &path, Scene* scene) {
-    ObjParser::parse(path,scene);
+void AssetImporter::importFile(const fileExtension ext, const std::string& path, Scene* scene, std::string& warnings)
+{
+    std::ostringstream warningStream;
+    switch (ext)
+    {
+        case OBJ:
+            ObjParser::parse(path,scene,warningStream);
+        break;
+    }
+    warnings = warningStream.str();
 }

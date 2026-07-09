@@ -11,11 +11,13 @@
 
 class MtlParser: Parser {
 public:
-    MtlParser(const std::string &file,Scene* scene);
-
-    static void parse(const std::string &file,Scene* scene);
+    inline static auto parse =
+        &Parser::parseTemplate<MtlParser>;
+    friend class Parser;
 private:
+    using Parser::Parser;
     void parseImpl() override;
+    void initFlags() override {}
     void parseNewmtl();
     void parseKs();
     void parseKd();
@@ -24,7 +26,6 @@ private:
     void parseTr();
     void parseNs();
     void parseMap_Kd();
-    glm::vec3 parseVec3();
 
     Material* mCurrentMaterial=nullptr;
 };

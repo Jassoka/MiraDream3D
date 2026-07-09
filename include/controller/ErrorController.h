@@ -10,6 +10,7 @@
 class ErrorController {
 
 public:
+    static void showWarnings(const std::string &warnings,const std::string& title="Warning");
     static void showError(const std::runtime_error &e,const std::string& title="Error");
 };
 

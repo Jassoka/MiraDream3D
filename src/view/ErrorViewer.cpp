@@ -4,7 +4,7 @@
 #include <QMessageBox>
 #include "view/ErrorViewer.hpp"
 
- void ErrorViewer::showErrorMsg(const std::runtime_error &e,const std::string& title="Error")
+void ErrorViewer::showErrorMsg(const std::string &msg,const std::string &title)
 {
-    QMessageBox::warning(nullptr,QString::fromStdString(title),e.what());
+    QMessageBox::warning(nullptr,QString::fromStdString(title),QString::fromStdString(msg));
 }

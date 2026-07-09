@@ -57,13 +57,13 @@ void Scene::addTexture(const Texture &texture) {
     this->mTextureList.push_back(texture);
 }*/
 
-Material* Scene::giveNewMaterial(std::string &name) {
+Material* Scene::giveNewMaterial(const std::string &name) {
     mMaterialList.push_back(defaultMaterial);
     Material* material= &mMaterialList.back();
     mMaterialNames[name]=mMaterialList.size()-1;//TODO bien initialiser la map pour la etxture par defaut aussiiii
     return material;
 }
-uint32_t Scene::getMaterialID(std::string &name) {
+uint32_t Scene::getMaterialID(const std::string &name) {
     return mMaterialNames[name];
 }
 

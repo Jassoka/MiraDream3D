@@ -21,10 +21,13 @@ struct MeshBuildData;
 
 class ObjParser: Parser {
 public:
-    ObjParser(const std::string &file,Scene* scene);
-    ~ObjParser();
-    void static parse(const std::string& file, Scene* scene);
+    inline static auto parse =
+        &Parser::parseTemplate<ObjParser>;
+    friend class Parser;
 private:
+    using Parser::Parser;
+    ~ObjParser();
+    void initFlags() override;
     void parseImpl() override;
     Node* mCurrentNode=nullptr;
     Mesh *mCurrentMesh;
