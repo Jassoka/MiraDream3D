@@ -2,7 +2,7 @@
 // Created by jassoka on 7/4/26.
 //
 
-#include "Parser.h"
+#include "../../../include/model/importer/Parser.h"
 
 #include "model/MeshBuilder.h"
 #include "util/file_funcs.hpp"

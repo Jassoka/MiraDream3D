@@ -1,6 +1,6 @@
 #include "model/Scene.h"
 #include "model/Node.h"
-#include "model/AssetImporter.h"
+#include "model/importer/AssetImporter.h"
 
 #include "ObjParser.hpp"
 

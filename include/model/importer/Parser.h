@@ -7,7 +7,7 @@
 #include <sstream>
 #include <string>
 
-#include "Lexer.h"
+#include "../../../include/model/importer/Lexer.h"
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
 

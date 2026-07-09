@@ -7,7 +7,7 @@
 #include "controller/ErrorController.h"
 #include "controller/RenderController.h"
 #include "model/Scene.h"
-#include "model/AssetImporter.h"
+#include "model/importer/AssetImporter.h"
 #include "model/PrimitiveMeshes.h"
 
 SceneController::SceneController(QObject* parent, RenderController *renderController) :

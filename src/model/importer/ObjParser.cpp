@@ -2,7 +2,7 @@
 // Created by Mathis Pean on 09/06/2026.
 //
 
-#include "ObjParser.hpp"
+#include "../../../include/model/importer/ObjParser.hpp"
 
 #include <array>
 #include "glm/vec2.hpp"
@@ -11,7 +11,7 @@
 #include "model/MeshBuilder.h"
 #include <sstream>
 
-#include "MtlParser.hpp"
+#include "../../../include/model/importer/MtlParser.hpp"
 
 glm::vec3 xzy(const glm::vec3 v)
 {
