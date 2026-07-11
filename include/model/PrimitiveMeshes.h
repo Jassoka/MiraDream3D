@@ -9,6 +9,10 @@
 class Mesh;
 struct PrimitiveMesh;
 
+/**
+ * @brief Class for generating software-default meshes
+ * Has options for scaling translation and rotation //TODO
+ */
 class PrimitiveMeshes
 {
 public:

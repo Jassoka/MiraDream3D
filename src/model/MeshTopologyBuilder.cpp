@@ -337,8 +337,3 @@ void MeshTopologyBuilder::generateNormals() const
     }
 }
 
-void MeshTopologyBuilder::build(Mesh *mesh, const std::vector<std::vector<uint32_t>>* facesPerVertex)
-{
-    MeshTopologyBuilder builder(mesh, facesPerVertex);
-    builder.buildImpl();
-}

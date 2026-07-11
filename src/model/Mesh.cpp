@@ -80,10 +80,10 @@ void Mesh::triangulateSubMesh(const uint32_t subMeshIndex)
         else
         {
 
-            glm::vec3 A=mRenderVertices[f[0]].toVec3();
-            glm::vec3 B=mRenderVertices[f[1]].toVec3();
-            glm::vec3 C=mRenderVertices[f[2]].toVec3();
-            glm::vec3 D=mRenderVertices[f[3]].toVec3();
+            glm::vec3 A=mRenderVertices[f[0]].getPosition();
+            glm::vec3 B=mRenderVertices[f[1]].getPosition();
+            glm::vec3 C=mRenderVertices[f[2]].getPosition();
+            glm::vec3 D=mRenderVertices[f[3]].getPosition();
             glm::vec3 mid = A+C;
             mid/=2;
             //la diagonale AC sort du quad, on divise donc selon BD

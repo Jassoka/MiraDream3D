@@ -39,7 +39,7 @@ void ObjParser::parseImpl() {
     mCurrentNode=mScene->getRootNode();
     mCurrentMesh=mScene->newMesh();
     mDefaultMeshNode = dynamic_cast<Node*>(new MeshNode("",mScene->getMeshes().size()-1));
-    dynamic_cast<HierarchyNode*>(mCurrentNode)->addChild(mDefaultMeshNode);
+    dynamic_cast<HierarchyNode*>(mCurrentNode)->pushChild(mDefaultMeshNode);
     mMeshBuildFlags->hasUserNormals=true;
     mCurrentMeshHasUVCoords=true;
     mCurrentMeshSmoothGroupsMap[0]=0;
@@ -119,7 +119,7 @@ void ObjParser::parseO() {
     // si le mesh par défaut existe encore, le déplacer dans ce nouvel objet
     if (mDefaultMeshNode != nullptr) {
         dynamic_cast<HierarchyNode*>(mCurrentNode)->popLastChild();
-        newNode->addChild(mDefaultMeshNode);
+        newNode->pushChild(mDefaultMeshNode);
         mDefaultMeshNode = nullptr;
 
     }else {
@@ -127,11 +127,11 @@ void ObjParser::parseO() {
         finishMesh();
         createMesh(name);
         auto* meshNode = new MeshNode(name, mScene->getMeshes().size() - 1);
-        newNode->addChild(meshNode);
+        newNode->pushChild(meshNode);
     }
 
     mCurrentNode = newNode;
-    dynamic_cast<HierarchyNode*>(mScene->getRootNode())->addChild(mCurrentNode);
+    dynamic_cast<HierarchyNode*>(mScene->getRootNode())->pushChild(mCurrentNode);
 }
 
 void ObjParser::parseG() {
@@ -149,7 +149,7 @@ void ObjParser::parseG() {
     }*/
     if (mCurrentMesh) finishMesh();
     createMesh(name);
-    dynamic_cast<HierarchyNode *>(mCurrentNode)->addChild(new MeshNode(name,mScene->getMeshes().size()-1));
+    dynamic_cast<HierarchyNode *>(mCurrentNode)->pushChild(new MeshNode(name,mScene->getMeshes().size()-1));
 }
 
 

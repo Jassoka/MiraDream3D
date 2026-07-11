@@ -10,59 +10,75 @@
 #include "glm/fwd.hpp"
 
 
-/**
- * @brief Represents a node in the object hierarchy tree
- */
-
-
+/** @brief Represents a node in the object hierarchy tree */
 class Node
 {
 public:
-    Node(std::string name=""):mName(name){};
+    explicit Node(const std::string& name=""): mName(name){};
     virtual ~Node();
+
+    /** @brief Returns number of children */
     virtual size_t getChildrenSize() const;
 
-
-    virtual bool isMesh(){return false;}
-    virtual bool isLeaf();
+    /** @brief Returns true if this node is a mesh */
+    virtual bool isMesh() { return false; }
+    /** @brief Returns true if this node is a leaf node */
+    bool isLeaf() const { return getChildrenSize() == 0; };
 
 protected:
     std::string mName;
 };
 
+/** @brief Represents a leaf node in the object hierarchy tree */
 class LeafNode: public Node {
 public:
-    LeafNode(std::string name="") : Node(name) {};
-    bool isLeaf() override {return true;};
+    explicit LeafNode(const std::string& name="") : Node(name) {};
     size_t getChildrenSize() const override {return 0;}
 };
 
-class HierarchyNode : public Node {
 
+/**
+ * @brief Represents a hierarchy node in the object hierarchy tree
+ * A hierarchy node does not contain a mesh
+ */
+class HierarchyNode : public Node {
 public:
-    HierarchyNode(std::string &name):Node(name){};
-     ~HierarchyNode() {
+    explicit HierarchyNode(const std::string &name):Node(name){};
+     ~HierarchyNode() override
+     {
          for (const Node* n : mChildren)
              delete n;
          mChildren.clear();
      };
-    bool isLeaf() override {return false;};
 
-    const Node* getChild(const glm::uint32_t n) const {
+    /**
+     * @brief Returns n-th child of this node
+     */
+    const Node* getChild(const uint32_t n) const {
         assert(n<getChildrenSize());
         return mChildren[n];
     };
-    void addChild(Node* nodePtr){mChildren.push_back(nodePtr);}
 
+    /**
+     * @brief Adds a child to this node
+     */
+    void pushChild(Node* nodePtr){mChildren.push_back(nodePtr);}
+
+    /**
+     * @brief Pops last child
+     */
     Node* popLastChild() {
         if (mChildren.empty()) return nullptr;
         Node* n = mChildren.back();
         mChildren.pop_back();
         return n;
     }
-    void removeLastChild() {
-        Node* n = popLastChild();
-        if (n) delete n;
+
+    /**
+     * @brief Deletes last child
+     */
+    void deleteLastChild() {
+        if (const Node* n = popLastChild()) delete n;
     }
     size_t getChildrenSize() const override {return mChildren.size();}
 
@@ -70,15 +86,21 @@ private:
     std::vector<Node*> mChildren;
 };
 
+/**
+ * @brief Represents a mesh node in the object hierarchy tree
+ * A mesh node cannot have children
+ */
 class MeshNode : public LeafNode {
 public:
-    MeshNode(std::string name,uint32_t meshId):mMesh(meshId),LeafNode(name){};
+    MeshNode(const std::string& name, const uint32_t meshId):LeafNode(name),mMesh(meshId){};
+    /** @getter{\ref mMesh} */
     uint32_t getMesh() const {return mMesh;}
+    /** @setter{\ref mMesh} */
     void setMesh(const uint32_t mesh){mMesh=mesh;}
     bool isMesh() override {return true;}
 private:
+    /** @brief This node's mesh */
     uint32_t mMesh;
-
 };
 
 

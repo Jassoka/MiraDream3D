@@ -10,6 +10,9 @@ class SceneController;
 class RenderController;
 class MainWindow;
 
+/**
+ * @brief Class for starting the software
+ */
 class Engine : public QObject
 {
     Q_OBJECT

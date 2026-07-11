@@ -1,6 +1,7 @@
 //
 // Created by jassoka on 6/18/26.
 //
+
 #include  "model/MeshBuilder.h"
 #include  "model/Mesh.h"
 #include "model/MeshTopologyBuilder.h"
@@ -15,6 +16,13 @@ MeshBuilder::MeshBuilder(Mesh *mesh, MeshBuildData &data, MeshBuildFlags &flags)
 void MeshBuilder::build(Mesh *mesh, MeshBuildData data, MeshBuildFlags flags)
 {
     const auto builder = MeshBuilder(mesh, data, flags);
+    builder.buildImpl();
+}
+
+
+void MeshBuilder::buildTopology(Mesh *mesh, const std::vector<std::vector<uint32_t>>* facesPerVertex)
+{
+    MeshTopologyBuilder builder(mesh, facesPerVertex);
     builder.buildImpl();
 }
 
@@ -44,7 +52,7 @@ void MeshBuilder::buildImpl() const
     mMesh->mNbSmoothingGroups = mData.nbSmoothingGroups;
     mMesh->mSmoothingGroups = mData.smoothingGroups;
     mMesh->triangulate();
-    MeshTopologyBuilder::build(mMesh, mFlags.computedFacesPerVertex?&mData.facesPerVertex:nullptr); //TODO changer DES QUE POSSIBLE
+    buildTopology(mMesh, mFlags.computedFacesPerVertex?&mData.facesPerVertex:nullptr); //TODO changer DES QUE POSSIBLE
 }
 
 

@@ -2,7 +2,8 @@
 // Created by Mathis Pean on 19/06/2026.
 //
 
-#include "MtlParser.hpp"
+#include "model/importer/MtlParser.hpp"
+
 #include <filesystem>
 
 #include "glm/vec3.hpp"
@@ -53,7 +54,7 @@ void MtlParser::parseNewmtl() {
     if (mCurrent.type == IDENTIFIER)
     {
         std::string name = parseName();
-        mCurrentMaterial=mScene->giveNewMaterial(name);
+        mCurrentMaterial=mScene->createNewMaterial(name);
     }
 }
 

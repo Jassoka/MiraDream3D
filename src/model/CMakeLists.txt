@@ -13,20 +13,20 @@ add_library(Model STATIC
         Node.cpp
         Mesh.cpp
         importer/AssetImporter.cpp
-        ../../include/model/AssetImporter.h
+        ../../include/model/importer/AssetImporter.h
         importer/ObjParser.cpp
-        importer/ObjParser.hpp
+        ../../include/model/importer/ObjParser.hpp
         ../../include/model/PrimitiveMeshes.h
         PrimitiveMeshes.cpp
         MeshTopologyBuilder.cpp
         MeshBuilder.cpp
         TextureManager.cpp
         importer/MtlParser.cpp
-        importer/MtlParser.hpp
+        ../../include/model/importer/MtlParser.hpp
         importer/Parser.cpp
-        importer/Parser.h
+        ../../include/model/importer/Parser.h
         importer/Lexer.cpp
-        importer/Lexer.h
+        ../../include/model/importer/Lexer.h
 )
 
 target_include_directories(Model PUBLIC

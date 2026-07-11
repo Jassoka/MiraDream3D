@@ -12,7 +12,7 @@ GLuint ShaderManager::getShaderProgram(const std::string& name)
     return mShaderPrograms.at(name);
 }
 
-void ShaderManager::createProgram(const std::string &name, const std::vector<uint32_t>& shaders)
+void ShaderManager::createProgram(const std::string &name, const std::vector<GLuint>& shaders)
 {
     const GLuint shaderProgram = mGlFuncs->glCreateProgram();
     for (const auto shader : shaders)

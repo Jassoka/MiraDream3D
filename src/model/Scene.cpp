@@ -47,7 +47,7 @@ void Scene::clearScene()
 
 void Scene::addNode(Node* nodePtr) const
 {
-    dynamic_cast<HierarchyNode*>(this->mRootNode)->addChild(nodePtr);
+    dynamic_cast<HierarchyNode*>(this->mRootNode)->pushChild(nodePtr);
 }
 void Scene::addMesh(const Mesh &mesh) {
     this->mMeshList.push_back(mesh);
@@ -57,7 +57,7 @@ void Scene::addTexture(const Texture &texture) {
     this->mTextureList.push_back(texture);
 }*/
 
-Material* Scene::giveNewMaterial(const std::string &name) {
+Material* Scene::createNewMaterial(const std::string &name) {
     mMaterialList.push_back(defaultMaterial);
     Material* material= &mMaterialList.back();
     mMaterialNames[name]=mMaterialList.size()-1;//TODO bien initialiser la map pour la etxture par defaut aussiiii
@@ -84,7 +84,7 @@ Mesh *Scene::newMesh() {
     addMesh(Mesh());
     return &mMeshList[mMeshList.size()-1];
 }
-void Scene::removeLastMesh() {
+void Scene::removeLastMesh() { //TODO memory leak je crois
     mMeshList.pop_back();
 }
 

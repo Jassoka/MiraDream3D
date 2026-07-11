@@ -1,8 +1,8 @@
 #include "model/Scene.h"
 #include "model/Node.h"
-#include "model/importer/AssetImporter.h"
+#include "../../../include/model/importer/AssetImporter.h"
 
-#include "ObjParser.hpp"
+#include "model/importer/ObjParser.hpp"
 
 void AssetImporter::importFile(const fileExtension ext, const std::string& path, Scene* scene, std::string& warnings)
 {

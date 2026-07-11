@@ -21,7 +21,7 @@ RenderController::~RenderController()
 
 void RenderController::paint()
 {
-    if (!hasToRedraw) return;
+    if (!mHasToRedraw) return;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (hasGeometryChanged())
     {

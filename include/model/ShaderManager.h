@@ -9,20 +9,39 @@
 #include <unordered_map>
 #include <QtOpenGL>
 
+/** @brief Class for managing GPU shader programs */
 class ShaderManager
 {
 public:
-    static void initialize(QOpenGLFunctions* glFuncs)
-    {
-        mGlFuncs = glFuncs;
-    }
-    static GLuint compileQTRessourceShader(const std::string &virtualPath, GLenum shaderType);
-    static GLuint compileShader(const std::string &shaderCode, GLenum shaderType);
+    static void initialize(QOpenGLFunctions* glFuncs) { mGlFuncs = glFuncs; }
+
     /**
-     * @brief Clears all programs known by the current instance of ShaderManager
+     * @brief Compiles a shader program in GPU memory using a QT Ressource path
+     * @param virtualPath Virtual path associated to QT Ressource (cf. resources.qrc)
+     * @param shaderType Type of shader
+     * @return Shader program index
      */
+    static GLuint compileQTRessourceShader(const std::string &virtualPath, GLenum shaderType);
+    /**
+     * @brief Compiles a shader program in GPU memory
+     * @param shaderCode String containing the code as a string
+     * @param shaderType Type of shader
+     * @return Shader program index
+     */
+    static GLuint compileShader(const std::string &shaderCode, GLenum shaderType);
+
+    /** @brief Clears all programs known by the current instance of ShaderManager */
     static void clearShaders();
+    /**
+     * @brief Compiles a program using shaders
+     * @param name Name of program
+     * @param shaders List of compiled shaders' indices in OpenGL
+     */
     static void createProgram(const std::string &name, const std::vector<GLuint>& shaders);
+    /**
+     * @brief Returns OpenGL index for program
+     * @param name Name of program
+     */
     static GLuint getShaderProgram(const std::string &name);
 
 private:

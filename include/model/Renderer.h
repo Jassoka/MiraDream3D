@@ -17,38 +17,35 @@ class QOpenGLFunctions;
 
 enum class ViewportMode;
 
+/**
+ * @brief Class for 3D rendering
+ */
 class Renderer
 {
 public:
     Renderer() = default;
 
-    void setScene(const Scene* scene)
-    {
-        mScene = scene;
-    }
+    void setScene(const Scene* scene) { mScene = scene; }
 
-    Camera *getEngineCamera() const
-    {
-        return mEngineCamera;
-    }
+    /**
+     * @getter{\ref mEngineCamera}
+     */
+    Camera *getEngineCamera() const { return mEngineCamera; }
 
+    /** @brief Initialization for OpenGL */
     void initialize(QOpenGLFunctions* glFuncs);
+    /** @brief Resizes the engine camera aspect ratio */
     void resize(int width, int height) const;
 
-    /**
-     * @brief Draw function for cases when vertices or faces are added/ deleted
-     */
+    /** @brief Draw function for cases when vertices or faces are added/ deleted */
     void geometryRedraw(ViewportMode mode);
 
-    /**
-     * @brief Draw function for cases when vertices are moved
-     */
+    /** @brief Draw function for cases when vertices are moved */
     //void topologyRedraw();
-    /**
-     * @brief Draw function without calculating new topology
-     */
+    /** @brief Draw function without calculating new topology */
     void draw(ViewportMode mode);
 
+    /** @brief Initializes all shaders in GPU memory */
     void initShaders();
 
 #ifdef TEST_HALFEDGES
@@ -77,6 +74,7 @@ public:
 #endif
 
 private:
+    /** @brief Returns an engine camera pointer with default settings */
     static Camera *initEngineCamera();
 
     template <ViewportMode m>
@@ -85,19 +83,39 @@ private:
     template <ViewportMode m>
     void geometryRedrawTemplate();
 
+    /** @brief Draws the viewport grid 2d */
     void drawGrid();
 
+    /**
+     * @brief Camera used to render the software's viewport
+     */
     Camera *mEngineCamera = initEngineCamera();
     ShaderManager *mShaderManager;
     TextureManager *mTextureManager;
     const Scene *mScene = nullptr;
     QOpenGLFunctions *mGlFuncs = nullptr;
+    /**
+     * @brief OpenGL Vertex Array Object
+     * For storing how to read vertex data from a CPU vertex objet
+     */
     QOpenGLVertexArrayObject mVAO;
+    /**
+     * @brief OpenGL Vertex Buffer Object
+     * For storing all vertices as a contiguous memory block
+     */
     QOpenGLBuffer mVBO;
+    /**
+     * @brief OpenGL Element Buffer Object
+     * For storing elements indices such as faces or edges
+     */
     QOpenGLBuffer mEBO{QOpenGLBuffer::IndexBuffer};
 
+    /** @brief OpenGL Vertex Array Object for the 2D grid */
     QOpenGLVertexArrayObject mGridVAO;
 
+    /**
+     * @brief Number of indices (face or edges depending on viewport mode)
+     */
     uint32_t nIndices = 0;
 #ifdef TEST_HALFEDGES
     uint32_t mTestHalfEdge=0;

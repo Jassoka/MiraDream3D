@@ -37,6 +37,7 @@ namespace ParserMessages
 
 }
 
+/** @brief Template for parser class */
 class Parser
 {
 public:
@@ -71,7 +72,17 @@ protected:
         return name;
     }
 
+    /**
+     * @brief Throws error if next token is not an end of line or end of file
+     * Skips next token
+     */
     void expectEOL();
+
+    /**
+     * @brief Throws error if next token is unexpected, skips next token
+     * @param tokenType Expected token
+     * @param msg Error message
+     */
     void expectToken(LexerTokenType tokenType, const std::string& msg = ParserMessages::UnexpectedToken);
 
     LexerToken mCurrent;
