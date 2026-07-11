@@ -154,7 +154,7 @@ void MeshTopologyBuilder::generateHalfEdges(uint32_t &facesToVisit)
 
         const uint32_t edgeID = getEdgeMapValue(currHalfEdge.origin, currHalfEdge.end);
 
-        // Trouver la face voisine (il y en a au plus 1 par la propriété du mesh 2-manifold //TODO verifier que c'est bien 2-manifold à un moment
+        // Trouver la face voisine (il y en a au plus 1 par la propriété du mesh 2-manifold
         const int32_t neighbouringFace = [this, edgeID](const uint32_t face)
         {
             int32_t neighbour;

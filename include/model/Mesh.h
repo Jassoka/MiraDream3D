@@ -94,6 +94,10 @@ public:
 
     /** @getter{\ref mGeometricVertices} */
     const std::vector<GeometricVertex>& getGeometricVertices() const { return mGeometricVertices; }
+
+    /** @brief Returns geometric vertex position at index idx */
+    glm::vec3 getGeometricVertexPosition(const uint32_t idx) const { return mRenderVertices[mGeometricVertices[idx].vertices[0]].getPosition(); }
+
 #ifdef ENABLE_DEBUG
     bool operator==(const Mesh &other) const;
 #endif
@@ -122,9 +126,6 @@ private:
 
     /** @brief Returns the index which comes after vertexID in a face */
     int getNextIndice(uint32_t faceID, uint32_t vertexID) const;
-
-    /** @brief Returns geometric vertex position at index idx */
-    glm::vec3 getGeometricVertexPosition(const uint32_t idx) const { return mRenderVertices[mGeometricVertices[idx].vertices[0]].getPosition(); }
 
     /**
      * @brief Determines the orientation of faces adjacent to an extremal vertex.

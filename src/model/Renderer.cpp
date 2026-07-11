@@ -97,13 +97,18 @@ void Renderer::drawTemplate()
             drawMode = GL_LINES;
             #ifdef TEST_HALFEDGES
 
-            auto halfEdgesVect=mScene->getMeshes()[0].getHalfEdges();
+            const Mesh &currentMesh = mScene->getMeshes()[mTestMesh];
+
+            const auto halfEdgesVect=currentMesh.getHalfEdges();
             mTestHalfEdge%=halfEdgesVect.size();
-            auto origin = mScene->getMeshes()[0].getRenderVertices()[halfEdgesVect[mTestHalfEdge].origin] ;
-            auto end = mScene->getMeshes()[0].getRenderVertices()[halfEdgesVect[mTestHalfEdge].end];
 
             const int halfEdgeOrigin = mGlFuncs->glGetUniformLocation(programID, "halfEdgeOrigin");
             const int halfEdgeEnd = mGlFuncs->glGetUniformLocation(programID, "halfEdgeEnd");
+
+            const glm::vec3 origin = currentMesh.getGeometricVertexPosition(halfEdgesVect[mTestHalfEdge].origin);
+            const glm::vec3 end = currentMesh.getGeometricVertexPosition(halfEdgesVect[mTestHalfEdge].end);
+
+
             mGlFuncs->glUniform3f(halfEdgeOrigin,origin.x,origin.y,origin.z);
             mGlFuncs->glUniform3f(halfEdgeEnd,end.x,end.y,end.z);
 
@@ -375,6 +380,11 @@ void Renderer::drawGrid() {
 
     const int projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
     mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera->computePerspectiveMatrix()[0][0]);
+
+
+    const int cameraPosition = mGlFuncs->glGetUniformLocation(programID, "cameraPosition");
+    glm::vec3 vCamPosition = mEngineCamera->getPosition();
+    mGlFuncs->glUniform3f (cameraPosition, vCamPosition.x, vCamPosition.y, vCamPosition.z);
 
     mGridVAO.bind();
     mGlFuncs->glDrawArrays(GL_TRIANGLES, 0, 3);
