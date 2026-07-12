@@ -10,6 +10,7 @@
 #include "../../../include/model/importer/Lexer.h"
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
+#include "model/SceneImport.h"
 
 class Mesh;
 class Node;
@@ -34,6 +35,7 @@ namespace ParserMessages
     inline const std::string ExpectedEOL = "expected end of line";
     inline const std::string FileNotFound = "file not found";
     inline const std::string VectorTooLarge = "vector has too many coordinates";
+    inline const std::string MaterialNotFound = "material not found";
 
 }
 
@@ -41,22 +43,20 @@ namespace ParserMessages
 class Parser
 {
 public:
-    Parser(const std::string &file, Scene* scene, std::ostringstream &warningStream);
+    Parser(const std::string &file, SceneImport &sceneOutput, std::ostringstream &warningStream);
     ~Parser() = default;
 protected:
-    template <typename ParserT>
-    static void parseTemplate(const std::string &file, Scene* scene, std::ostringstream& warnings)
+    void executeParser()
     {
-        auto instance = ParserT(file, scene, warnings);
-        instance.initFlags();
-        instance.parseImpl();
+        initFlags();
+        parseImpl();
     }
     void virtual initFlags() = 0;
     void virtual parseImpl() = 0;
 
     void next();
     [[noreturn]] void throwError(const std::string &msg, const std::string &detail = "") const;
-    void throwWarning(const std::string &msg, const std::string &detail);
+    void throwWarning(const std::string &msg, const std::string &detail = "");
 
     glm::vec2 parseVec2() { return parseVec<2>(); }
     glm::vec3 parseVec3() { return parseVec<3>(); }
@@ -73,6 +73,15 @@ protected:
     }
 
     /**
+     * @brief Skips whole line
+     */
+    void skipLine()
+    {
+        while (mCurrent.type != NEWLINE) {
+            next();
+        }
+    };
+    /**
      * @brief Throws error if next token is not an end of line or end of file
      * Skips next token
      */
@@ -87,7 +96,8 @@ protected:
 
     LexerToken mCurrent;
     Lexer mLexer;
-    Scene* mScene;
+    /** @brief Contains this instance's imported scene elements */
+    SceneImport &mSceneImport;
     std::string mDir;
 
     MeshBuildFlags *mMeshBuildFlags;

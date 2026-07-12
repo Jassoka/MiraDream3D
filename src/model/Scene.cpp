@@ -26,13 +26,14 @@ Scene::Scene():
             defaultSceneAspectRatio
         ))
 {
-    std::string name="Root node";
+    const std::string name="Root node";
     mRootNode =static_cast<Node*>(new HierarchyNode(name));
     auto defaultTextureData = std::array<uint8_t, TEXTURE_SIZE*TEXTURE_SIZE*4>();
     defaultTextureData.fill(255);
     //loadQTImageAsTexture(":/assets/default_texture.png");
     mTextureList.emplace_back(defaultTextureData.data());
-    mMaterialList.push_back(defaultMaterial);
+    //TODO petit probleme on peut magouiller pour modifier le materiau par défaut la
+    mMaterialRegistry.newMaterial("");
 }
 
 Scene::~Scene() {
@@ -57,21 +58,12 @@ void Scene::addTexture(const Texture &texture) {
     this->mTextureList.push_back(texture);
 }*/
 
-Material* Scene::createNewMaterial(const std::string &name) {
-    mMaterialList.push_back(defaultMaterial);
-    Material* material= &mMaterialList.back();
-    mMaterialNames[name]=mMaterialList.size()-1;//TODO bien initialiser la map pour la etxture par defaut aussiiii
-    return material;
-}
-uint32_t Scene::getMaterialID(const std::string &name) {
-    return mMaterialNames[name];
-}
 
 int32_t Scene::getTextureId(const std::string & path) {
-    if (mTextureNames.find(path)== mTextureNames.end()) {
+    if (mTexturePaths.find(path)== mTexturePaths.end()) {
         return loadQTImageAsTexture(QString::fromStdString(path));
     }
-    return mTextureNames[path];
+    return mTexturePaths[path];
 }
 
 
@@ -91,7 +83,7 @@ void Scene::removeLastMesh() { //TODO memory leak je crois
 int32_t Scene::loadQTImageAsTexture(const QString &path)
 {
     const auto strPath = path.toStdString();
-    if (const auto it = mTextureNames.find(strPath); it != mTextureNames.end()) // texture already exists
+    if (const auto it = mTexturePaths.find(strPath); it != mTexturePaths.end()) // texture already exists
     {
         return it->second;
     }
@@ -111,6 +103,6 @@ int32_t Scene::loadQTImageAsTexture(const QString &path)
 
     const uint32_t textureID = mTextureList.size();
     mTextureList.push_back(Texture(image.constBits()));
-    mTextureNames[strPath] = textureID;
+    mTexturePaths[strPath] = textureID;
     return textureID;
 }

@@ -13,15 +13,6 @@
 
 class Node;
 
-constexpr Material defaultMaterial {
-    .ColorTextureID = DEFAULT_TEXTURE,
-    .Ka        = {1.0f, 1.0f, 1.0f},
-    .Kd        = {1.0f, 1.0f, 1.0f},
-    .Ks        = {0.05f, 0.05f, 0.05f},
-     // sera remplacé par ta texture de test
-    .alpha     = 1.0f,
-    .shininess        = 32.0f
-};
 
 /**
  * @brief Class for the main scene
@@ -29,6 +20,7 @@ constexpr Material defaultMaterial {
  */
 class Scene
 {
+    friend class SceneController;
 public:
     Scene();
     ~Scene();
@@ -56,22 +48,15 @@ public:
     /** @brief Deletes the last mesh from the scene */
     void removeLastMesh();
 
-    /**
-     * @brief Creates a material in the scene with default configuration
-     * @param name Name of material
-     * @return Pointer to material
-     */
-    Material* createNewMaterial(const std::string &name);
-    /**
-     * @brief Returns ID to material called name
-     * @warning Does not check if material exists //TODO en vrai ce serait bien
-     */
-    uint32_t getMaterialID(const std::string &name) ;
-    /**
-     * @brief Returns pointer to material indexed id
-     * @warning Does not check if material exists
-     */
-    const Material* getMaterial(const uint32_t id) const {return &mMaterialList[id];}
+    /** @copybrief MaterialRegistry::newMaterial */
+    uint32_t createNewMaterial(const std::string &name, const Material &material = Material()) { return mMaterialRegistry.newMaterial(name, material); }
+
+    /** @copybrief MaterialRegistry::getMaterial */
+    const Material &getMaterial(const uint32_t id) const
+    {
+        const Material &material =  mMaterialRegistry.getMaterial(id);
+        return material;
+    }
 
     /**
      * @brief Returns ID to material in given path
@@ -93,12 +78,10 @@ private:
     std::vector<Mesh> mMeshList;
     /** @brief List of textures in scene */
     std::vector<Texture> mTextureList;
-    /** @brief Map associating a name to each Texture ID */
-    std::map<std::string, uint32_t> mTextureNames;
-    /** @brief List of materials in scene */
-    std::vector<Material> mMaterialList;
-    /** @brief Map associating a name to each Material ID */
-    std::map<std::string, uint32_t> mMaterialNames;
+    /** @brief Map associating a path to each Texture ID */
+    std::map<std::string, uint32_t> mTexturePaths;
+    /** @brief Registry object for managing materials */
+    MaterialRegistry mMaterialRegistry;
 
 };
 

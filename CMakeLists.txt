@@ -43,6 +43,9 @@ set(PROJECT_SOURCES
         include/model/MeshBuilder.h
         include/model/TextureManager.h
         include/util/parser_utils.hpp
+        include/view/NodeHierarchyWidget.h
+        include/controller/NodeHierarchyController.h
+        include/model/SceneImport.h
 )
 
 qt_add_executable(MiraDream3D

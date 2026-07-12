@@ -18,6 +18,7 @@
 * [ ] Subdivision
 * [ ] Hierarchie des nodes
 * [ ] Bouger un mesh + ses descendants dans la hierarchy des nodes
+* [ ] Extension de fichier pour ouvrir scene
 * **
 ## Widgets
 * [x] Bouton Import Fichiers
@@ -25,7 +26,7 @@
 * [ ] Bouton Selection mode d'édition (faces, vertices, edges)
 * **
 ## Graphic Pipeline
-* [] Séparer modes d'édition
+* [ ] Séparer modes d'édition
 * [x] Triangulation des faces (quads seulement)
 * [x] Textures
 * [ ] Plusieurs Lumières

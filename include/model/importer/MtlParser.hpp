@@ -11,9 +11,12 @@
 
 class MtlParser: Parser {
 public:
-    inline static auto parse =
-        &Parser::parseTemplate<MtlParser>;
     friend class Parser;
+    static void parse(const std::string &file, SceneImport &sceneOutput, std::ostringstream& warnings)
+    {
+        auto instance = MtlParser(file, sceneOutput, warnings);
+        instance.executeParser();
+    }
 private:
     using Parser::Parser;
     void parseImpl() override;
@@ -27,7 +30,7 @@ private:
     void parseNs();
     void parseMap_Kd();
 
-    Material* mCurrentMaterial=nullptr;
+    int32_t mCurrentMaterialID;
 };
 
 

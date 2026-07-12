@@ -6,8 +6,10 @@
 #define MIRADREAM3D_SCENECONTROLLER_H
 #include <QObject>
 
+#include "model/Scene.h"
+
+class SceneImport;
 class RenderController;
-class Scene;
 
 /**
  * @brief Controller class for managing the main scene
@@ -18,21 +20,22 @@ class SceneController : public QObject
 public:
     explicit SceneController(QObject* parent, RenderController *renderController);
 
-    Scene *getScene() const;
+    Scene *getScene();
     /**
      * @brief Empties current scene
      */
-    void loadBlankScene() const;
+    void loadBlankScene();
 
 public slots:
     /**
      * @brief Imports a file to the current scene
      */
-    void importScene(const std::string &path) const;
+    void importScene(const std::string &path);
 
 private:
+    void appendImport(SceneImport &import);
     RenderController *mRenderController;
-    Scene *mScene;
+    Scene mScene;
 };
 
 #endif //MIRADREAM3D_SCENECONTROLLER_H

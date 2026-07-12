@@ -168,20 +168,20 @@ void Renderer::drawTemplate<ViewportMode::MATERIAL>()
         auto &subMeshes = mesh.getSubMeshes();
         for (uint32_t submeshIndex = 0; submeshIndex < subMeshes.size(); submeshIndex++)
         {
-            const Material* mat=mScene->getMaterial(mesh.getMaterialId(submeshIndex));
+            const Material &mat= mScene->getMaterial(mesh.getMaterialId(submeshIndex));
 
             mGlFuncs->glActiveTexture(GL_TEXTURE0);
-            GLint textureSlot = TextureManager::loadSceneTexture(mat->ColorTextureID, mScene);
+            GLint textureSlot = TextureManager::loadSceneTexture(mat.ColorTextureID, mScene);
             mGlFuncs->glBindTexture(GL_TEXTURE_2D, textureSlot);  // ton ID de texture
             int texLoc = mGlFuncs->glGetUniformLocation(programID, "colorTexture");
             mGlFuncs->glUniform1i(texLoc, 0);
 
 
-            mGlFuncs->glUniform3f(Ks,mat->Ks.r,mat->Ks.g,mat->Ks.b);
-            mGlFuncs->glUniform3f(Ka,mat->Ka.r,mat->Ka.g,mat->Ka.b);
-            mGlFuncs->glUniform3f(Kd,mat->Kd.r,mat->Kd.g,mat->Kd.b);
-            mGlFuncs->glUniform1f(Ns,mat->shininess);
-            mGlFuncs->glUniform1f(alpha,mat->alpha);
+            mGlFuncs->glUniform3f(Ks,mat.Ks.r,mat.Ks.g,mat.Ks.b);
+            mGlFuncs->glUniform3f(Ka,mat.Ka.r,mat.Ka.g,mat.Ka.b);
+            mGlFuncs->glUniform3f(Kd,mat.Kd.r,mat.Kd.g,mat.Kd.b);
+            mGlFuncs->glUniform1f(Ns,mat.shininess);
+            mGlFuncs->glUniform1f(alpha,mat.alpha);
 
 
             endTriangle+= 3*mesh.getTriangles(submeshIndex).size();

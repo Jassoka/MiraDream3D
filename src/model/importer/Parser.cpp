@@ -7,9 +7,9 @@
 #include "model/MeshBuilder.h"
 #include "util/file_funcs.hpp"
 
-Parser::Parser(const std::string &file, Scene* scene, std::ostringstream &warningStream):
+Parser::Parser(const std::string& file, SceneImport& sceneOutput, std::ostringstream& warningStream):
     mLexer(Lexer(readFileToString(file), file)),
-    mScene(scene),
+    mSceneImport(sceneOutput),
     mDir(file.substr(0, file.find_last_of('/') + 1)),
     mMeshBuildFlags(new MeshBuildFlags{}),
     mMeshBuildData(new MeshBuildData{}),

@@ -33,16 +33,9 @@ ObjParser::~ObjParser()
 
 void ObjParser::parseImpl() {
     next();
-
-    //bool oEncountered=false;
-    bool gEncountered=false;
-    mCurrentNode=mScene->getRootNode();
-    mCurrentMesh=mScene->newMesh();
-    mDefaultMeshNode = dynamic_cast<Node*>(new MeshNode("",mScene->getMeshes().size()-1));
-    dynamic_cast<HierarchyNode*>(mCurrentNode)->pushChild(mDefaultMeshNode);
+    mCurrentNode = mSceneImport.getRootNode();
+    mCurrentMeshID = -1;
     mMeshBuildFlags->hasUserNormals=true;
-    mCurrentMeshHasUVCoords=true;
-    mCurrentMeshSmoothGroupsMap[0]=0;
     mMeshBuildData->nbSmoothingGroups=0;
 
 
@@ -71,13 +64,6 @@ void ObjParser::parseImpl() {
             else if (mCurrent.identifier=="usemtl")
                 parseUsemtl();
             else if (mCurrent.identifier=="g"){
-                if (!gEncountered) {
-                    if ( mMeshBuildData->renderVertices.empty()) {
-                        removeDefaultMesh();   // ← le 1er g supprime le mesh par défaut
-                    }
-                    else {mDefaultMeshNode=nullptr;}
-                    gEncountered = true;
-                }
                 parseG();
             }
             else if (mCurrent.identifier=="o"){
@@ -116,22 +102,16 @@ void ObjParser::parseO() {
     }
     auto* newNode = new HierarchyNode(name);
 
-    // si le mesh par défaut existe encore, le déplacer dans ce nouvel objet
-    if (mDefaultMeshNode != nullptr) {
-        dynamic_cast<HierarchyNode*>(mCurrentNode)->popLastChild();
-        newNode->pushChild(mDefaultMeshNode);
-        mDefaultMeshNode = nullptr;
-
-    }else {
-        // Crée un mesh propre pour ce nouvel objet
+    // Si un mesh existait, alors on ouvre un nouveau mesh
+    if (mCurrentMeshID != -1)
         finishMesh();
-        createMesh(name);
-        auto* meshNode = new MeshNode(name, mScene->getMeshes().size() - 1);
-        newNode->pushChild(meshNode);
-    }
+    // Crée un mesh propre pour ce nouvel objet
+    createMesh(name);
+    auto* meshNode = new MeshNode(name, mCurrentMeshID);
+    newNode->pushChild(meshNode);
 
     mCurrentNode = newNode;
-    dynamic_cast<HierarchyNode*>(mScene->getRootNode())->pushChild(mCurrentNode);
+    dynamic_cast<HierarchyNode*>(mSceneImport.getRootNode())->pushChild(mCurrentNode);
 }
 
 void ObjParser::parseG() {
@@ -147,9 +127,9 @@ void ObjParser::parseG() {
         name+=mCurrent.identifier;
         next();
     }*/
-    if (mCurrentMesh) finishMesh();
+    if (mCurrentMeshID) finishMesh();
     createMesh(name);
-    dynamic_cast<HierarchyNode *>(mCurrentNode)->pushChild(new MeshNode(name,mScene->getMeshes().size()-1));
+    dynamic_cast<HierarchyNode *>(mCurrentNode)->pushChild(new MeshNode(name,mCurrentMeshID));
 }
 
 
@@ -215,14 +195,20 @@ void ObjParser::parseF() {
 void ObjParser::parseMtllib() {
     next();
     const std::string filename= parseName();
-    MtlParser::parse(mDir + filename, mScene, mWarnings);
+    MtlParser::parse(mDir + filename, mSceneImport, mWarnings);
 }
 
 void ObjParser::parseUsemtl() {
     next();
     if (mCurrent.type == IDENTIFIER) {
         const std::string name = parseName();
-        mCurrentSubMesh = mMeshBuildData->newSubMesh(mScene->getMaterialID(name));
+        int32_t materialID = mSceneImport.getLocalMaterialID(name);
+        if (materialID < 0)
+        {
+            throwWarning(ParserMessages::MaterialNotFound, name);
+            materialID = DEFAULT_MATERIAL;
+        }
+        mCurrentSubMeshID = mMeshBuildData->newSubMesh(materialID);
     }
 }
 //TODO implemeter pour de vrai
@@ -249,9 +235,8 @@ void ObjParser::parseS() {
     }
     else if (mCurrent.type == INT) {
         if (mCurrent.value.intValue>255  ||mCurrent.value.intValue<0) {
-            throwError("too high smoothing group (>255), changed to 0.");//TODO warning
+            throwWarning("too high smoothing group (>255), changed to 0.");//TODO warning
             mCurrent.value.intValue=0;
-
         }
 
         mCurrentSmoothGroup=static_cast<uint8_t>(mCurrent.value.intValue);
@@ -267,21 +252,9 @@ void ObjParser::parseS() {
 }
 
 
-void ObjParser::removeDefaultMesh() {
-    // retirer le MeshNode du parent
-    auto* parent = dynamic_cast<HierarchyNode*>(mCurrentNode);
-    //parent->removeLastChild();   // à ajouter dans HierarchyNode
-    delete dynamic_cast<MeshNode*>(mDefaultMeshNode);
-
-    // retirer le mesh de la scène
-    mScene->removeLastMesh();        // à ajouter dans Scene
-
-    mCurrentMesh = nullptr; //TODO euh jsp je touche pas
-    mDefaultMeshNode = nullptr;
-}
-
 void ObjParser::finishMesh() {
-    MeshBuilder::build(mCurrentMesh, *mMeshBuildData, *mMeshBuildFlags);
+    if (mCurrentMeshID < 0) /* Aucun mesh n'a été créé */ { createMesh("Default"); }
+    mSceneImport.buildMesh(mCurrentMeshID, *mMeshBuildData, *mMeshBuildFlags);
     delete mMeshBuildData;
     delete mMeshBuildFlags;
     mMeshBuildData = new MeshBuildData();
@@ -289,8 +262,11 @@ void ObjParser::finishMesh() {
     mCurrentMeshGeometricVerticesMap.clear();
     mCurrentMeshSmoothGroupsMap.clear();
 }
-void ObjParser::createMesh(std::string name) {
-    mCurrentMesh=mScene->newMesh();
+void ObjParser::createMesh(const std::string &name) {
+    mCurrentMeshID=mSceneImport.newMesh();
+     dynamic_cast<HierarchyNode*>(mCurrentNode)->pushChild(new MeshNode(name,mCurrentMeshID));
+    //TODO gerer nom dupliqués
+
     mMeshBuildFlags->hasUserNormals=true;
     mCurrentMeshHasUVCoords=true;
     mMeshBuildFlags->computedFacesAndVertices = true;

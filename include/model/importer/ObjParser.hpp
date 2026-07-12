@@ -21,18 +21,20 @@ struct MeshBuildData;
 
 class ObjParser: Parser {
 public:
-    inline static auto parse =
-        &Parser::parseTemplate<ObjParser>;
     friend class Parser;
+    static void parse(const std::string &file, SceneImport &sceneOutput, std::ostringstream& warnings)
+    {
+        auto instance = ObjParser(file, sceneOutput, warnings);
+        instance.executeParser();
+    }
 private:
     using Parser::Parser;
     ~ObjParser();
     void initFlags() override;
     void parseImpl() override;
     Node* mCurrentNode=nullptr;
-    Mesh *mCurrentMesh;
-    uint32_t mCurrentSubMesh;
-    Node* mDefaultMeshNode=nullptr;
+    int32_t mCurrentMeshID;
+    uint32_t mCurrentSubMeshID;
     uint32_t mCurrentMeshOriginVId=0;
     bool mCurrentMeshHasUVCoords=true;
     uint8_t mCurrentSmoothGroup=0;
@@ -57,9 +59,7 @@ private:
     void parseMtllib();
     void parseL();
 
-    void notEnoughComponentsError(int i) const;
-    void removeDefaultMesh();
-    void createMesh(std::string name);
+    void createMesh(const std::string &name);
 
 };
 

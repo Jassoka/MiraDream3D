@@ -21,25 +21,28 @@ void MtlParser::parseImpl() {
         {
             if (mCurrent.identifier=="newmtl")
                 parseNewmtl();
-            else if (mCurrentMaterial==nullptr)
-                throwError("No material selected");
-            else if (mCurrent.identifier=="Ks")
-                parseKs();
-            else if (mCurrent.identifier=="Ka")
-                parseKa();
-            else if (mCurrent.identifier=="Kd")
-                parseKd();
-            else if (mCurrent.identifier=="d")
-                parseD();
-            else if (mCurrent.identifier=="Tr")
-                parseTr();
-            else if (mCurrent.identifier=="Ns")
-                parseNs();
-            else if (mCurrent.identifier=="map_Kd")
-                parseMap_Kd();
-            else {
-                while (mCurrent.type !=NEWLINE) {
-                    next();
+            else
+            {
+                if (mCurrentMaterialID < 0) // Aucun matériau selectionné
+                    skipLine();
+                else
+                {
+                    if (mCurrent.identifier=="Ks")
+                        parseKs();
+                    else if (mCurrent.identifier=="Ka")
+                        parseKa();
+                    else if (mCurrent.identifier=="Kd")
+                        parseKd();
+                    else if (mCurrent.identifier=="d")
+                        parseD();
+                    else if (mCurrent.identifier=="Tr")
+                        parseTr();
+                    else if (mCurrent.identifier=="Ns")
+                        parseNs();
+                    else if (mCurrent.identifier=="map_Kd")
+                        parseMap_Kd();
+                    else
+                        skipLine();
                 }
             }
         }
@@ -53,51 +56,43 @@ void MtlParser::parseNewmtl() {
     next();
     if (mCurrent.type == IDENTIFIER)
     {
-        std::string name = parseName();
-        mCurrentMaterial=mScene->createNewMaterial(name);
+        const std::string name = parseName();
+        mCurrentMaterialID=mSceneImport.newLocalMaterial(name);
     }
 }
 
 void MtlParser::parseKs() {
     next();
-    mCurrentMaterial->Ks=parseVec3();
+    mSceneImport.getLocalMaterial(mCurrentMaterialID).Ks=parseVec3();
 }
 
 void MtlParser::parseKd() {
     next();
-    mCurrentMaterial->Kd=parseVec3();
+    mSceneImport.getLocalMaterial(mCurrentMaterialID).Kd=parseVec3();
 }
 void MtlParser::parseKa() {
     next();
-    mCurrentMaterial->Ka=parseVec3();
+    mSceneImport.getLocalMaterial(mCurrentMaterialID).Ka=parseVec3();
 }
 void MtlParser::parseD() {
     next();
-    mCurrentMaterial->alpha=parseNumber();
+    mSceneImport.getLocalMaterial(mCurrentMaterialID).alpha=parseNumber();
 }
 
 void MtlParser::parseTr() {
     next();
-    mCurrentMaterial->alpha=parseNumber();
+    mSceneImport.getLocalMaterial(mCurrentMaterialID).alpha=parseNumber();
 }
 void MtlParser::parseNs() {
     next();
-    mCurrentMaterial->shininess=parseNumber();
+    mSceneImport.getLocalMaterial(mCurrentMaterialID).shininess=parseNumber();
 }
 
 void MtlParser::parseMap_Kd() {
     next();
     const std::string filename = parseName();
     const std::string path = mDir + filename;
-    const int32_t colorTextureID = mScene->getTextureId(path);
-    if (colorTextureID == -1)
-    {
-        throwWarning(ParserMessages::FileNotFound, path);
-        mCurrentMaterial->ColorTextureID = DEFAULT_TEXTURE;
-    }
-    else
-    {
-        mCurrentMaterial->ColorTextureID = colorTextureID;
-    }
+    const uint32_t colorTextureID = mSceneImport.getLocalTextureID(path);
+    mSceneImport.getLocalMaterial(mCurrentMaterialID).ColorTextureID = colorTextureID;
     next();
 }

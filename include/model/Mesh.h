@@ -51,6 +51,8 @@ public:
      */
     uint32_t getMaterialId(const uint32_t subMeshIndex) const { return mMaterials[subMeshIndex]; }
 
+    std::vector<uint32_t> &getMaterialList() {return mMaterials;}
+
     /** @getter{\ref mRenderVertices} */
     const std::vector<RenderVertex>& getRenderVertices() const { return mRenderVertices; }
 

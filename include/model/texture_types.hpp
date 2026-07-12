@@ -14,6 +14,13 @@ constexpr int TEXTURE_SIZE = 1024;
 
 struct Material
 {
+    Material():
+        ColorTextureID(DEFAULT_TEXTURE),
+        Ka({1.0f, 1.0f, 1.0f}),
+        Kd({1.0f, 1.0f, 1.0f}),
+        Ks({0.05f, 0.05f, 0.05f}),
+        alpha(1.0f),
+        shininess(32.0f) {}
     uint32_t ColorTextureID;
     /** @brief Ambiant coefficient */
     glm::vec3 Ka;
@@ -24,6 +31,59 @@ struct Material
     /** @brief Transparency coefficient */
     float alpha;
     float shininess;
+};
+
+struct MaterialRegistry
+{
+    /** @brief List of materials in registry */
+    std::vector<Material> materials;
+    /** @brief Map associating a name to each Material ID */
+    std::unordered_map<std::string, uint32_t> materialNames;
+
+    /**
+     * @brief Creates a new material and returns its ID
+     * @param name New material name
+     * @param material Optional material copied to the new slot
+     * cf. \ref Material::Material() for default material
+     */
+    uint32_t newMaterial(const std::string &name, const Material& material = Material())
+    {
+        // On check si un materiau de meme nom n'existe pas déjà
+        const auto it = materialNames.find(name);
+        if (it == materialNames.end())
+        {
+            // S'il n'y en a pas on crée un materiau
+            materials.push_back(material);
+            materialNames[name]=materials.size()-1;
+        }
+        return materialNames[name];
+    }
+
+    /**
+     * @brief Returns ID to material called name
+     * Returns -1 if material does not exist
+     */
+    int32_t getMaterialID(const std::string &name)
+    {
+        if (materialNames.find(name) == materialNames.end()) return -1;
+        return materialNames[name];
+    }
+    /**
+     * @brief Returns const reference to material at index id
+     */
+    const Material &getMaterial(const uint32_t id) const
+    {
+        assert(id < materials.size());
+        return materials[id];
+    }
+    /**
+     * @brief Returns reference to material at index id
+     */
+    Material &getMaterial(const uint32_t id)
+    {
+        assert(id < materials.size());
+        return materials[id];
+    }
 };
 
 /**
