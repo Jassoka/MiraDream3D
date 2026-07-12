@@ -11,6 +11,7 @@
 #include "Mesh.h"
 #include "texture_types.hpp"
 
+class SceneImport;
 class Node;
 
 
@@ -66,6 +67,12 @@ public:
      * If file fails to open, returns -1
      */
     int32_t getTextureId(const std::string & path);
+
+    /**
+     * @brief Appends import data into the current scene
+     */
+    void appendImport(SceneImport &import);
+
 
 private:
     /** @brief Scene camera(s) for final rendering */

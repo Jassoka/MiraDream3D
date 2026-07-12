@@ -18,7 +18,7 @@ class Node;
  */
 class SceneImport
 {
-    friend class SceneController;
+    friend class Scene;
 public:
     SceneImport();
     ~SceneImport();
@@ -48,7 +48,7 @@ public:
 private:
     MaterialRegistry mLocalMaterialRegistry;
     std::map<std::string, uint32_t> mTexturePaths;
-    int mTextureCount = 0;
+    int mTextureCount = DEFAULT_TEXTURE + 1;
     std::vector<Mesh> mLocalMeshes;
     /** @brief Temporary node under which the hierarchy is built */
     Node *mLocalRootNode;

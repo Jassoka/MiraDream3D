@@ -33,7 +33,6 @@ public slots:
     void importScene(const std::string &path);
 
 private:
-    void appendImport(SceneImport &import);
     RenderController *mRenderController;
     Scene mScene;
 };

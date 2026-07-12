@@ -4,6 +4,7 @@
 #include "model/Scene.h"
 #include "model/Node.h"
 #include "glm/trigonometric.hpp"
+#include "model/SceneImport.h"
 
 static constexpr glm::vec3 defaultSceneCameraUp {1, 1, 1}; //TODO: mettre des vraies valeurs
 static constexpr glm::vec3 defaultSceneCameraRight {1, 1, 1};
@@ -105,4 +106,56 @@ int32_t Scene::loadQTImageAsTexture(const QString &path)
     mTextureList.push_back(Texture(image.constBits()));
     mTexturePaths[strPath] = textureID;
     return textureID;
+}
+
+
+void Scene::appendImport(SceneImport& import)
+{
+    auto &importMeshes = import.mLocalMeshes;
+    auto &sceneMeshes = mMeshList;
+
+    //std::ostringstream warnings;
+
+    // Generating maps
+    std::unordered_map<uint32_t, uint32_t> localToGlobalTextureMap;
+    std::unordered_map<uint32_t, uint32_t> localToGlobalMaterialMap;
+    for (const auto &[path, localId] : import.mTexturePaths)
+    {
+        const int32_t globalId = getTextureId(path);
+        if (globalId < 0)
+        {
+           // warnings << "file not found: " << path << '\n';
+            localToGlobalTextureMap[localId] = DEFAULT_TEXTURE;
+        }
+        else
+            localToGlobalTextureMap[localId] = globalId;
+    }
+
+    for (const auto &[name, localId] : import.mLocalMaterialRegistry.materialNames)
+    {
+        Material &material = import.mLocalMaterialRegistry.getMaterial(localId);
+        localToGlobalMaterialMap[localId] = createNewMaterial(name, material);
+        // remapping texture to correct index
+        const auto globalId = localToGlobalMaterialMap[localId];
+        const auto localTextureId = material.ColorTextureID;
+        // Si c'est la texture par défaut, elle ne change pas
+        const auto globalTextureId =
+            localTextureId == DEFAULT_TEXTURE ? DEFAULT_TEXTURE : localToGlobalTextureMap[localTextureId];
+
+        mMaterialRegistry.getMaterial(globalId).ColorTextureID = globalTextureId;
+    }
+
+    for (auto &mesh: importMeshes)
+    {
+        auto &meshMaterials = mesh.getMaterialList();
+        for (int i = 0; i < meshMaterials.size(); i++) { meshMaterials[i] = localToGlobalMaterialMap[meshMaterials[i]]; }
+    }
+
+    sceneMeshes.reserve(sceneMeshes.size()+importMeshes.size());
+    sceneMeshes.insert(sceneMeshes.end(), importMeshes.begin(), importMeshes.end());
+
+    /*
+    const auto warningsStr = warnings.str();
+    if (!warningsStr.empty())
+        ErrorController::showWarnings(warningsStr);*/
 }
