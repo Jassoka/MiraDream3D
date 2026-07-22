@@ -23,11 +23,12 @@ add_library(Model STATIC
         TextureManager.cpp
         importer/MtlParser.cpp
         ../../include/model/importer/MtlParser.hpp
-        importer/Parser.cpp
-        ../../include/model/importer/Parser.h
-        importer/Lexer.cpp
-        ../../include/model/importer/Lexer.h
+        parser/Parser.cpp
+        ../../include/model/parser/Parser.h
+        parser/Lexer.cpp
+        ../../include/model/parser/Lexer.h
         SceneImport.cpp
+        importer/ImportParser.cpp
 )
 
 target_include_directories(Model PUBLIC

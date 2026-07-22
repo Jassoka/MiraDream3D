@@ -9,9 +9,11 @@ out vec4 fragColor;
 uniform mat4 viewMatrix;
 uniform mat4 projMatrix;
 
+uniform vec3 cameraPosition;
 
 //On se base sur la fonction affine R(t)=n + t(f-n) t dans R. On regarde l'intersection à y=0
 //t>0 indique que l'on regarde a travers la surface y=0
+
 
 void main() {
     float denom = farUnProj.z - nearUnProj.z ;

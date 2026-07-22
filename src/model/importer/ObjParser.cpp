@@ -13,7 +13,7 @@
 
 #include "../../../include/model/importer/MtlParser.hpp"
 
-glm::vec3 xzy(const glm::vec3 v)
+static glm::vec3 xzy(const glm::vec3 v)
 {
     return glm::vec3(v.x, v.z, v.y);
 }
@@ -34,7 +34,6 @@ ObjParser::~ObjParser()
 void ObjParser::parseImpl() {
     next();
     mCurrentNode = mSceneImport.getRootNode();
-    mCurrentMeshID = -1;
     mMeshBuildFlags->hasUserNormals=true;
     mMeshBuildData->nbSmoothingGroups=0;
 
@@ -98,7 +97,7 @@ void ObjParser::parseO() {
     next();
     std::string name="";
     if (mCurrent.type==IDENTIFIER) {
-        name = parseName();
+        name = parseString();
     }
     auto* newNode = new HierarchyNode(name);
 
@@ -116,7 +115,7 @@ void ObjParser::parseO() {
 
 void ObjParser::parseG() {
     next();
-    const std::string name= parseName();
+    const std::string name= parseString();
     /*
     while (mCurrent.type==IDENTIFIER)
     {
@@ -194,14 +193,14 @@ void ObjParser::parseF() {
 }
 void ObjParser::parseMtllib() {
     next();
-    const std::string filename= parseName();
-    MtlParser::parse(mDir + filename, mSceneImport, mWarnings);
+    const std::string filename= parseString();
+    MtlParser::parse(mDir + filename, mWarnings, mSceneImport);
 }
 
 void ObjParser::parseUsemtl() {
     next();
     if (mCurrent.type == IDENTIFIER) {
-        const std::string name = parseName();
+        const std::string name = parseString();
         int32_t materialID = mSceneImport.getLocalMaterialID(name);
         if (materialID < 0)
         {

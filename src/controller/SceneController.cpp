@@ -28,7 +28,7 @@ Scene *SceneController::getScene()
 
 void SceneController::importScene(const std::string &path)
 {
-    loadBlankScene();
+    //loadBlankScene();
     mRenderController->changedGeometry();
     try {
         SceneImport importData;

@@ -6,7 +6,6 @@
 
 #include <unordered_set>
 
-#include "glm/detail/func_geometric.inl"
 #include "model/Mesh.h"
 
 halfEdgeDirection defaultHalfEdgeDirection = ABC;

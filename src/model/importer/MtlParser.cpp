@@ -56,7 +56,7 @@ void MtlParser::parseNewmtl() {
     next();
     if (mCurrent.type == IDENTIFIER)
     {
-        const std::string name = parseName();
+        const std::string name = parseString();
         mCurrentMaterialID=mSceneImport.newLocalMaterial(name);
     }
 }
@@ -90,7 +90,7 @@ void MtlParser::parseNs() {
 
 void MtlParser::parseMap_Kd() {
     next();
-    const std::string filename = parseName();
+    const std::string filename = parseString();
     const std::string path = mDir + filename;
     const uint32_t colorTextureID = mSceneImport.getLocalTextureID(path);
     mSceneImport.getLocalMaterial(mCurrentMaterialID).ColorTextureID = colorTextureID;

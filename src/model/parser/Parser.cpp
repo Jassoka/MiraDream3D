@@ -2,24 +2,32 @@
 // Created by jassoka on 7/4/26.
 //
 
-#include "../../../include/model/importer/Parser.h"
-
-#include "model/MeshBuilder.h"
+#include "model/parser/Parser.h"
 #include "util/file_funcs.hpp"
 
-Parser::Parser(const std::string& file, SceneImport& sceneOutput, std::ostringstream& warningStream):
+Parser::Parser(const std::string& file, std::ostringstream& warningStream):
     mLexer(Lexer(readFileToString(file), file)),
-    mSceneImport(sceneOutput),
+
     mDir(file.substr(0, file.find_last_of('/') + 1)),
-    mMeshBuildFlags(new MeshBuildFlags{}),
-    mMeshBuildData(new MeshBuildData{}),
     mWarningThrown(false),
     mWarnings(warningStream)
 {}
 
+void Parser::executeParser()
+{
+    parseImpl();
+}
+
 void Parser::next()
 {
     mCurrent=mLexer.next();
+}
+
+void Parser::skipLine()
+{
+    while (mCurrent.type != NEWLINE) {
+        next();
+    }
 }
 
 void Parser::throwError(const std::string &msg, const std::string &detail) const {
@@ -37,13 +45,6 @@ void Parser::throwWarning(const std::string& msg, const std::string &detail)
         mWarnings << parserMessageFormat(WARNING, "Parser", mLexer.getFilePath(), msg + ": " + detail, mLexer.getLine(),mLexer.getLine()) << '\n';
 }
 
-template <int dimension>
-glm::vec<dimension, float> Parser::parseVec() {
-    auto v = glm::vec<dimension, float>(0.);
-    for (int i = 0; i < dimension; i++)
-        v[i] = parseNumber();
-    return v;
-}
 
 float Parser::parseNumber()
 {
@@ -82,6 +83,12 @@ void Parser::expectToken(const LexerTokenType tokenType, const std::string& msg)
     next();
 }
 
-
-template glm::vec<2, float> Parser::parseVec<2>();
-template glm::vec<3, float> Parser::parseVec<3>();
+std::string Parser::parseString()
+{
+    std::string name="";
+    while (mCurrent.type != NEWLINE && mCurrent.type != END) {
+        name += mCurrent.identifier;   // accumule tous les tokens
+        next();
+    }
+    return name;
+}

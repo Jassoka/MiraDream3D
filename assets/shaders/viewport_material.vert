@@ -13,6 +13,7 @@ out vec3 n, v, l;
 
 uniform vec3 lightPos;
 uniform vec3 cameraPos;
+uniform float scale;
 
 
 out vec2 uvTexCoords;
@@ -21,7 +22,7 @@ out vec2 uvTexCoords;
 
 void main(){
     uvTexCoords=texCoords;
-    vec4 viewPos = viewMatrix * vec4(position, 1.0f);
+    vec4 viewPos = viewMatrix * vec4(position*scale, 1.0f);
 
     mat3 normalMatrix = transpose(mat3(inverse(viewMatrix)));
     n = normalMatrix * normal;
@@ -30,5 +31,4 @@ void main(){
     l = lightPosViewSpace - viewPos.xyz;
 
     gl_Position = projMatrix * viewPos;
-
 }

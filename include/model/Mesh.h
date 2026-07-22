@@ -7,6 +7,8 @@
 #include <iosfwd>
 #include "geometry.hpp"
 #include "glm/fwd.hpp"
+#include "glm/mat4x4.hpp"
+#include "glm/ext/matrix_transform.hpp"
 
 class MeshTopologyBuilder;
 
@@ -33,6 +35,15 @@ public:
     /** @brief Constructor for a completely empty mesh */
     Mesh() {}
 
+
+    /**
+     * @brief Constructor for a mesh, given a list of positions and a list of face indices
+     * @param positions List of glm vectors for positions
+     * @param faces List of faces using the positions vector indices
+     */
+    Mesh(const std::vector<glm::vec3> &positions,
+         const std::vector<SizedFace> &faces);
+
     /**
      * @brief Constructor for a mesh, given a list of positions and a list of face indices
      * @param positions List of glm vectors for positions
@@ -43,7 +54,7 @@ public:
     Mesh(const std::vector<glm::vec3> &positions,
          const std::vector<SizedFace> &faces,
          const glm::mat4 &translationRotationMatrix,
-         float scale);
+         float scale = 1.0);
 
     /**
      * @brief Returns the material ID for a submesh index
@@ -106,6 +117,17 @@ public:
 
     bool isTriangle(const uint32_t faceID) const { return getNbVertex(faceID) == 3; }
     bool isQuad(const uint32_t faceID) const { return getNbVertex(faceID) == 4; }
+
+
+    /** @getter{\ref mRotationTranslationMatrix} */
+    glm::mat4 getRotationTranslationMatrix() const { return mRotationTranslationMatrix; }
+
+    /** @getter{\ref mScale} */
+    float getScale() const { return mScale; }
+
+    /** @brief Translates the whole mesh's position according to a vector */
+    void translateMesh(const glm::vec3 &translationVector);
+
 
 private:
     /** @brief Triangulates the whole mesh */
@@ -223,6 +245,14 @@ private:
     /** @brief Vector containing one half-edge index for each component of the mesh */
     std::vector<uint32_t> mComponents;
     //bool mIsTriangulated = false;
+    /**
+     * @brief Matrix containing the info of relative rotation and translation in the scene
+     */
+    glm::mat4 mRotationTranslationMatrix = glm::identity<glm::mat4>();
+    /**
+     * @brief Mesh's position scales times \ref mScale centered in 0
+     */
+    float mScale = 1.0;
 };
 #endif //MIRADREAM3D_MESH_H
 

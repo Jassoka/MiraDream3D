@@ -25,7 +25,7 @@ public:
     /** @brief Creates a new empty mesh and returns its ID */
     uint32_t newMesh();
     /** @copybrief MaterialRegistry::newMaterial */
-    uint32_t newLocalMaterial(const std::string &name); //TODO PAS RENVOYER DE REFERENCE RISQUE QUE LA MEMOIRE BOUGE
+    uint32_t newLocalMaterial(const std::string &name);
     /** @getter{\ref mLocalRootNode} */
     Node *getRootNode() const { return mLocalRootNode; }
     /** @brief Build the mesh using the mesh builder at index id */

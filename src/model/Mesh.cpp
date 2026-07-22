@@ -6,13 +6,24 @@
 #include "glm/geometric.hpp"
 #include "model/MeshBuilder.h"
 
-
-Mesh::Mesh(const std::vector<glm::vec3> &positions,const std::vector<SizedFace> &faces, const glm::mat4 &translationRotationMatrix, const float scale)
+Mesh::Mesh(const std::vector<glm::vec3> &positions,const std::vector<SizedFace> &faces)
 {
     MeshBuildData data;
     data.positions = positions;
     data.faces = faces;
     MeshBuilder::build(this, data);
+}
+
+Mesh::Mesh(const std::vector<glm::vec3> &positions,const std::vector<SizedFace> &faces, const glm::mat4 &translationRotationMatrix, const float scale):
+    Mesh(positions, faces)
+{
+    mRotationTranslationMatrix = translationRotationMatrix;
+    mScale = scale;
+}
+
+void Mesh::translateMesh(const glm::vec3 &translationVector)
+{
+    mRotationTranslationMatrix[3] += glm::vec4(translationVector, 0.0f);
 }
 
 #ifdef ENABLE_DEBUG

@@ -13,9 +13,6 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Gestion des assets avec QT
-set(CMAKE_AUTORCC ON)
-
 #Qt
 find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets Gui)
 
@@ -46,6 +43,7 @@ set(PROJECT_SOURCES
         include/view/NodeHierarchyWidget.h
         include/controller/NodeHierarchyController.h
         include/model/SceneImport.h
+        include/model/importer/ImportParser.h
 )
 
 qt_add_executable(MiraDream3D
@@ -77,8 +75,15 @@ target_include_directories(EngineCore PUBLIC
         ${DIR_INC}
 )
 
-target_sources(EngineCore PUBLIC
-        resources.qrc)
+
+# Gestion des assets avec QT
+file(GLOB_RECURSE EDITOR_ASSETS "assets/shaders/*")
+
+qt_add_resources(MiraDream3D "editor_resources"
+        PREFIX "/"
+        BASE ${CMAKE_CURRENT_SOURCE_DIR}
+        FILES ${EDITOR_ASSETS}
+)
 
 target_link_libraries(MiraDream3D PUBLIC EngineCore)
 

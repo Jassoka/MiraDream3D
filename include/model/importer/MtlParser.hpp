@@ -5,22 +5,23 @@
 #ifndef MIRADREAM3D_MTLPARSER_HPP
 #define MIRADREAM3D_MTLPARSER_HPP
 
-#include "Parser.h"
-#include "glm/fwd.hpp"
+#include "ImportParser.h"
+#include "../parser/Parser.h"
 #include "model/texture_types.hpp"
 
-class MtlParser: Parser {
+class MtlParser final: public ImportParser {
 public:
-    friend class Parser;
-    static void parse(const std::string &file, SceneImport &sceneOutput, std::ostringstream& warnings)
+    //friend class Parser;
+    static void parse(const std::string &file, std::ostringstream& warnings, SceneImport &sceneOutput)
     {
-        auto instance = MtlParser(file, sceneOutput, warnings);
+        auto instance = MtlParser(file, warnings, sceneOutput);
         instance.executeParser();
     }
-private:
-    using Parser::Parser;
+protected:
+    using ImportParser::ImportParser;
     void parseImpl() override;
     void initFlags() override {}
+private:
     void parseNewmtl();
     void parseKs();
     void parseKd();
@@ -30,7 +31,7 @@ private:
     void parseNs();
     void parseMap_Kd();
 
-    int32_t mCurrentMaterialID;
+    int32_t mCurrentMaterialID = -1;
 };
 
 

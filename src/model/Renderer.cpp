@@ -161,6 +161,8 @@ void Renderer::drawTemplate<ViewportMode::MATERIAL>()
     const int Ns= mGlFuncs->glGetUniformLocation(programID, "Ns");
     const int alpha= mGlFuncs->glGetUniformLocation(programID, "alpha");
 
+    const int scale = mGlFuncs->glGetUniformLocation(programID, "scale");
+
 
 
     uint32_t startTriangle=0,endTriangle=0;
@@ -182,6 +184,8 @@ void Renderer::drawTemplate<ViewportMode::MATERIAL>()
             mGlFuncs->glUniform3f(Kd,mat.Kd.r,mat.Kd.g,mat.Kd.b);
             mGlFuncs->glUniform1f(Ns,mat.shininess);
             mGlFuncs->glUniform1f(alpha,mat.alpha);
+
+            mGlFuncs->glUniform1f(scale, mesh.getScale());
 
 
             endTriangle+= 3*mesh.getTriangles(submeshIndex).size();

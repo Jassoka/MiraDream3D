@@ -16,7 +16,7 @@ struct PrimitiveMesh
 
 Mesh PrimitiveMeshes::generateCube()
 {
-        return Mesh(cube.positions, cube.faces, glm::mat4(1.0), 1.0 );
+        return Mesh(cube.positions, cube.faces);
 }
 
 /*
@@ -27,7 +27,7 @@ PrimitiveMeshes& PrimitiveMeshes::getInstance()
 }*/
 
 const PrimitiveMesh PrimitiveMeshes::cube = {
-        {
+        .positions = {
                 {-1.0f, -1.0f, -1.0f},
                 { 1.0f, -1.0f, -1.0f},
                 { 1.0f,  1.0f, -1.0f},
@@ -37,14 +37,14 @@ const PrimitiveMesh PrimitiveMeshes::cube = {
                 { 1.0f,  1.0f,  1.0f},
                 {-1.0f,  1.0f,  1.0f}
         },
-        {
-            {4, 0, 3, 2, 1},
-            {4, 4, 5, 6, 7},
+        .faces = {
+                {4, 0, 3, 2, 1},
+                {4, 4, 5, 6, 7},
 
-            {4, 0, 1, 5, 4},
-            {4, 3, 7, 6, 2},
+                {4, 0, 1, 5, 4},
+                {4, 3, 7, 6, 2},
 
-            {4, 0, 4, 7, 3},
-            {4, 1, 2, 6, 5}
+                {4, 0, 4, 7, 3},
+                {4, 1, 2, 6, 5}
         }
 };

@@ -10,7 +10,7 @@ void AssetImporter::importFile(const fileExtension ext, const std::string& path,
     switch (ext)
     {
         case OBJ:
-            ObjParser::parse(path,sceneOutput,warningStream);
+            ObjParser::parse(path,warningStream,sceneOutput);
         break;
     }
     warnings = warningStream.str();

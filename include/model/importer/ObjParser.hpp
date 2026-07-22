@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Parser.h"
+#include "ImportParser.h"
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
 #define MAX_OBJ_NAME_SIZE 10
@@ -19,22 +19,23 @@ class Scene;
 struct MeshBuildFlags;
 struct MeshBuildData;
 
-class ObjParser: Parser {
+class ObjParser final: public ImportParser {
 public:
-    friend class Parser;
-    static void parse(const std::string &file, SceneImport &sceneOutput, std::ostringstream& warnings)
+    //friend class Parser;
+    static void parse(const std::string &file, std::ostringstream& warnings, SceneImport &sceneOutput)
     {
-        auto instance = ObjParser(file, sceneOutput, warnings);
+        auto instance = ObjParser(file, warnings, sceneOutput);
         instance.executeParser();
     }
-private:
-    using Parser::Parser;
-    ~ObjParser();
+protected:
+    using ImportParser::ImportParser;
+    ~ObjParser() override;
     void initFlags() override;
     void parseImpl() override;
+private:
     Node* mCurrentNode=nullptr;
-    int32_t mCurrentMeshID;
-    uint32_t mCurrentSubMeshID;
+    int32_t mCurrentMeshID = -1;
+    uint32_t mCurrentSubMeshID = 0;
     uint32_t mCurrentMeshOriginVId=0;
     bool mCurrentMeshHasUVCoords=true;
     uint8_t mCurrentSmoothGroup=0;

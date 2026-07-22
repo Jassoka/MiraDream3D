@@ -17,7 +17,7 @@ public:
 
     /**
      * @brief Compiles a shader program in GPU memory using a QT Ressource path
-     * @param virtualPath Virtual path associated to QT Ressource (cf. resources.qrc)
+     * @param virtualPath Virtual path associated to QT Ressource
      * @param shaderType Type of shader
      * @return Shader program index
      */

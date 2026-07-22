@@ -40,12 +40,12 @@ void RenderWidget::paintGL() {
 
 
 void RenderWidget::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton) {
+    if (event->button() == Qt::MiddleButton || event->button() == Qt::RightButton) {
         grabMouse();
         mMouseAnchor = QCursor::pos();
         mMouseLastPosition = mMouseAnchor;
         setCursor(Qt::BlankCursor); // Nice UX touch: change cursor when dragging
-        if (event->button() == Qt::LeftButton)
+        if (event->button() == Qt::MiddleButton)
             mMouseDragRotateX = mMouseDragRotateY = 0;
         else
             mMouseDragTranslateX = mMouseDragTranslateY = 0;
@@ -68,7 +68,7 @@ void RenderWidget::mouseMoveEvent(QMouseEvent *event) {
         }
         return mIsTeleportingCursor;
     };
-    if (event->buttons() & Qt::LeftButton ) {
+    if (event->buttons() & Qt::MiddleButton ) {
 
         if (hasTeleported()) return;
         QPoint currPos = QCursor::pos();
@@ -89,7 +89,7 @@ void RenderWidget::mouseMoveEvent(QMouseEvent *event) {
 }
 void RenderWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton) {
+    if (event->button() == Qt::MiddleButton || event->button() == Qt::RightButton) {
         QCursor::setPos(mMouseAnchor); //TODO faire une méthode centerCursor
         releaseMouse();
         unsetCursor(); // Restore the normal arrow cursor

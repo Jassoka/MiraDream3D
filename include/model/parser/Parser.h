@@ -7,7 +7,7 @@
 #include <sstream>
 #include <string>
 
-#include "../../../include/model/importer/Lexer.h"
+#include "Lexer.h"
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
 #include "model/SceneImport.h"
@@ -43,44 +43,21 @@ namespace ParserMessages
 class Parser
 {
 public:
-    Parser(const std::string &file, SceneImport &sceneOutput, std::ostringstream &warningStream);
-    ~Parser() = default;
+    Parser(const std::string &file, std::ostringstream &warningStream);
+    virtual ~Parser() = default;
 protected:
-    void executeParser()
-    {
-        initFlags();
-        parseImpl();
-    }
-    void virtual initFlags() = 0;
+    virtual void executeParser();
     void virtual parseImpl() = 0;
 
     void next();
     [[noreturn]] void throwError(const std::string &msg, const std::string &detail = "") const;
     void throwWarning(const std::string &msg, const std::string &detail = "");
 
-    glm::vec2 parseVec2() { return parseVec<2>(); }
-    glm::vec3 parseVec3() { return parseVec<3>(); }
     float parseNumber();
     int parseInt();
-    inline std::string parseName()
-    {
-        std::string name="";
-        while (mCurrent.type != NEWLINE && mCurrent.type != END) {
-            name += mCurrent.identifier;   // accumule tous les tokens
-            next();
-        }
-        return name;
-    }
-
-    /**
-     * @brief Skips whole line
-     */
-    void skipLine()
-    {
-        while (mCurrent.type != NEWLINE) {
-            next();
-        }
-    };
+    std::string parseString();
+    /** @brief Skips whole line */
+    void skipLine();
     /**
      * @brief Throws error if next token is not an end of line or end of file
      * Skips next token
@@ -96,18 +73,10 @@ protected:
 
     LexerToken mCurrent;
     Lexer mLexer;
-    /** @brief Contains this instance's imported scene elements */
-    SceneImport &mSceneImport;
     std::string mDir;
-
-    MeshBuildFlags *mMeshBuildFlags;
-    MeshBuildData *mMeshBuildData;
 
     bool mWarningThrown;
     std::ostringstream &mWarnings;
-private:
-    template <int dimension>
-    glm::vec<dimension, float> parseVec();
 };
 
 
