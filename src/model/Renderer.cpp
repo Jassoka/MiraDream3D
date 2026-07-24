@@ -58,9 +58,6 @@ void Renderer::drawTemplate()
             break;
     case ViewportMode::WIREFRAME:
             programID = ShaderManager::getShaderProgram(VIEWPORT_WIREFRAME);
-            #ifdef TEST_HALFEDGES
-            programID = ShaderManager::getShaderProgram("viewport_test_halfedges");
-            #endif
             break;
     default:
         programID = 0;
@@ -294,34 +291,38 @@ void Renderer::geometryRedraw(const ViewportMode mode)
 
 void Renderer::initShaders()
 {
-    GLuint vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_solid.vert", GL_VERTEX_SHADER);
-    GLuint fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_solid.frag", GL_FRAGMENT_SHADER);
-    std::vector<GLuint> shaders = {vertexShader, fragmentShader};
-    ShaderManager::createProgram(VIEWPORT_SOLID, shaders);
-
-
-    vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_wireframe.vert", GL_VERTEX_SHADER);
-    fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_wireframe.frag", GL_FRAGMENT_SHADER);
-    shaders = {vertexShader, fragmentShader};
-    ShaderManager::createProgram(VIEWPORT_WIREFRAME, shaders);
-
-    vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_material.vert", GL_VERTEX_SHADER);
-    fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_material.frag", GL_FRAGMENT_SHADER);
-    shaders = {vertexShader, fragmentShader};
-    ShaderManager::createProgram(VIEWPORT_MATERIAL, shaders);
-
-
+    for (int i = 0; i < 3; i++)
+    {
+        int define_mode = i;
 #ifdef TEST_HALFEDGES
-    vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_test_halfedges.vert", GL_VERTEX_SHADER);
-    fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport_test_halfedges.frag", GL_FRAGMENT_SHADER);
-    shaders = {vertexShader, fragmentShader};
-    ShaderManager::createProgram("viewport_test_halfedges", shaders);
+        // Mode half edge
+        if (i == 0) define_mode = 3;
 #endif
 
+        const GLuint vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport.vert",
+            GL_VERTEX_SHADER,
+            {{.field = "RENDER_MODE", .value = std::to_string(define_mode)}});
+        const GLuint fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport.frag",
+            GL_FRAGMENT_SHADER,
+            {{.field = "RENDER_MODE", .value = std::to_string(define_mode)}});
+        std::vector shaders = {vertexShader, fragmentShader};
+        switch (i)
+        {
+        case 0:
+            ShaderManager::createProgram(VIEWPORT_WIREFRAME, shaders);
+            break;
+        case 1:
+            ShaderManager::createProgram(VIEWPORT_SOLID, shaders);
+            break;
+        case 2:
+            ShaderManager::createProgram(VIEWPORT_MATERIAL, shaders);
+            break;
+        }
+    }
 
-    vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/grid.vert", GL_VERTEX_SHADER);
-    fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/grid.frag", GL_FRAGMENT_SHADER);
-    shaders = {vertexShader, fragmentShader};
+    auto vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/grid.vert", GL_VERTEX_SHADER);
+    auto fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/grid.frag", GL_FRAGMENT_SHADER);
+    auto shaders = {vertexShader, fragmentShader};
     ShaderManager::createProgram(GRID, shaders);
 }
 

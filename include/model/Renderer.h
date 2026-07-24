@@ -46,7 +46,7 @@ public:
     void draw(ViewportMode mode);
 
     /** @brief Initializes all shaders in GPU memory */
-    void initShaders();
+    static void initShaders();
 
 #ifdef TEST_HALFEDGES
     void addTestHalfEdge(const int32_t i) {

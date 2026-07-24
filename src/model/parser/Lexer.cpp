@@ -7,42 +7,17 @@
 #include <cmath>
 
 //accepte 1 à 9, ., - ;
-bool isNumber(const char c) {
+bool Lexer::isNumber(const char c) {
     return '0'<=c && c<='9' ;
 }
 //accepte les lettres maj/min et le _
-bool isLetter(const char c) {
+bool Lexer::isLetter(const char c) {
     return ('a'<=c && c<='z') || ('A'<=c && c<='Z')  ;
 }
 
-LexerToken Lexer::next() {
-    readSpace();
-    if (mPos>=mSrc.size()) {
-        return LexerToken{.type=END};
-    }
-    const char c = mSrc[mPos];
-    if (c=='\n') {
-        skipLine();
-        return(LexerToken{.type=NEWLINE});
-    }
-    if (c=='/') {
-        mPos++; mCol++;
-        return LexerToken{.type=SLASH, .identifier = "/"};
-    }
-    if (c=='#') {
-        skipLine();
-        return LexerToken{NEWLINE};
-    }
-    if (isLetter(c)|| c=='_'){return readIdentifier();}
-    if (isNumber(c) || c=='-' || c=='.'||c=='+' ){return readNumber();}
-
-    //std::cout << "error char :" << c << std::endl;
-    throwError("Unknown grammar");
-}
 
 
 LexerToken Lexer::readIdentifier() {
-
     LexerToken token;
     token.type=IDENTIFIER;
 
@@ -131,6 +106,17 @@ LexerToken Lexer::readNumber(){
         mPos++;
         mCol++;
         c=mSrc[mPos];
+    }
+    /* Implémentation de f tel que 1f par exemple */
+    if (mPos < mSrc.size()) {
+        const char suffix = mSrc[mPos];
+        if (suffix == 'f' || suffix == 'F') {
+            token.identifier += suffix;
+            token.type = FLOAT;
+            isFloat = true;
+            mPos++;
+            mCol++;
+        }
     }
     if (!isValid) {
 

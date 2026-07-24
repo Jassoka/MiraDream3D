@@ -5,10 +5,9 @@
 #include "model/parser/Parser.h"
 #include "util/file_funcs.hpp"
 
-Parser::Parser(const std::string& file, std::ostringstream& warningStream):
-    mLexer(Lexer(readFileToString(file), file)),
-
-    mDir(file.substr(0, file.find_last_of('/') + 1)),
+Parser::Parser(Lexer *lexer, const std::string& path, std::ostringstream& warningStream):
+    mLexer(lexer),
+    mDir(path.substr(0, path.find_last_of('/') + 1)),
     mWarningThrown(false),
     mWarnings(warningStream)
 {}
@@ -20,7 +19,7 @@ void Parser::executeParser()
 
 void Parser::next()
 {
-    mCurrent=mLexer.next();
+    mCurrent=mLexer->next();
 }
 
 void Parser::skipLine()
@@ -32,17 +31,17 @@ void Parser::skipLine()
 
 void Parser::throwError(const std::string &msg, const std::string &detail) const {
     if (detail.empty())
-        throw ParserException(msg, mLexer.getFilePath(),mLexer.getLine(),mLexer.getLine());
-    throw ParserException(msg + ": " + detail,mLexer.getFilePath(),mLexer.getLine(),mLexer.getLine());
+        throw ParserException(msg, mLexer->getFilePath(),mLexer->getLine(),mLexer->getLine());
+    throw ParserException(msg + ": " + detail,mLexer->getFilePath(),mLexer->getLine(),mLexer->getLine());
 }
 
 void Parser::throwWarning(const std::string& msg, const std::string &detail)
 {
     mWarningThrown = true;
     if (detail.empty())
-        mWarnings << parserMessageFormat(WARNING, "Parser", mLexer.getFilePath(), msg, mLexer.getLine(),mLexer.getLine()) << '\n';
+        mWarnings << parserMessageFormat(WARNING, "Parser", mLexer->getFilePath(), msg, mLexer->getLine(),mLexer->getLine()) << '\n';
     else
-        mWarnings << parserMessageFormat(WARNING, "Parser", mLexer.getFilePath(), msg + ": " + detail, mLexer.getLine(),mLexer.getLine()) << '\n';
+        mWarnings << parserMessageFormat(WARNING, "Parser", mLexer->getFilePath(), msg + ": " + detail, mLexer->getLine(),mLexer->getLine()) << '\n';
 }
 
 
@@ -83,7 +82,7 @@ void Parser::expectToken(const LexerTokenType tokenType, const std::string& msg)
     next();
 }
 
-std::string Parser::parseString()
+std::string Parser::parseString() //TODO: on en a peut etre pas besoin au final
 {
     std::string name="";
     while (mCurrent.type != NEWLINE && mCurrent.type != END) {

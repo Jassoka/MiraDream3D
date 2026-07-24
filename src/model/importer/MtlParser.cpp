@@ -8,7 +8,16 @@
 
 #include "glm/vec3.hpp"
 #include "model/Scene.h"
+#include "model/importer/ObjLexer.h"
+#include "util/file_funcs.hpp"
 
+MtlParser::MtlParser(const std::string &path, std::ostringstream& warnings, SceneImport &sceneOutput):
+ImportParser(
+    new ObjLexer(readFileToString(path), path),
+    path,
+    warnings,
+    sceneOutput)
+{}
 
 void MtlParser::parseImpl() {
     next();

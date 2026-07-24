@@ -16,9 +16,9 @@ struct Material
 {
     Material():
         ColorTextureID(DEFAULT_TEXTURE),
-        Ka({1.0f, 1.0f, 1.0f}),
-        Kd({1.0f, 1.0f, 1.0f}),
-        Ks({0.05f, 0.05f, 0.05f}),
+        Ka({0.15f, 0.15f, 0.15f}),
+        Kd({0.7f, 0.7f, 0.7f}),
+        Ks({0.2f, 0.2f, 0.2f}),
         alpha(1.0f),
         shininess(32.0f) {}
     uint32_t ColorTextureID;

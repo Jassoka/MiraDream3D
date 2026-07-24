@@ -22,13 +22,13 @@ struct MeshBuildData;
 class ObjParser final: public ImportParser {
 public:
     //friend class Parser;
-    static void parse(const std::string &file, std::ostringstream& warnings, SceneImport &sceneOutput)
+    static void parse(const std::string &path, std::ostringstream& warnings, SceneImport &sceneOutput)
     {
-        auto instance = ObjParser(file, warnings, sceneOutput);
+        auto instance = ObjParser(path, warnings, sceneOutput);
         instance.executeParser();
     }
 protected:
-    using ImportParser::ImportParser;
+    explicit ObjParser(const std::string &path, std::ostringstream& warnings, SceneImport &sceneOutput);
     ~ObjParser() override;
     void initFlags() override;
     void parseImpl() override;

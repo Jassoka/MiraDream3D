@@ -5,11 +5,11 @@
 #include "model/importer/ImportParser.h"
 #include "model/MeshBuilder.h"
 
-ImportParser::ImportParser(const std::string& file, std::ostringstream& warningStream, SceneImport& sceneOutput):
-    Parser(file, warningStream),
-    mSceneImport(sceneOutput),
+ImportParser::ImportParser(Lexer *lexer, const std::string& path, std::ostringstream& warningStream, SceneImport& sceneOutput):
+    Parser(lexer, path, warningStream),
     mMeshBuildFlags(new MeshBuildFlags{}),
-    mMeshBuildData(new MeshBuildData{}) {}
+    mMeshBuildData(new MeshBuildData{}),
+    mSceneImport(sceneOutput) {}
 
 void ImportParser::executeParser()
 {

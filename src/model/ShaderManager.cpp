@@ -3,8 +3,11 @@
 //
 
 #include "model/ShaderManager.h"
+#include "types.h"
+#include "../../include/model/shader_parser/ShaderParser.h"
 #include "util/QTResourceManager.hpp"
 #include "util/file_funcs.hpp"
+#include "util/NullStream.h"
 
 
 GLuint ShaderManager::getShaderProgram(const std::string& name)
@@ -80,8 +83,12 @@ void ShaderManager::clearShaders()
 }
 
 
-GLuint ShaderManager::compileQTRessourceShader(const std::string &virtualPath, const GLenum shaderType)
+GLuint ShaderManager::compileQTRessourceShader(const std::string &virtualPath, const GLenum shaderType, const std::vector<DefineField> &defines)
 {
-    const std::string code = QTResourceManager::readEmbeddedRessource(virtualPath);
+    std::string code = QTResourceManager::readEmbeddedRessource(virtualPath);
+    if (defines.size() > 0)
+    {
+        code = ShaderParser::parse(code, virtualPath, _cnull , defines);
+    }
     return compileShader(code, shaderType);
 }

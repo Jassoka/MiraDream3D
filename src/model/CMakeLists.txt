@@ -29,6 +29,7 @@ add_library(Model STATIC
         ../../include/model/parser/Lexer.h
         SceneImport.cpp
         importer/ImportParser.cpp
+        ShaderParser.cpp
 )
 
 target_include_directories(Model PUBLIC

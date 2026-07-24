@@ -18,7 +18,7 @@ public:
         instance.executeParser();
     }
 protected:
-    using ImportParser::ImportParser;
+    explicit MtlParser(const std::string &path, std::ostringstream& warnings, SceneImport &sceneOutput);
     void parseImpl() override;
     void initFlags() override {}
 private:

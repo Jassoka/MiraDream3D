@@ -19,7 +19,7 @@ public:
     {
         QFile file(QString::fromStdString(virtualPath));
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            std::cerr << "Can't read resource " << virtualPath << std::endl;
+            std::cerr << "Failed to read resource " << virtualPath << std::endl;
             exit(1);
         }
         QTextStream in(&file);

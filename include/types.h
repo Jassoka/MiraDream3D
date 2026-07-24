@@ -12,4 +12,10 @@ enum class ViewportMode
     MATERIAL
 };
 
+struct DefineField
+{
+    std::string field;
+    std::string value = "";
+};
+
 #endif //MIRADREAM3D_TYPES_H

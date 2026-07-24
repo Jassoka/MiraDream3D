@@ -42,10 +42,12 @@ namespace ParserMessages
 /** @brief Template for parser class */
 class Parser
 {
-public:
-    Parser(const std::string &file, std::ostringstream &warningStream);
-    virtual ~Parser() = default;
 protected:
+    explicit Parser(Lexer *lexer, const std::string &path, std::ostringstream &warningStream);
+    virtual ~Parser()
+    {
+        delete mLexer;
+    }
     virtual void executeParser();
     void virtual parseImpl() = 0;
 
@@ -72,10 +74,11 @@ protected:
     void expectToken(LexerTokenType tokenType, const std::string& msg = ParserMessages::UnexpectedToken);
 
     LexerToken mCurrent;
-    Lexer mLexer;
+    Lexer *mLexer;
     std::string mDir;
 
     bool mWarningThrown;
+    //TODO utiliser ostream plutot
     std::ostringstream &mWarnings;
 };
 

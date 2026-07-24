@@ -12,6 +12,8 @@
 #include <sstream>
 
 #include "../../../include/model/importer/MtlParser.hpp"
+#include "model/importer/ObjLexer.h"
+#include "util/file_funcs.hpp"
 
 static glm::vec3 xzy(const glm::vec3 v)
 {
@@ -24,6 +26,14 @@ void ObjParser::initFlags()
     mMeshBuildFlags->computedFacesPerVertex = true;
     mMeshBuildFlags->assignedMaterials = true;
 }
+
+ObjParser::ObjParser(const std::string &path, std::ostringstream& warnings, SceneImport &sceneOutput):
+ImportParser(
+    new ObjLexer(readFileToString(path), path),
+    path,
+    warnings,
+    sceneOutput)
+{}
 
 ObjParser::~ObjParser()
 {

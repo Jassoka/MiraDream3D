@@ -18,6 +18,8 @@ enum LexerTokenType {
     NEWLINE,
     SPACE,
     END,
+    SYMBOL,
+    GLSL_DIRECTIVE,
     UNKNOWN
 };
 struct LexerToken {
@@ -38,17 +40,20 @@ public:
 class Lexer
 {
 public:
-    explicit Lexer(const std::string &file, const std::string &path):mSrc(file), mFilePath(path){};
+    explicit Lexer(const std::string &file, const std::string &path):mSrc(file), mFilePath(path){}
+    virtual ~Lexer() = default;
     [[noreturn]] void throwError(const std::string &msg) const;
-    LexerToken next();
+    virtual LexerToken next() = 0;
     uint32_t getLine() const {return mLin;}
     uint32_t getCol() const {return mCol;}
     const std::string &getFilePath() const {return mFilePath;}
-private:
+protected:
     LexerToken readIdentifier();
     LexerToken readNumber();
     void readSpace();
     void skipLine();
+    static bool isNumber(char c);
+    static bool isLetter(char c);
     uint32_t mLin=0;
     uint32_t mCol=0;
     uint32_t mPos=0;

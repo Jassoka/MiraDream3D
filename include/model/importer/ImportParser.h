@@ -10,7 +10,7 @@
 class ImportParser : public Parser
 {
 protected:
-    ImportParser(const std::string &file, std::ostringstream &warningStream, SceneImport &sceneOutput);
+    ImportParser(Lexer *lexer, const std::string& path, std::ostringstream& warningStream, SceneImport& sceneOutput);
     void executeParser() override;
     void virtual initFlags() = 0;
     glm::vec2 parseVec2() { return parseVec<2>(); }

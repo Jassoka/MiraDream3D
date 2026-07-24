@@ -44,6 +44,10 @@ set(PROJECT_SOURCES
         include/controller/NodeHierarchyController.h
         include/model/SceneImport.h
         include/model/importer/ImportParser.h
+        include/model/shader_parser/ShaderParser.h
+        include/util/NullStream.h
+        include/model/shader_parser/GLSLLexer.h
+        include/model/importer/ObjLexer.h
 )
 
 qt_add_executable(MiraDream3D
