@@ -3,6 +3,7 @@
 //
 #include "controller/Engine.h"
 
+#include "controller/EditorController.h"
 #include "controller/RenderController.h"
 #include "controller/SceneController.h"
 #include "view/MainWindow.h"
@@ -12,22 +13,17 @@ Engine::Engine(QObject *parent) :
 QObject(parent)
 {
     mMainWindow = new MainWindow(nullptr);
+    RenderWidget *renderWidget = mMainWindow->getRenderWidget();
 
-    mRenderController = new RenderController(static_cast<QObject*>(this));
+    mRenderController = new RenderController(static_cast<QObject*>(this), renderWidget);
     mSceneController = new SceneController(static_cast<QObject*>(this), mRenderController);
+    mEditorController = new EditorController(static_cast<QObject*>(this), mRenderController);
     mRenderController->setScene(mSceneController->getScene());
 
     connect(mMainWindow, &MainWindow::importSceneRequested, mSceneController, &SceneController::importScene);
 
-    const RenderWidget *renderWidget = mMainWindow->getRenderWidget();
-    connect(renderWidget, &RenderWidget::initialize, mRenderController, &RenderController::onInitialize, Qt::DirectConnection);
-    connect(renderWidget, &RenderWidget::paint, mRenderController, &RenderController::paint);
-    connect(renderWidget, &RenderWidget::resize, mRenderController, &RenderController::onResize);
-    connect(renderWidget, &RenderWidget::rotateAroundAnchor, mRenderController, &RenderController::onRotateAroundAnchor);
-    connect(renderWidget, &RenderWidget::strafeCamera, mRenderController, &RenderController::onCameraStrafe);
 
-    connect(renderWidget, &RenderWidget::zoom, mRenderController, &RenderController::onZoom);
-    connect(renderWidget, &RenderWidget::setViewportMode, mRenderController, &RenderController::onSetViewportMode);
+    connect(mMainWindow, &MainWindow::changedEditorTool, mEditorController, &EditorController::setTool);
 
 
 

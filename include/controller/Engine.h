@@ -5,6 +5,7 @@
 #ifndef MIRADREAM3D_ENGINE_H
 #define MIRADREAM3D_ENGINE_H
 #include <QObject>
+class EditorController;
 class Scene;
 class SceneController;
 class RenderController;
@@ -27,6 +28,7 @@ private:
     MainWindow *mMainWindow;
     SceneController *mSceneController;
     RenderController *mRenderController;
+    EditorController *mEditorController;
 
 };
 #endif //MIRADREAM3D_ENGINE_H

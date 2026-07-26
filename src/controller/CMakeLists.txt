@@ -8,6 +8,7 @@ add_library(Controller STATIC
         RenderController.cpp
         ../../include/controller/ErrorController.h
         ErrorController.cpp
+        EditorController.cpp
 )
 target_include_directories(Controller PUBLIC
         ${CMAKE_SOURCE_DIR}/libs

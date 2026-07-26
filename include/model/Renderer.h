@@ -8,6 +8,7 @@
 #include <QOpenGLBuffer>
 
 #include "Scene.h"
+#include "types.h"
 
 class TextureManager;
 class Scene;
@@ -16,6 +17,7 @@ class ShaderManager;
 class QOpenGLFunctions;
 
 enum class ViewportMode;
+
 
 /**
  * @brief Class for 3D rendering
@@ -26,6 +28,11 @@ public:
     Renderer() = default;
 
     void setScene(const Scene* scene) { mScene = scene; }
+
+    void setSelectionMode(const SelectionMode mode)
+    {
+        mCurrentSelectionMode = mode;
+    }
 
     /**
      * @getter{\ref mEngineCamera}
@@ -86,6 +93,31 @@ private:
     /** @brief Draws the viewport grid 2d */
     void drawGrid();
 
+    /** @brief Draws the viewport vertices as squares */
+    void drawPoints();
+
+
+    /** @brief Draws the viewport edges as lines */
+    void drawLines();
+
+    /**
+     * @brief Sets all the input arguments for the shader based of viewport mode
+     */
+    template <ViewportMode m>
+    void setShaderArguments(GLuint programID);
+
+    template <ViewportMode m>
+    void drawForMode(GLuint programID);
+
+    /**
+     * @brief Binds all triangle indices to the render VBO
+     */
+    void buildFaceBuffer(const std::vector<Mesh> &meshes);
+    /**
+     * @brief Binds all edge indices to the geometric VBO
+     */
+    void buildEdgeBuffer(const std::vector<Mesh> &meshes);
+
     /**
      * @brief Camera used to render the software's viewport
      */
@@ -95,28 +127,49 @@ private:
     const Scene *mScene = nullptr;
     QOpenGLFunctions *mGlFuncs = nullptr;
     /**
-     * @brief OpenGL Vertex Array Object
+     * @brief OpenGL Vertex Array Object (for render)
      * For storing how to read vertex data from a CPU vertex objet
      */
-    QOpenGLVertexArrayObject mVAO;
+    QOpenGLVertexArrayObject mRenderVAO;
     /**
-     * @brief OpenGL Vertex Buffer Object
+     * @brief OpenGL Vertex Buffer Object (for render)
      * For storing all vertices as a contiguous memory block
      */
-    QOpenGLBuffer mVBO;
+    QOpenGLBuffer mRenderVBO;
     /**
-     * @brief OpenGL Element Buffer Object
+     * @brief OpenGL Element Buffer Object (for render)
      * For storing elements indices such as faces or edges
      */
-    QOpenGLBuffer mEBO{QOpenGLBuffer::IndexBuffer};
+    QOpenGLBuffer mRenderEBO{QOpenGLBuffer::IndexBuffer};
+    /** @brief OpenGL Vertex Array Object (for topology) */
+    QOpenGLVertexArrayObject mGeometricVAO;
+    /** @brief OpenGL Vertex Buffer Object (for topology) */
+    QOpenGLBuffer mGeometricVBO;
+    /** @brief OpenGL Element Buffer Object  (for topology) */
+    QOpenGLBuffer mGeometricEBO{QOpenGLBuffer::IndexBuffer};
+
+    /** @brief OpenGL Vertex Buffer Object for selection highlight */
+    QOpenGLBuffer mSelectionVBO;
 
     /** @brief OpenGL Vertex Array Object for the 2D grid */
     QOpenGLVertexArrayObject mGridVAO;
 
     /**
-     * @brief Number of indices (face or edges depending on viewport mode)
+     * @brief Selected object (can be vertex, edge, face, or mesh)
      */
-    uint32_t nIndices = 0;
+    int32_t mSelection = 0;
+    SelectionMode mCurrentSelectionMode = SelectionMode::NONE;
+    /**
+     * @brief Number of edge indices
+     */
+    uint32_t mNbEdgeIndices = 0;
+
+    /**
+     * @brief Number of face indices
+     */
+    uint32_t mNbFaceIndices = 0;
+    /** @brief Number of existing geometric vertices */
+    uint32_t nVertices = 0;
 #ifdef TEST_HALFEDGES
     uint32_t mTestHalfEdge=0;
     uint32_t mTestMesh=0;

@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+enum class EditorTool;
+class EditorToolBar;
 class RenderWidget;
 class QPushButton;
 
@@ -18,8 +20,10 @@ public slots:
     //void timeoutControl();
     signals:
     void importSceneRequested(const std::string &path);
+    void changedEditorTool(EditorTool tool);
 private:
     RenderWidget* mRenderWidget;
     QPushButton* mImportButton;
+    EditorToolBar *mEditorToolBar;
 };
 #endif // MAINWINDOW_H

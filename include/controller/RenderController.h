@@ -7,6 +7,8 @@
 
 #include <QObject>
 
+class RenderWidget;
+enum class EditorTool;
 class Scene;
 class Renderer;
 class QOpenGLFunctions;
@@ -17,12 +19,14 @@ enum class ViewportMode;
  */
 class RenderController: public QObject
 {
+  Q_OBJECT
 public:
     /**
      * @brief Default constructor for RenderController
      * @param parent QT Parent Object
+     * @param render_widget Render Widget
      */
-    explicit RenderController(QObject* parent);
+    explicit RenderController(QObject* parent, RenderWidget *render_widget);
 
     ~RenderController() override;
 
@@ -47,28 +51,30 @@ public:
     /**
       * @brief Called when geometry is modified by the software
       */
-    void changedGeometry() { mHasGeometryChanged = mHasToRedraw = true; }
+    void changedGeometry() { mHasGeometryChanged = true; emit callWidgetRedraw();}
     /**
       * @brief Called when topology is modified by the software
       */
-    void changedTopology() { mHasTopologyChanged = mHasToRedraw = true; }
+    void changedTopology() { mHasTopologyChanged = true; emit callWidgetRedraw(); }
     /**
       * @brief Called when camera is modified by the software
       */
-    void changedCamera() { mHasCameraChanged = mHasToRedraw = true; }
+    void changedCamera() { mHasCameraChanged = true; emit callWidgetRedraw(); }
 
     /**
       * @brief Resets the flags once geometry is properly redrawn
       */
-    void geometryRedrawn() { mHasGeometryChanged = mHasTopologyChanged = mHasCameraChanged = mHasToRedraw = false; }
+    void geometryRedrawn() { mHasGeometryChanged = mHasTopologyChanged = mHasCameraChanged = false; }
     /**
       * @brief Resets the flags once topology is properly redrawn
       */
-    void topologyRedrawn() { mHasTopologyChanged = mHasCameraChanged = mHasToRedraw = false; }
+    void topologyRedrawn() { mHasTopologyChanged = mHasCameraChanged = false; }
     /**
       * @brief Resets the flags once the camera is properly redrawn
       */
-    void cameraRedrawn() { mHasCameraChanged = mHasToRedraw = false; }
+    void cameraRedrawn() { mHasCameraChanged = false; }
+
+    void toolChanged(EditorTool tool);
 
 public slots:
     /** @brief Signal called each frame to check if, and how the render needs to be redrawn */
@@ -93,10 +99,10 @@ public slots:
 
     void nextComponentTest();
 #endif
+  signals:
+    void callWidgetRedraw();
 
 private:
-    /** @brief Flag which returns true if there has been any update to the render */
-    bool mHasToRedraw = false;
     /** @brief Flag which returns true if geometry needs to be redrawn (implies \ref mHasTopologyChanged, \ref mHasCameraChanged, and \ref mHasToRedraw) */
     bool mHasGeometryChanged = false;
     /**
@@ -109,6 +115,8 @@ private:
     bool mHasCameraChanged = false;
     /** @brief Pointer to the \ref Renderer object */
     Renderer *mRenderer;
+    /** @brief Pointer to \ref RenderWidget object */
+    RenderWidget *mRenderWidget;
     /** @brief Current viewport mode (if in viewport) */
     ViewportMode mCurrViewportMode;
 };

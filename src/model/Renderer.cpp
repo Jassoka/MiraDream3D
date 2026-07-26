@@ -17,11 +17,11 @@
 #include "model/TextureManager.h"
 
 const std::string VIEWPORT_SOLID = "viewport_solid";
-const std::string VIEWPORT_WIREFRAME = "viewport_wireframe";
 const std::string VIEWPORT_MATERIAL = "viewport_material";
 const std::string GRID = "grid";
+const std::string LINES = "viewport_lines";
+const std::string VERTICES = "viewport_vertices";
 
-static constexpr glm::vec3 worldOrigin {0.0f, 0.0f, 0.0f};
 static constexpr glm::vec3 worldUp {0.0f, 0.0f, 1.0f};
 static constexpr glm::vec3 defaultEngineCameraPosition {4.0f, 4.0f, 4.0f};
 static constexpr float defaultEngineCameraFOV = glm::radians(45.0f);
@@ -46,162 +46,183 @@ Camera *Renderer::initEngineCamera()
 }
 
 template <ViewportMode m>
-void Renderer::drawTemplate()
+static GLuint getShaderForMode()
 {
-
-    // On choisit le programme du vertex shader
-    GLuint programID;
-    switch (m)
-    {
-    case ViewportMode::SOLID:
-            programID = ShaderManager::getShaderProgram(VIEWPORT_SOLID);
-            break;
-    case ViewportMode::WIREFRAME:
-            programID = ShaderManager::getShaderProgram(VIEWPORT_WIREFRAME);
-            break;
-    default:
-        programID = 0;
-    }
-    mGlFuncs->glUseProgram(programID);
+    if constexpr (m == ViewportMode::SOLID) return ShaderManager::getShaderProgram(VIEWPORT_SOLID);
+    else if constexpr (m == ViewportMode::WIREFRAME) return ShaderManager::getShaderProgram(LINES);
+    else if constexpr (m == ViewportMode::MATERIAL) return ShaderManager::getShaderProgram(VIEWPORT_MATERIAL);
+}
+template <ViewportMode m>
+void Renderer::setShaderArguments(const GLuint programID)
+{
     // Arguments de la caméra
     const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
     mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera->computeViewMatrix()[0][0]);
 
     const int projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
     mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera->computePerspectiveMatrix()[0][0]);
-
-    mVAO.bind();
-    mVBO.bind();
-    mEBO.bind();
-
-    GLuint drawMode;
-    switch (m)
+    if constexpr (m == ViewportMode::SOLID || m == ViewportMode::MATERIAL)
     {
-    case ViewportMode::SOLID:
-        {
-            const int cameraPos= mGlFuncs->glGetUniformLocation(programID, "cameraPos");
-            const glm::vec3 cameraVec =  mEngineCamera->getPosition();
-            mGlFuncs->glUniform3f (cameraPos, cameraVec.x,cameraVec.y,cameraVec.z );
+        const int cameraPos= mGlFuncs->glGetUniformLocation(programID, "cameraPos");
+        const glm::vec3 cameraVec =  mEngineCamera->getPosition();
+        mGlFuncs->glUniform3f (cameraPos, cameraVec.x,cameraVec.y,cameraVec.z );
 
-            const int lightPos = mGlFuncs->glGetUniformLocation(programID, "lightPos");
-            const glm::vec3 lightVec =  mEngineCamera->getPosition();
-            mGlFuncs->glUniform3f (lightPos,lightVec.x,lightVec.y,lightVec.z);
-            drawMode = GL_TRIANGLES;
-            break;
+        const int lightPos = mGlFuncs->glGetUniformLocation(programID, "lightPos");
+        const glm::vec3 lightVec =  mEngineCamera->getPosition();
+        mGlFuncs->glUniform3f (lightPos,lightVec.x,lightVec.y,lightVec.z);
+    }
+    else if constexpr (m == ViewportMode::WIREFRAME)
+    {
+        /*
+#ifdef TEST_HALFEDGES
+
+        const Mesh &currentMesh = mScene->getMeshes()[mTestMesh];
+
+        const auto halfEdgesVect=currentMesh.getHalfEdges();
+        mTestHalfEdge%=halfEdgesVect.size();
+
+        const int halfEdgeOrigin = mGlFuncs->glGetUniformLocation(programID, "halfEdgeOrigin");
+        const int halfEdgeEnd = mGlFuncs->glGetUniformLocation(programID, "halfEdgeEnd");
+
+        const glm::vec3 origin = currentMesh.getGeometricVertexPosition(halfEdgesVect[mTestHalfEdge].origin);
+        const glm::vec3 end = currentMesh.getGeometricVertexPosition(halfEdgesVect[mTestHalfEdge].end);
+
+
+        mGlFuncs->glUniform3f(halfEdgeOrigin,origin.x,origin.y,origin.z);
+        mGlFuncs->glUniform3f(halfEdgeEnd,end.x,end.y,end.z);
+#endif */
+    }
+}
+
+template <ViewportMode m>
+void Renderer::drawForMode(const GLuint programID)
+{
+    if constexpr (m == ViewportMode::SOLID)
+    {
+        mRenderVAO.bind();
+        mGlFuncs->glDrawElements(GL_TRIANGLES, mNbFaceIndices, GL_UNSIGNED_INT, nullptr);
+        mRenderVAO.release();
+        drawLines();
+    }
+    else if constexpr (m == ViewportMode::WIREFRAME)
+    {
+        drawLines();
+        /*
+        mGeometricVAO.bind();
+        mGlFuncs->glDrawElements(GL_LINES, mNbEdgeIndices, GL_UNSIGNED_INT, nullptr);
+        mGeometricVAO.release();*/
+    }
+    else if constexpr (m == ViewportMode::MATERIAL)
+    {
+
+        mRenderVAO.bind();
+        const int Ks= mGlFuncs->glGetUniformLocation(programID, "Ks");
+        const int Ka= mGlFuncs->glGetUniformLocation(programID, "Ka");
+        const int Kd= mGlFuncs->glGetUniformLocation(programID, "Kd");
+        const int Ns= mGlFuncs->glGetUniformLocation(programID, "Ns");
+        const int alpha= mGlFuncs->glGetUniformLocation(programID, "alpha");
+        const int scale = mGlFuncs->glGetUniformLocation(programID, "scale");
+
+
+
+        uint32_t startTriangle=0,endTriangle=0;
+        for (auto &mesh : mScene->getMeshes()) {
+            auto &subMeshes = mesh.getSubMeshes();
+            for (uint32_t submeshIndex = 0; submeshIndex < subMeshes.size(); submeshIndex++)
+            {
+                const Material &mat= mScene->getMaterial(mesh.getMaterialId(submeshIndex));
+
+                mGlFuncs->glActiveTexture(GL_TEXTURE0);
+                GLint textureSlot = TextureManager::loadSceneTexture(mat.ColorTextureID, mScene);
+                mGlFuncs->glBindTexture(GL_TEXTURE_2D, textureSlot);  // ton ID de texture
+                int texLoc = mGlFuncs->glGetUniformLocation(programID, "colorTexture");
+                mGlFuncs->glUniform1i(texLoc, 0);
+
+
+                mGlFuncs->glUniform3f(Ks,mat.Ks.r,mat.Ks.g,mat.Ks.b);
+                mGlFuncs->glUniform3f(Ka,mat.Ka.r,mat.Ka.g,mat.Ka.b);
+                mGlFuncs->glUniform3f(Kd,mat.Kd.r,mat.Kd.g,mat.Kd.b);
+                mGlFuncs->glUniform1f(Ns,mat.shininess);
+                mGlFuncs->glUniform1f(alpha,mat.alpha);
+
+                mGlFuncs->glUniform1f(scale, mesh.getScale());
+
+
+                endTriangle+= 3*mesh.getTriangles(submeshIndex).size();
+                mGlFuncs->glDrawElements(
+                GL_TRIANGLES,
+                    endTriangle - startTriangle,
+                    GL_UNSIGNED_INT,
+                        (void*)(startTriangle * sizeof(uint32_t))
+                );
+                startTriangle=endTriangle  ;
+            }
         }
-    case ViewportMode::WIREFRAME:
-        {
-            drawMode = GL_LINES;
-            #ifdef TEST_HALFEDGES
+        mRenderVAO.release();
+    }
+}
 
-            const Mesh &currentMesh = mScene->getMeshes()[mTestMesh];
+void Renderer::drawPoints()
+{
 
-            const auto halfEdgesVect=currentMesh.getHalfEdges();
-            mTestHalfEdge%=halfEdgesVect.size();
+    // Drawing vertices
+    mGeometricVAO.bind();
+    mGeometricVBO.bind();
+    mGeometricEBO.bind();
+    mGlFuncs->glEnable(GL_PROGRAM_POINT_SIZE);
+    const GLuint programID = ShaderManager::getShaderProgram(VERTICES);
+    mGlFuncs->glUseProgram(programID);
+    auto viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
+    mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera->computeViewMatrix()[0][0]);
 
-            const int halfEdgeOrigin = mGlFuncs->glGetUniformLocation(programID, "halfEdgeOrigin");
-            const int halfEdgeEnd = mGlFuncs->glGetUniformLocation(programID, "halfEdgeEnd");
+    auto projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
+    mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera->computePerspectiveMatrix()[0][0]);
 
-            const glm::vec3 origin = currentMesh.getGeometricVertexPosition(halfEdgesVect[mTestHalfEdge].origin);
-            const glm::vec3 end = currentMesh.getGeometricVertexPosition(halfEdgesVect[mTestHalfEdge].end);
+    auto selectedVertex = mGlFuncs->glGetUniformLocation(programID, "selectedVertex");
+    mGlFuncs->glUniform1i (selectedVertex, (mCurrentSelectionMode == SelectionMode::VERTEX)? mSelection : -1);
+    mGlFuncs->glDrawArrays(GL_POINTS, 0, nVertices);
+
+    mGeometricVAO.release();
+    mGeometricVBO.release();
+    mGeometricEBO.release();
+}
+
+void Renderer::drawLines()
+{
+    // Drawing vertices
+    mGeometricVAO.bind();
+    mGeometricVBO.bind();
+    mGeometricEBO.bind();
+    const GLuint programID = ShaderManager::getShaderProgram(LINES);
+    mGlFuncs->glUseProgram(programID);
+    auto viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
+    mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera->computeViewMatrix()[0][0]);
+
+    auto projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
+    mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera->computePerspectiveMatrix()[0][0]);
+    mGlFuncs->glDrawElements(GL_LINES, mNbEdgeIndices, GL_UNSIGNED_INT, nullptr);
+
+    mGeometricVAO.release();
+    mGeometricVBO.release();
+    mGeometricEBO.release();
+}
+
+template <ViewportMode m>
+void Renderer::drawTemplate()
+{
+    // On choisit le programme du vertex shader
+    GLuint programID = getShaderForMode<m>();
+    mGlFuncs->glUseProgram(programID);
+
+    setShaderArguments<m>(programID);
+    drawForMode<m>(programID);
 
 
-            mGlFuncs->glUniform3f(halfEdgeOrigin,origin.x,origin.y,origin.z);
-            mGlFuncs->glUniform3f(halfEdgeEnd,end.x,end.y,end.z);
-
-
-            #endif
-
-            break;
-        }
-   }
-    mGlFuncs->glDrawElements(drawMode, nIndices, GL_UNSIGNED_INT, nullptr);
-    mVAO.release();
-
+    drawPoints();
     //on dessine d'abord la grid
     drawGrid();
 }
 
-template <>
-void Renderer::drawTemplate<ViewportMode::MATERIAL>()
-{
-
-    // On choisit le programme du vertex shader
-    GLuint programID=ShaderManager::getShaderProgram(VIEWPORT_MATERIAL);
-
-    mGlFuncs->glUseProgram(programID);
-
-    // Arguments de la caméra
-    const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
-    mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera->computeViewMatrix()[0][0]);
-
-    const int projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
-    mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera->computePerspectiveMatrix()[0][0]);
-
-    mVAO.bind();
-    mVBO.bind();
-    mEBO.bind();
-
-
-    const int cameraPos= mGlFuncs->glGetUniformLocation(programID, "cameraPos");
-    const glm::vec3 cameraVec =  mEngineCamera->getPosition();
-    mGlFuncs->glUniform3f (cameraPos, cameraVec.x,cameraVec.y,cameraVec.z );
-
-    const int lightPos = mGlFuncs->glGetUniformLocation(programID, "lightPos");
-    const glm::vec3 lightVec =  mEngineCamera->getPosition();
-    mGlFuncs->glUniform3f (lightPos,lightVec.x,lightVec.y,lightVec.z);
-
-
-    const int Ks= mGlFuncs->glGetUniformLocation(programID, "Ks");
-    const int Ka= mGlFuncs->glGetUniformLocation(programID, "Ka");
-    const int Kd= mGlFuncs->glGetUniformLocation(programID, "Kd");
-    const int Ns= mGlFuncs->glGetUniformLocation(programID, "Ns");
-    const int alpha= mGlFuncs->glGetUniformLocation(programID, "alpha");
-
-    const int scale = mGlFuncs->glGetUniformLocation(programID, "scale");
-
-
-
-    uint32_t startTriangle=0,endTriangle=0;
-    for (auto &mesh : mScene->getMeshes()) {
-        auto &subMeshes = mesh.getSubMeshes();
-        for (uint32_t submeshIndex = 0; submeshIndex < subMeshes.size(); submeshIndex++)
-        {
-            const Material &mat= mScene->getMaterial(mesh.getMaterialId(submeshIndex));
-
-            mGlFuncs->glActiveTexture(GL_TEXTURE0);
-            GLint textureSlot = TextureManager::loadSceneTexture(mat.ColorTextureID, mScene);
-            mGlFuncs->glBindTexture(GL_TEXTURE_2D, textureSlot);  // ton ID de texture
-            int texLoc = mGlFuncs->glGetUniformLocation(programID, "colorTexture");
-            mGlFuncs->glUniform1i(texLoc, 0);
-
-
-            mGlFuncs->glUniform3f(Ks,mat.Ks.r,mat.Ks.g,mat.Ks.b);
-            mGlFuncs->glUniform3f(Ka,mat.Ka.r,mat.Ka.g,mat.Ka.b);
-            mGlFuncs->glUniform3f(Kd,mat.Kd.r,mat.Kd.g,mat.Kd.b);
-            mGlFuncs->glUniform1f(Ns,mat.shininess);
-            mGlFuncs->glUniform1f(alpha,mat.alpha);
-
-            mGlFuncs->glUniform1f(scale, mesh.getScale());
-
-
-            endTriangle+= 3*mesh.getTriangles(submeshIndex).size();
-            mGlFuncs->glDrawElements(
-            GL_TRIANGLES,
-                endTriangle - startTriangle,
-                GL_UNSIGNED_INT,
-                    (void*)(startTriangle * sizeof(uint32_t))
-            );
-            startTriangle=endTriangle  ;
-        }
-    }
-
-
-    mVAO.release();
-
-    //on dessine apres la grid
-    drawGrid();
-}
 
 
 void Renderer::draw(const ViewportMode mode)
@@ -215,65 +236,90 @@ void Renderer::draw(const ViewportMode mode)
     else if (mode == ViewportMode::MATERIAL)
         drawTemplate<ViewportMode::MATERIAL>();
 }
-template <ViewportMode m>
-void Renderer::geometryRedrawTemplate()
-{
-    mVAO.bind();
-    mVBO.bind();
 
-    // Buffer de vertices
+void Renderer::buildFaceBuffer(const std::vector<Mesh> &meshes)
+{
     std::vector<RenderVertex> vertices;
+    // Buffer des faces
     std::vector<uint32_t> indices;
     uint32_t indexOffset = 0;
-
-    for (const Mesh &mesh : mScene->getMeshes())
+    for (const Mesh &mesh : meshes)
     {
         const auto meshVertices = mesh.getRenderVertices();
         vertices.reserve(vertices.size() + meshVertices.size());
         vertices.insert(vertices.end(), meshVertices.begin(), meshVertices.end());
-
-        if (m == ViewportMode::SOLID || m == ViewportMode::MATERIAL)
+        std::vector<Triangle> triangles;
+        for (uint32_t i = 0; i < mesh.getSubMeshes().size(); i++)
         {
-            // Buffer des faces
-            std::vector<Triangle> triangles;
-            for (uint32_t i = 0; i < mesh.getSubMeshes().size(); i++)
-            {
-                const auto currentTriangles = mesh.getTriangles(i);
-                triangles.insert(triangles.end(), currentTriangles.begin(), currentTriangles.end());
-            }
-            indices.reserve(indices.size() + triangles.size()*3);
-            for (const auto& t: triangles)
-            {
-                indices.push_back(t[0] + indexOffset);
-                indices.push_back(t[1] + indexOffset);
-                indices.push_back(t[2] + indexOffset);
-            }
+            const auto currentTriangles = mesh.getTriangles(i);
+            triangles.insert(triangles.end(), currentTriangles.begin(), currentTriangles.end());
         }
-        else if (m == ViewportMode::WIREFRAME)
+        indices.reserve(indices.size() + triangles.size()*3);
+        for (const auto& t: triangles)
         {
-            //Buffer des edges
-            const auto edges = mesh.getEdges();
-            const auto geometricVertices = mesh.getGeometricVertices();
-            indices.reserve(indices.size() + edges.size()*2);
-            for (const auto& [origin, end]: edges)
-            {
-                indices.push_back(geometricVertices[origin].vertices[0] + indexOffset);
-                indices.push_back(geometricVertices[end].vertices[0] + indexOffset);
-            }
+            indices.push_back(t[0] + indexOffset);
+            indices.push_back(t[1] + indexOffset);
+            indices.push_back(t[2] + indexOffset);
         }
         indexOffset += meshVertices.size();
     }
 
     const RenderVertex *vertices_data = vertices.data(); // Pointeur vers les vertices
-    mVBO.allocate(vertices_data,vertices.size() * sizeof(RenderVertex));
+    mRenderVBO.bind();
+    mRenderVBO.allocate(vertices_data,vertices.size() * sizeof(RenderVertex));
 
     const uint32_t *data = indices.data();
-    nIndices = indices.size();
+    mNbFaceIndices = indices.size();
 
-    mEBO.bind();
-    mEBO.allocate(data,nIndices * sizeof(uint32_t));
+    mRenderEBO.bind();
+    mRenderEBO.allocate(data,mNbFaceIndices * sizeof(uint32_t));
+    mRenderVBO.release();
+}
+
+
+void Renderer::buildEdgeBuffer(const std::vector<Mesh> &meshes)
+{
+    std::vector<glm::vec3> vertexPositions;
+    std::vector<uint32_t> indices;
+    uint32_t indexOffset = 0;
+    for (const Mesh &mesh : meshes)
+    {
+        // Construction des positions;
+        vertexPositions.reserve(vertexPositions.size() + mesh.getGeometricVertices().size());
+        for (int i = 0; i < mesh.getGeometricVertices().size(); i++)
+            vertexPositions.push_back(mesh.getGeometricVertexPosition(i));
+
+        //Buffer des edges
+        const auto edges = mesh.getEdges();
+        const auto geometricVertices = mesh.getGeometricVertices();
+
+        indices.reserve(indices.size() + edges.size()*2);
+        for (const auto& [origin, end]: edges)
+        {
+            indices.push_back(origin + indexOffset);
+            indices.push_back(end + indexOffset);
+        }
+        indexOffset += geometricVertices.size();
+    }
+
+    mGeometricVBO.bind();
+    const glm::vec3 *positions_data = vertexPositions.data();
+    mGeometricVBO.allocate(positions_data, vertexPositions.size() * sizeof(glm::vec3));
+    nVertices = vertexPositions.size();
+
+    const uint32_t *data = indices.data();
+    mNbEdgeIndices = indices.size();
+    mGeometricEBO.bind();
+    mGeometricEBO.allocate(data,mNbEdgeIndices * sizeof(uint32_t));
+    mGeometricVBO.release();
+}
+
+template <ViewportMode m>
+void Renderer::geometryRedrawTemplate()
+{
+    buildFaceBuffer(mScene->getMeshes());
+    buildEdgeBuffer(mScene->getMeshes());
     drawTemplate<m>();
-    mVAO.release();
 }
 
 void Renderer::geometryRedraw(const ViewportMode mode)
@@ -291,30 +337,27 @@ void Renderer::geometryRedraw(const ViewportMode mode)
 
 void Renderer::initShaders()
 {
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 4; i++)
     {
-        int define_mode = i;
-#ifdef TEST_HALFEDGES
-        // Mode half edge
-        if (i == 0) define_mode = 3;
-#endif
-
         const GLuint vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport.vert",
             GL_VERTEX_SHADER,
-            {{.field = "RENDER_MODE", .value = std::to_string(define_mode)}});
+            {{.field = "RENDER_MODE", .value = std::to_string(i)}});
         const GLuint fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/viewport.frag",
             GL_FRAGMENT_SHADER,
-            {{.field = "RENDER_MODE", .value = std::to_string(define_mode)}});
+            {{.field = "RENDER_MODE", .value = std::to_string(i)}});
         std::vector shaders = {vertexShader, fragmentShader};
         switch (i)
         {
         case 0:
-            ShaderManager::createProgram(VIEWPORT_WIREFRAME, shaders);
+            ShaderManager::createProgram(VERTICES, shaders);
             break;
         case 1:
-            ShaderManager::createProgram(VIEWPORT_SOLID, shaders);
+            ShaderManager::createProgram(LINES, shaders);
             break;
         case 2:
+            ShaderManager::createProgram(VIEWPORT_SOLID, shaders);
+            break;
+        case 3:
             ShaderManager::createProgram(VIEWPORT_MATERIAL, shaders);
             break;
         }
@@ -333,15 +376,19 @@ void Renderer::initialize(QOpenGLFunctions* glFuncs)
     ShaderManager::initialize(glFuncs);
     TextureManager::initialize(glFuncs);
 
-    if (!mVAO.create()) exit(1);
-    if (!mVBO.create()) exit(1);
-    if (!mEBO.create()) exit(1);
+    if (!mRenderVAO.create()) exit(1);
+    if (!mRenderVBO.create()) exit(1);
+    if (!mRenderEBO.create()) exit(1);
 
 
     if (!mGridVAO.create()) exit(1);
 
-    mVAO.bind();
-    mVBO.bind();
+    if (!mGeometricVAO.create()) exit(1);
+    if (!mGeometricVBO.create()) exit(1);
+    if (!mGeometricEBO.create()) exit(1);
+
+    mRenderVAO.bind();
+    mRenderVBO.bind();
     // 0: position du vertex
     mGlFuncs->glEnableVertexAttribArray(0);
     mGlFuncs->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(RenderVertex), (void*)offsetof(RenderVertex, x));
@@ -354,8 +401,15 @@ void Renderer::initialize(QOpenGLFunctions* glFuncs)
     mGlFuncs->glEnableVertexAttribArray(2);
     mGlFuncs->glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(RenderVertex), (void*)offsetof(RenderVertex, u));
 
-    mEBO.bind();
-    mVAO.release();
+    mRenderEBO.bind();
+    mRenderVAO.release();
+
+    mGeometricVAO.bind();
+    mGeometricVBO.bind();
+    mGlFuncs->glEnableVertexAttribArray(0);
+    mGlFuncs->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
+    mGeometricEBO.bind();
+    mGeometricVAO.release();
 
     initShaders();
 }
@@ -397,3 +451,32 @@ void Renderer::drawGrid() {
 
     glDisable(GL_BLEND);
 }
+
+/*
+void Renderer::drawVertices()
+{
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    GLuint programID = ShaderManager::getShaderProgram(VERTICES);
+    mGlFuncs->glUseProgram(programID);
+    // Arguments de la caméra
+    const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
+    mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera->computeViewMatrix()[0][0]);
+
+    const int projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
+    mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera->computePerspectiveMatrix()[0][0]);
+
+
+    const int cameraPosition = mGlFuncs->glGetUniformLocation(programID, "cameraPosition");
+    glm::vec3 vCamPosition = mEngineCamera->getPosition();
+    mGlFuncs->glUniform3f (cameraPosition, vCamPosition.x, vCamPosition.y, vCamPosition.z);
+
+    mGridVAO.bind();
+    mGlFuncs->glDrawArrays(GL_TRIANGLES, 0, 3);
+    mGridVAO.release();
+
+    glDisable(GL_BLEND);
+}
+*/

@@ -18,4 +18,15 @@ struct DefineField
     std::string value = "";
 };
 
+enum class EditorTool
+{
+    NAVIGATE,
+    SELECTION,
+};
+
+enum class SelectionMode
+{
+    NONE = 0, VERTEX, EDGE, FACE
+};
+
 #endif //MIRADREAM3D_TYPES_H

@@ -22,6 +22,11 @@ RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) :
     setUpdateBehavior(QOpenGLWidget::PartialUpdate);//TODO ca explose si pas ca sur mac (clignotements). Probleme de buffer
 }
 
+void RenderWidget::requestRedraw()
+{
+    mHasToRedraw = true;
+}
+
 void RenderWidget::initializeGL() {
     initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST);
@@ -165,7 +170,11 @@ void RenderWidget::timeOutSlot() {
         emit zoom(exp(-mMouseScroll*mScrollSensitivity));
         mMouseScroll = 0;
     }
-    this->update();
+    if (mHasToRedraw)
+    {
+        update();
+        mHasToRedraw = false;
+    }
 }
 
 RenderWidget::~RenderWidget()

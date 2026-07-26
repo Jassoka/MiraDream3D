@@ -28,6 +28,7 @@ public:
 
 public slots:
     virtual void timeOutSlot();
+    void requestRedraw();
 
 signals:
     void initialize(QOpenGLFunctions *glFuncs);
@@ -65,6 +66,7 @@ private:
     float mScrollSensitivity = 0.00035f;
     bool mIsTeleportingCursor = false;
     bool mWasTeleported = false;
+    bool mHasToRedraw = true;
 };
 
 

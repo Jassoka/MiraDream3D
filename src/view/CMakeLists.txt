@@ -5,6 +5,8 @@ add_library(View STATIC
         ../../include/view/RenderWidget.h
         ../../include/view/ErrorViewer.hpp
         ErrorViewer.cpp
+        EditorToolBar.cpp
+        ../../include/view/EditorToolBar.h
 )
 
 target_include_directories(View PRIVATE

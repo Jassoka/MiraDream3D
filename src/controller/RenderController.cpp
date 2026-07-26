@@ -6,10 +6,20 @@
 #include "model/Renderer.h"
 #include "model/Camera.h"
 #include "types.h"
+#include "view/RenderWidget.h"
 
-RenderController::RenderController(QObject* parent) :
-    QObject(parent), mCurrViewportMode(ViewportMode::SOLID)
+RenderController::RenderController(QObject* parent, RenderWidget *render_widget) :
+    QObject(parent), mRenderWidget(render_widget), mCurrViewportMode(ViewportMode::SOLID)
 {
+    connect(mRenderWidget, &RenderWidget::initialize, this, &RenderController::onInitialize, Qt::DirectConnection);
+    connect(mRenderWidget, &RenderWidget::paint, this, &RenderController::paint);
+    connect(mRenderWidget, &RenderWidget::resize, this, &RenderController::onResize);
+    connect(mRenderWidget, &RenderWidget::rotateAroundAnchor, this, &RenderController::onRotateAroundAnchor);
+    connect(mRenderWidget, &RenderWidget::strafeCamera, this, &RenderController::onCameraStrafe);
+
+    connect(mRenderWidget, &RenderWidget::zoom, this, &RenderController::onZoom);
+    connect(mRenderWidget, &RenderWidget::setViewportMode, this, &RenderController::onSetViewportMode);
+    connect(this, &RenderController::callWidgetRedraw, mRenderWidget, &RenderWidget::requestRedraw);
     mRenderer = new Renderer();
 }
 
@@ -19,9 +29,22 @@ RenderController::~RenderController()
     delete mRenderer;
 }
 
+void RenderController::toolChanged(const EditorTool tool)
+{
+    switch (tool)
+    {
+    case EditorTool::SELECTION:
+        mRenderer->setSelectionMode(SelectionMode::VERTEX);
+        break;
+    default:
+        mRenderer->setSelectionMode(SelectionMode::NONE);
+        break;
+    }
+    changedCamera();
+}
+
 void RenderController::paint()
 {
-    if (!mHasToRedraw) return;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (hasGeometryChanged())
     {
@@ -33,11 +56,12 @@ void RenderController::paint()
         //TODO
         topologyRedrawn();
     }
-    else if (hasCameraChanged())
+    else
     {
         mRenderer->draw(mCurrViewportMode);
         cameraRedrawn();
     }
+    glFinish();
 }
 
 

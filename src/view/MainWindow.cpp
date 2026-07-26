@@ -8,6 +8,8 @@
 #include <QToolBar>
 #include <QPushButton>
 
+#include "view/EditorToolBar.h"
+
 extern uint32_t frame;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -25,6 +27,10 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(mRenderWidget);
     this->resize(800, 600);
 
+    mEditorToolBar = new EditorToolBar(this);
+    this->addToolBar(Qt::LeftToolBarArea, mEditorToolBar);
+
+    connect(mEditorToolBar, &EditorToolBar::clickedEditorTool, this, &MainWindow::changedEditorTool);
 
 
 
