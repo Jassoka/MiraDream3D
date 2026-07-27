@@ -76,6 +76,16 @@ public:
 
     void toolChanged(EditorTool tool);
 
+
+    /** @brief Signal called when a selection is made on the screen */
+    int32_t pickFromScreen(int x, int y);
+
+    /** @brief Signal called upon camera rotation */
+    void rotateAroundAnchor(float dPhi, float dTheta);
+    /** @brief Signal called upon camera translation */
+    void cameraStrafe(float dx, float dy);
+    /** @brief Signal called upon camera zoom */
+    void cameraZoom(float factor);
 public slots:
     /** @brief Signal called each frame to check if, and how the render needs to be redrawn */
     void paint();
@@ -84,17 +94,8 @@ public slots:
     /** @brief Signal which is called once OpenGL is initialised properly */
     void onInitialize(QOpenGLFunctions* glFuncs) const;
 
-
-    /** @brief Signal called upon camera rotation */
-    void onRotateAroundAnchor(float dPhi, float dTheta);
-    /** @brief Signal called upon camera translation */
-    void onCameraStrafe(float dx, float dy);
-    /** @brief Signal called upon camera zoom */
-    void onZoom(float factor);
     /** @brief Signal called upon changing the current viewport Mode (always redraws) */
     void onSetViewportMode(ViewportMode mode);
-    /** @brief Signal called when a selection is made on the screen */
-    void onScreenSelect(int x, int y);
 #ifdef TEST_HALFEDGES
     void onAddHalfEdgeTest(int i);
     void nextMeshTest();

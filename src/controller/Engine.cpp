@@ -17,7 +17,7 @@ QObject(parent)
 
     mRenderController = new RenderController(static_cast<QObject*>(this), renderWidget);
     mSceneController = new SceneController(static_cast<QObject*>(this), mRenderController);
-    mEditorController = new EditorController(static_cast<QObject*>(this), mRenderController);
+    mEditorController = new EditorController(static_cast<QObject*>(this), mRenderController, renderWidget);
     mRenderController->setScene(mSceneController->getScene());
 
     connect(mMainWindow, &MainWindow::importSceneRequested, mSceneController, &SceneController::importScene);

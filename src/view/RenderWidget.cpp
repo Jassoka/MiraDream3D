@@ -46,73 +46,41 @@ void RenderWidget::paintGL() {
 
 
 void RenderWidget::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::MiddleButton || event->button() == Qt::RightButton) {
-        grabMouse();
-        mMouseAnchor = QCursor::pos();
-        mMouseLastPosition = mMouseAnchor;
-        setCursor(Qt::BlankCursor); // Nice UX touch: change cursor when dragging
-        if (event->button() == Qt::MiddleButton)
-            mMouseDragRotateX = mMouseDragRotateY = 0;
-        else
-            mMouseDragTranslateX = mMouseDragTranslateY = 0;
-    }
-    if (event->button() == Qt::LeftButton)
-    {
-        const double scale = devicePixelRatioF();
-        const QPoint localpos = mapFromGlobal(QCursor::pos());
-        emit pickFromScreen(localpos.x()*scale, localpos.y()*scale);
-    }
+    const QPoint localpos = mapFromGlobal(QCursor::pos());
+    emit mousePress(event->button(), localpos.x(), localpos.y());
 }
+
+void RenderWidget::teleportMouseToCenter()
+{
+    mIsTeleportingCursor = true;
+    const QPoint screenCenter = mapToGlobal(rect().center());
+    QCursor::setPos(screenCenter);
+    mMouseLastPosition = screenCenter;
+}
+
+void RenderWidget::initMouseDrag()
+{
+    mMouseAnchor = QCursor::pos();
+    mMouseLastPosition = mMouseAnchor;
+}
+
 void RenderWidget::mouseMoveEvent(QMouseEvent *event) {
-
-    auto teleport = [this]()
-    {
-        mIsTeleportingCursor = true;
-        const QPoint screenCenter = mapToGlobal(rect().center());
-        QCursor::setPos(screenCenter);
-        mMouseLastPosition = screenCenter;
-    };
-
-    auto hasTeleported = [this]() -> bool
-    {
-        if (mIsTeleportingCursor) {
-            mIsTeleportingCursor = false;
-        }
-        return mIsTeleportingCursor;
-    };
-    if (event->buttons() & Qt::MiddleButton ) {
-
-        if (hasTeleported()) return;
-        QPoint currPos = QCursor::pos();
-
-        mMouseDragRotateX += currPos.x() - mMouseLastPosition.x();
-        mMouseDragRotateY += currPos.y() - mMouseLastPosition.y();
-        teleport();
-    }
-    if (event->buttons() & Qt::RightButton) {
-
-        if (hasTeleported()) return;
-        QPoint currPos = QCursor::pos();
-
-        mMouseDragTranslateX += currPos.x() - mMouseLastPosition.x();
-        mMouseDragTranslateY += currPos.y() - mMouseLastPosition.y();
-        teleport();
-    }
+    const QPoint currPos = QCursor::pos();
+    emit mouseDrag(currPos.x() - mMouseLastPosition.x(), currPos.y() - mMouseLastPosition.y(), event->buttons());
 }
 void RenderWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::MiddleButton || event->button() == Qt::RightButton) {
-        QCursor::setPos(mMouseAnchor); //TODO faire une méthode centerCursor
-        releaseMouse();
-        unsetCursor(); // Restore the normal arrow cursor
-    }
+    emit mouseRelease(event->button());
 }
 
 void RenderWidget::wheelEvent(QWheelEvent *event) {
-    int deltaY = event->angleDelta().y();
-    int deltaX = event->angleDelta().x();
-    if (event->modifiers() & Qt::ShiftModifier) deltaX*=2;
-    mMouseScroll += deltaX + 2*deltaY;
+    emit mouseScroll(event->angleDelta().x(), event->angleDelta().y());
+    //if (event->modifiers() & Qt::ShiftModifier) deltaX*=2;
+}
+
+void RenderWidget::centerCursor()
+{
+    QCursor::setPos(mMouseAnchor);
 }
 
 
@@ -155,28 +123,8 @@ void RenderWidget::keyReleaseEvent(QKeyEvent* event) {
 }
 
 void RenderWidget::timeOutSlot() {
-    if (mMouseDragRotateX != 0 || mMouseDragRotateY != 0) // Engager rotation de la caméra
-    {
-        float dPhi   = -mMouseDragRotateX * mMouseRotateSensitivity;
-        float dTheta = -mMouseDragRotateY * mMouseRotateSensitivity;
-        mMouseDragRotateX = mMouseDragRotateY = 0;
 
-        emit rotateAroundAnchor(dPhi, dTheta);
-    }
-
-    if (mMouseDragTranslateX != 0 || mMouseDragTranslateY != 0) // Engager rotation de la caméra
-    {
-        float dx = mMouseDragTranslateX * mMouseTranslateSensitivity;
-        float dy = -mMouseDragTranslateY * mMouseTranslateSensitivity;
-        mMouseDragTranslateX = mMouseDragTranslateY = 0;
-
-        emit strafeCamera(dx, dy);
-    }
-    if (mMouseScroll != 0)
-    {
-        emit zoom(exp(-mMouseScroll*mScrollSensitivity));
-        mMouseScroll = 0;
-    }
+    emit refresh();
     if (mHasToRedraw)
     {
         update();

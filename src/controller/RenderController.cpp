@@ -14,12 +14,7 @@ RenderController::RenderController(QObject* parent, RenderWidget *render_widget)
     connect(mRenderWidget, &RenderWidget::initialize, this, &RenderController::onInitialize, Qt::DirectConnection);
     connect(mRenderWidget, &RenderWidget::paint, this, &RenderController::paint);
     connect(mRenderWidget, &RenderWidget::resize, this, &RenderController::onResize);
-    connect(mRenderWidget, &RenderWidget::rotateAroundAnchor, this, &RenderController::onRotateAroundAnchor);
-    connect(mRenderWidget, &RenderWidget::strafeCamera, this, &RenderController::onCameraStrafe);
-
-    connect(mRenderWidget, &RenderWidget::zoom, this, &RenderController::onZoom);
     connect(mRenderWidget, &RenderWidget::setViewportMode, this, &RenderController::onSetViewportMode);
-    connect(mRenderWidget, &RenderWidget::pickFromScreen, this, &RenderController::onScreenSelect);
     connect(this, &RenderController::callWidgetRedraw, mRenderWidget, &RenderWidget::requestRedraw);
     mRenderer = new Renderer();
 }
@@ -80,19 +75,19 @@ void RenderController::onInitialize(QOpenGLFunctions* glFuncs) const
     mRenderer->initialize(glFuncs);
 }
 
-void RenderController::onRotateAroundAnchor(const float dPhi, const float dTheta)
+void RenderController::rotateAroundAnchor(const float dPhi, const float dTheta)
 {
     mRenderer->getEngineCamera()->rotateAroundAnchor(dPhi, dTheta);
     changedCamera();
 }
 
-void RenderController::onCameraStrafe(const float dx, const float dy)
+void RenderController::cameraStrafe(const float dx, const float dy)
 {
     mRenderer->getEngineCamera()->strafeCamera(dx, dy);
     changedCamera();
 }
 
-void RenderController::onZoom(const float factor)
+void RenderController::cameraZoom(const float factor)
 {
     mRenderer->getEngineCamera()->zoom(factor);
     changedCamera();
@@ -104,10 +99,12 @@ void RenderController::onSetViewportMode(const ViewportMode mode)
     changedGeometry();
 }
 
-void RenderController::onScreenSelect(int x, int y)
+int32_t RenderController::pickFromScreen(int x, int y)
 {
-    if (mRenderer->readPickingBuffer(x, y) >= 0)
+    const auto res = mRenderer->readPickingBuffer(x, y);
+    if (res >= 0)
         changedCamera();
+    return res;
 }
 
 #ifdef TEST_HALFEDGES

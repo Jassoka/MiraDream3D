@@ -34,4 +34,6 @@ EditorToolBar::EditorToolBar(QWidget* parent)
     connect(mSelectAction, &QAction::triggered, this, [this]() {
         emit clickedEditorTool(EditorTool::SELECTION);
     });
+
+    mNavigateAction->setChecked(true); // TODO faire en sorte que ça s'active direct (pas possible actuellement car initialisé avant editorcontroller)
 }

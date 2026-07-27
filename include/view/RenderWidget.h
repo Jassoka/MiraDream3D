@@ -19,12 +19,9 @@ public:
     explicit RenderWidget(int framesPerSecond=0, QWidget *parent = nullptr);
     ~RenderWidget() override;
 
-    void initializeGL() override;
-    void resizeGL(int width, int height) override;
-    void paintGL() override;
-
-    void keyPressEvent(QKeyEvent *event) override;
-    void keyReleaseEvent(QKeyEvent* event) override;
+    void teleportMouseToCenter();
+    void initMouseDrag();
+    void centerCursor();
 
 public slots:
     virtual void timeOutSlot();
@@ -34,9 +31,18 @@ signals:
     void initialize(QOpenGLFunctions *glFuncs);
     void resize(int width, int height);
     void paint();
+
+    void mouseDrag(int x, int y, Qt::MouseButtons boutons);
+    void mouseScroll(int deltaX, int deltaY);
+    void mousePress(Qt::MouseButton button, int localX, int localY);
+    void mouseRelease(Qt::MouseButton button);
+    void refresh();
+
+    /*
     void rotateAroundAnchor(float dPhi, float dTheta);
     void strafeCamera(float dx, float dy);
     void zoom(float zoomFactor);
+    */
     void setViewportMode(ViewportMode mode);
     void pickFromScreen(int x, int y);
 #ifdef TEST_HALFEDGES
@@ -45,6 +51,13 @@ signals:
     void nextTestComponentSignal();
 #endif
 protected:
+    void initializeGL() override;
+    void resizeGL(int width, int height) override;
+    void paintGL() override;
+
+    void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
+
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
@@ -53,18 +66,9 @@ private:
     QTimer *mTimer;
     QPoint mMouseAnchor;
     QPoint mMouseLastPosition;
-    int mMouseDragRotateX = 0; // variable qui stocke la valeur de rotation
-    int mMouseDragRotateY = 0;
 
-    int mMouseDragTranslateX = 0; // variable qui stocke la valeur de translation
-    int mMouseDragTranslateY = 0;
-
-    int mMouseScroll = 0;
 
     QSet<int> mPressedKeys;
-    float mMouseRotateSensitivity = 0.0035f;
-    float mMouseTranslateSensitivity = 0.0035f;
-    float mScrollSensitivity = 0.00035f;
     bool mIsTeleportingCursor = false;
     bool mWasTeleported = false;
     bool mHasToRedraw = true;
