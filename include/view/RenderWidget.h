@@ -38,6 +38,7 @@ signals:
     void strafeCamera(float dx, float dy);
     void zoom(float zoomFactor);
     void setViewportMode(ViewportMode mode);
+    void pickFromScreen(int x, int y);
 #ifdef TEST_HALFEDGES
     void addTestHalfEdgeSignal(int i);
     void nextTestMeshSignal();

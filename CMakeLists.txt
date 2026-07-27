@@ -49,6 +49,7 @@ set(PROJECT_SOURCES
         include/model/shader_parser/GLSLLexer.h
         include/model/importer/ObjLexer.h
         include/controller/EditorController.h
+        include/model/Editor.h
 )
 
 qt_add_executable(MiraDream3D

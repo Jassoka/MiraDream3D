@@ -6,6 +6,7 @@
 #define MIRADREAM3D_RENDERER_H
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
+#include <qopenglframebufferobject.h>
 
 #include "Scene.h"
 #include "types.h"
@@ -42,7 +43,7 @@ public:
     /** @brief Initialization for OpenGL */
     void initialize(QOpenGLFunctions* glFuncs);
     /** @brief Resizes the engine camera aspect ratio */
-    void resize(int width, int height) const;
+    void resize(int width, int height);
 
     /** @brief Draw function for cases when vertices or faces are added/ deleted */
     void geometryRedraw(ViewportMode mode);
@@ -54,6 +55,9 @@ public:
 
     /** @brief Initializes all shaders in GPU memory */
     static void initShaders();
+
+    /** @brief Reads the picking buffer at pixel (x, y) (top-left origin) */
+    int32_t readPickingBuffer(int x, int y);
 
 #ifdef TEST_HALFEDGES
     void addTestHalfEdge(const int32_t i) {
@@ -118,6 +122,16 @@ private:
      */
     void buildEdgeBuffer(const std::vector<Mesh> &meshes);
 
+    void initPickingBuffer();
+
+    /**
+     * @brief Builds the picking buffer, assumes the VAO and vertex buffers are up to date
+     */
+    void updatePickingBuffer();
+
+
+    void resizePickingBuffer();
+
     /**
      * @brief Camera used to render the software's viewport
      */
@@ -154,6 +168,13 @@ private:
     /** @brief OpenGL Vertex Array Object for the 2D grid */
     QOpenGLVertexArrayObject mGridVAO;
 
+    /** @brief Frame buffer for picking */
+    GLuint mPickingFBO = 0;
+
+    /** @brief Texture slot bound to the picking FBO */
+    GLuint mPickingTexture = 0;
+    GLuint mDepthBuffer = 0;
+
     /**
      * @brief Selected object (can be vertex, edge, face, or mesh)
      */
@@ -170,6 +191,8 @@ private:
     uint32_t mNbFaceIndices = 0;
     /** @brief Number of existing geometric vertices */
     uint32_t nVertices = 0;
+    int mWidth = 1;
+    int mHeight = 1;
 #ifdef TEST_HALFEDGES
     uint32_t mTestHalfEdge=0;
     uint32_t mTestMesh=0;

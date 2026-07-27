@@ -93,6 +93,8 @@ public slots:
     void onZoom(float factor);
     /** @brief Signal called upon changing the current viewport Mode (always redraws) */
     void onSetViewportMode(ViewportMode mode);
+    /** @brief Signal called when a selection is made on the screen */
+    void onScreenSelect(int x, int y);
 #ifdef TEST_HALFEDGES
     void onAddHalfEdgeTest(int i);
     void nextMeshTest();

@@ -19,6 +19,7 @@ RenderController::RenderController(QObject* parent, RenderWidget *render_widget)
 
     connect(mRenderWidget, &RenderWidget::zoom, this, &RenderController::onZoom);
     connect(mRenderWidget, &RenderWidget::setViewportMode, this, &RenderController::onSetViewportMode);
+    connect(mRenderWidget, &RenderWidget::pickFromScreen, this, &RenderController::onScreenSelect);
     connect(this, &RenderController::callWidgetRedraw, mRenderWidget, &RenderWidget::requestRedraw);
     mRenderer = new Renderer();
 }
@@ -101,6 +102,12 @@ void RenderController::onSetViewportMode(const ViewportMode mode)
 {
     mCurrViewportMode = mode;
     changedGeometry();
+}
+
+void RenderController::onScreenSelect(int x, int y)
+{
+    if (mRenderer->readPickingBuffer(x, y) >= 0)
+        changedCamera();
 }
 
 #ifdef TEST_HALFEDGES

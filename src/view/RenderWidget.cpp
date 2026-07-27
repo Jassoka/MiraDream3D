@@ -37,7 +37,8 @@ void RenderWidget::initializeGL() {
 }
 void RenderWidget::resizeGL(int width, int height) {
     glViewport(0, 0, width, height);
-    emit resize(width, height);
+    const double scale = devicePixelRatioF();
+    emit resize(width * scale, height * scale);
 }
 void RenderWidget::paintGL() {
     emit paint();
@@ -54,6 +55,12 @@ void RenderWidget::mousePressEvent(QMouseEvent *event) {
             mMouseDragRotateX = mMouseDragRotateY = 0;
         else
             mMouseDragTranslateX = mMouseDragTranslateY = 0;
+    }
+    if (event->button() == Qt::LeftButton)
+    {
+        const double scale = devicePixelRatioF();
+        const QPoint localpos = mapFromGlobal(QCursor::pos());
+        emit pickFromScreen(localpos.x()*scale, localpos.y()*scale);
     }
 }
 void RenderWidget::mouseMoveEvent(QMouseEvent *event) {

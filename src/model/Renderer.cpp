@@ -13,6 +13,7 @@
 #include "model/ShaderManager.h"
 
 #include <iostream>
+#include <QOpenGLExtraFunctions>
 
 #include "model/TextureManager.h"
 
@@ -21,12 +22,14 @@ const std::string VIEWPORT_MATERIAL = "viewport_material";
 const std::string GRID = "grid";
 const std::string LINES = "viewport_lines";
 const std::string VERTICES = "viewport_vertices";
+const std::string PICKING = "picking";
 
 static constexpr glm::vec3 worldUp {0.0f, 0.0f, 1.0f};
 static constexpr glm::vec3 defaultEngineCameraPosition {4.0f, 4.0f, 4.0f};
 static constexpr float defaultEngineCameraFOV = glm::radians(45.0f);
 static constexpr float defaultEngineCameraNearPlane = 0.1f;
 static constexpr float defaultEngineCameraFarPlane = 1000.0f;
+
 
 Camera *Renderer::initEngineCamera()
 {
@@ -221,6 +224,8 @@ void Renderer::drawTemplate()
     drawPoints();
     //on dessine d'abord la grid
     drawGrid();
+
+    updatePickingBuffer(); // Toujours faire en dernier
 }
 
 
@@ -314,6 +319,118 @@ void Renderer::buildEdgeBuffer(const std::vector<Mesh> &meshes)
     mGeometricVBO.release();
 }
 
+void Renderer::updatePickingBuffer()
+{
+    mGlFuncs->glBindFramebuffer(GL_FRAMEBUFFER, mPickingFBO);
+
+    GLint prevViewport[4];
+    mGlFuncs->glGetIntegerv(GL_VIEWPORT, prevViewport);
+
+    GLfloat prevClearColor[4];
+    mGlFuncs->glGetFloatv(GL_COLOR_CLEAR_VALUE, prevClearColor);
+
+    const GLboolean prevDepthTest = mGlFuncs->glIsEnabled(GL_DEPTH_TEST);
+    mGlFuncs->glEnable(GL_PROGRAM_POINT_SIZE);
+    mGlFuncs->glViewport(0, 0, mWidth, mHeight);
+    mGlFuncs->glDepthMask(GL_TRUE);
+
+    QOpenGLExtraFunctions *extraFuncs = QOpenGLContext::currentContext()->extraFunctions();
+    GLuint clearValue = 0;
+    // 3. Clear Color Attachment 0 with the unsigned integer
+    extraFuncs->glClearBufferuiv(GL_COLOR, 0, &clearValue);
+
+    mGlFuncs->glClear(GL_DEPTH_BUFFER_BIT);
+    mGlFuncs->glEnable(GL_DEPTH_TEST);
+    mGlFuncs->glDisable(GL_BLEND);
+
+    const GLuint programID = ShaderManager::getShaderProgram(PICKING);
+    mGlFuncs->glUseProgram(programID);
+
+    const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
+    mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera->computeViewMatrix()[0][0]);
+
+    const int projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
+    mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera->computePerspectiveMatrix()[0][0]);
+
+    // 3. Draw geometry (Depth test automatically hides obscured vertices)
+    mGeometricVAO.bind();
+    mGlFuncs->glDrawArrays(GL_POINTS, 0, nVertices);
+
+    mGeometricVAO.release();
+
+    mGlFuncs->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    mGlFuncs->glViewport(prevViewport[0], prevViewport[1], prevViewport[2], prevViewport[3]);
+    mGlFuncs->glClearColor(prevClearColor[0], prevClearColor[1], prevClearColor[2], prevClearColor[3]);
+
+    if (prevDepthTest) {
+        mGlFuncs->glEnable(GL_DEPTH_TEST);
+    } else {
+        mGlFuncs->glDisable(GL_DEPTH_TEST);
+    }
+}
+
+int32_t Renderer::readPickingBuffer(const int x, int y)
+{
+    mGlFuncs->glBindFramebuffer(GL_FRAMEBUFFER, mPickingFBO);
+    uint32_t selectedID = 0;
+
+    // OpenGL uses bottom-left origin coordinates
+    y = mHeight - y*2 - 1;
+    mGlFuncs->glReadPixels(x*2, y, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &selectedID);
+
+    mGlFuncs->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    mSelection = selectedID -1;
+    return selectedID - 1;
+}
+
+
+
+void Renderer::initPickingBuffer()
+{
+    // 2. Create and configure the integer texture
+    mGlFuncs->glGenTextures(1, &mPickingTexture);
+    mGlFuncs->glBindTexture(GL_TEXTURE_2D, mPickingTexture);
+    mGlFuncs->glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, mWidth, mHeight, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, nullptr);
+
+    // CRITICAL: Apply GL_NEAREST filtering immediately
+    mGlFuncs->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    mGlFuncs->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    mGlFuncs->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    mGlFuncs->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // 3. Create the Depth Buffer (so depth testing works during picking)
+    mGlFuncs->glGenRenderbuffers(1, &mDepthBuffer);
+    mGlFuncs->glBindRenderbuffer(GL_RENDERBUFFER, mDepthBuffer);
+    mGlFuncs->glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mWidth, mHeight);
+
+    // 4. Create the Framebuffer Object and attach the texture + depth buffer
+    mGlFuncs->glGenFramebuffers(1, &mPickingFBO);
+    mGlFuncs->glBindFramebuffer(GL_FRAMEBUFFER, mPickingFBO);
+
+    mGlFuncs->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mPickingTexture, 0);
+    mGlFuncs->glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mDepthBuffer);
+
+    // 5. Verify OpenGL is happy with the setup
+    if (mGlFuncs->glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        qDebug() << "Integer FBO is incomplete!";
+    }
+
+    // 6. Unbind to restore clean state
+    mGlFuncs->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    mGlFuncs->glBindTexture(GL_TEXTURE_2D, 0);
+    mGlFuncs->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+}
+
+void Renderer::resizePickingBuffer()
+{
+    mGlFuncs->glDeleteFramebuffers(1, &mPickingFBO);
+    mGlFuncs->glDeleteTextures(1, &mPickingTexture);
+    mGlFuncs->glDeleteRenderbuffers(1, &mDepthBuffer);
+    initPickingBuffer();
+}
+
+
 template <ViewportMode m>
 void Renderer::geometryRedrawTemplate()
 {
@@ -367,6 +484,12 @@ void Renderer::initShaders()
     auto fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/grid.frag", GL_FRAGMENT_SHADER);
     auto shaders = {vertexShader, fragmentShader};
     ShaderManager::createProgram(GRID, shaders);
+
+
+    vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/picking.vert", GL_VERTEX_SHADER);
+    fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/picking.frag", GL_FRAGMENT_SHADER);
+    shaders = {vertexShader, fragmentShader};
+    ShaderManager::createProgram(PICKING, shaders);
 }
 
 void Renderer::initialize(QOpenGLFunctions* glFuncs)
@@ -411,14 +534,19 @@ void Renderer::initialize(QOpenGLFunctions* glFuncs)
     mGeometricEBO.bind();
     mGeometricVAO.release();
 
+    initPickingBuffer();
+
     initShaders();
 }
 
-void Renderer::resize(const int width, int height) const
+void Renderer::resize(const int width, int height)
 {
     if (height == 0) height = 1;
     const float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
+    mHeight = height*2;
+    mWidth = width*2; //TODO ENLEVER
     mEngineCamera->setAspectRatio(aspectRatio);
+    resizePickingBuffer();
 }
 
 

@@ -30,6 +30,7 @@ add_library(Model STATIC
         SceneImport.cpp
         importer/ImportParser.cpp
         ShaderParser.cpp
+        Editor.cpp
 )
 
 target_include_directories(Model PUBLIC
