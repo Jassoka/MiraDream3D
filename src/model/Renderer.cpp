@@ -492,14 +492,14 @@ void Renderer::initShaders()
 
     auto vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/grid.vert", GL_VERTEX_SHADER);
     auto fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/grid.frag", GL_FRAGMENT_SHADER);
-    auto shaders = {vertexShader, fragmentShader};
-    ShaderManager::createProgram(GRID, shaders);
+    const auto gridShaders = {vertexShader, fragmentShader};
+    ShaderManager::createProgram(GRID, gridShaders);
 
 
     vertexShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/picking.vert", GL_VERTEX_SHADER);
     fragmentShader = ShaderManager::compileQTRessourceShader(":/assets/shaders/picking.frag", GL_FRAGMENT_SHADER);
-    shaders = {vertexShader, fragmentShader};
-    ShaderManager::createProgram(PICKING, shaders);
+    const auto pickingShaders = {vertexShader, fragmentShader};
+    ShaderManager::createProgram(PICKING, pickingShaders);
 }
 
 void Renderer::initialize(QOpenGLFunctions* glFuncs)
