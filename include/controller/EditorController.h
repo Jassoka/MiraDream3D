@@ -22,7 +22,7 @@ public slots:
     void onMouseDrag(int dx, int dy, Qt::MouseButtons buttons);
     void onMouseScroll(int deltaX, int deltaY);
     void onMousePress(Qt::MouseButton button, int localX, int localY);
-    void onMouseRelease(Qt::MouseButton button) const;
+    void onMouseRelease(Qt::MouseButton button);
     void refresh();
     signals:
     void teleportMouseToCenter();
@@ -44,6 +44,9 @@ private:
 
     int mMouseScroll = 0;
 
+    Qt::MouseButtons mHeldButtons;
+    // Buffer for storing mouse cursor style
+    Qt::CursorShape mMouseStyleBuffer = Qt::ArrowCursor;
 
     float mMouseRotateSensitivity = 0.0035f;
     float mMouseTranslateSensitivity = 0.0035f;

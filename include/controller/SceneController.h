@@ -21,16 +21,12 @@ public:
     explicit SceneController(QObject* parent, RenderController *renderController);
 
     Scene *getScene();
-    /**
-     * @brief Empties current scene
-     */
-    void loadBlankScene();
 
 public slots:
-    /**
-     * @brief Imports a file to the current scene
-     */
+    /** @brief Imports a file to the current scene */
     void importScene(const std::string &path);
+    /** @brief Empties current scene */
+    void loadBlankScene();
 
 private:
     RenderController *mRenderController;

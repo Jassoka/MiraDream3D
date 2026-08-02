@@ -11,16 +11,16 @@
 EditorToolBar::EditorToolBar(QWidget* parent)
     : QToolBar("Editor Tools", parent)
 {
-    setIconSize(QSize(24, 24));
+    setIconSize(QSize(32, 32));
     setMovable(false);
 
     mToolGroup = new QActionGroup(this);
     mToolGroup->setExclusive(true);
 
-    mNavigateAction = new QAction("Navigate", this);
+    mNavigateAction = new QAction(QIcon(":/icons/navigate_tool.png"), "Navigate", this);
     mNavigateAction->setCheckable(true);
 
-    mSelectAction = new QAction("Select", this);
+    mSelectAction = new QAction(QIcon(":/icons/selection_tool.png"), "Select", this);
     mSelectAction->setCheckable(true);
 
     mToolGroup->addAction(mNavigateAction);
@@ -36,4 +36,11 @@ EditorToolBar::EditorToolBar(QWidget* parent)
     });
 
     mNavigateAction->setChecked(true); // TODO faire en sorte que ça s'active direct (pas possible actuellement car initialisé avant editorcontroller)
+}
+
+EditorToolBar::~EditorToolBar()
+{
+    delete mSelectAction;
+    delete mNavigateAction;
+    delete mToolGroup;
 }

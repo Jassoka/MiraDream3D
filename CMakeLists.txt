@@ -36,20 +36,6 @@ add_subdirectory(src/controller)
 
 set(PROJECT_SOURCES
         src/main.cpp
-        include/model/MeshTopologyBuilder.h
-        include/model/MeshBuilder.h
-        include/model/TextureManager.h
-        include/util/parser_utils.hpp
-        include/view/NodeHierarchyWidget.h
-        include/controller/NodeHierarchyController.h
-        include/model/SceneImport.h
-        include/model/importer/ImportParser.h
-        include/model/shader_parser/ShaderParser.h
-        include/util/NullStream.h
-        include/model/shader_parser/GLSLLexer.h
-        include/model/importer/ObjLexer.h
-        include/controller/EditorController.h
-        include/model/Editor.h
 )
 
 qt_add_executable(MiraDream3D
@@ -57,6 +43,16 @@ qt_add_executable(MiraDream3D
     ${PROJECT_SOURCES}
 )
 
+
+# include(FetchContent)
+
+# FetchContent_Declare(
+#         trianglib
+#         GIT_REPOSITORY https://github.com/Jassoka/trianglib
+#         GIT_TAG        master
+# )
+
+# FetchContent_MakeAvailable(trianglib)
 
 # Précompilation
 
@@ -75,6 +71,7 @@ target_link_libraries(EngineCore PUBLIC
         Model
         View
         Controller
+        # jassoka::trianglib
 )
 
 target_include_directories(EngineCore PUBLIC
@@ -92,6 +89,18 @@ qt_add_resources(MiraDream3D "editor_resources"
 )
 
 target_link_libraries(MiraDream3D PUBLIC EngineCore)
+
+# Assets hors RAM RCC
+
+add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/icons.rcc
+        COMMAND Qt6::rcc -binary ${CMAKE_CURRENT_SOURCE_DIR}/icons.qrc -o ${CMAKE_CURRENT_BINARY_DIR}/icons.rcc
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/icons.qrc
+        COMMENT "Compiling external binary resource icons.rcc..."
+)
+
+add_custom_target(MakeRccFile ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/icons.rcc)
+add_dependencies(MiraDream3D MakeRccFile)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

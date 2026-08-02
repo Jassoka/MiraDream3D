@@ -29,8 +29,5 @@ void main() {
     vec4  nearUnProj4D = viewInv * projInv * vec4(pos2D,0.0,1.0);
     nearUnProj=nearUnProj4D.xyz/nearUnProj4D.w;
 
-    vec4  lookAtPoint4D = viewInv * projInv * vec4(0.0,0.0,0.5,1.0);
-    lookAtPoint=lookAtPoint4D.xyz/lookAtPoint4D.w;
-
     gl_Position = vec4(pos2D,0.0,1.0);
 }

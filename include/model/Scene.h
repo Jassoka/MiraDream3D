@@ -37,6 +37,7 @@ public:
     /**
      * @brief Loads an image using QT and imports it as a texture
      * @return New texture ID, old texture ID if already exists, -1 if import failed
+     * @warning Can only load square textures as of now //TODO
      */
     int32_t loadQTImageAsTexture(const QString &path);
     /** @brief Return a pointer to the raw data of texture indexed textureID */

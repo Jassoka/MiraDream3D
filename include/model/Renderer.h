@@ -40,6 +40,9 @@ public:
      */
     Camera *getEngineCamera() const { return mEngineCamera; }
 
+    /** @brief Toggles grid display, returns state*/
+    bool toggleGrid() {mGridToggled = !mGridToggled; return mGridToggled;}
+
     /** @brief Initialization for OpenGL */
     void initialize(QOpenGLFunctions* glFuncs);
     /** @brief Resizes the engine camera aspect ratio */
@@ -179,11 +182,15 @@ private:
      * @brief Selected object (can be vertex, edge, face, or mesh)
      */
     int32_t mSelection = 0;
+
     SelectionMode mCurrentSelectionMode = SelectionMode::NONE;
     /**
      * @brief Number of edge indices
      */
     uint32_t mNbEdgeIndices = 0;
+
+    /** @brief True if grid needs to be drawn */
+    bool mGridToggled = true;
 
     /**
      * @brief Number of face indices

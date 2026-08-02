@@ -20,12 +20,14 @@ QObject(parent)
     mEditorController = new EditorController(static_cast<QObject*>(this), mRenderController, renderWidget);
     mRenderController->setScene(mSceneController->getScene());
 
+    connect(mMainWindow, &MainWindow::changedViewportMode, mRenderController, &RenderController::onSetViewportMode);
     connect(mMainWindow, &MainWindow::importSceneRequested, mSceneController, &SceneController::importScene);
+    connect(mMainWindow, &MainWindow::clearSceneRequested, mSceneController, &SceneController::loadBlankScene);
 
+    connect(mMainWindow, &MainWindow::toggleGridRequested, mRenderController, &RenderController::onToggleGrid);
 
+    connect(mRenderController, &RenderController::toggledGrid, mMainWindow, &MainWindow::onToggledGrid);
     connect(mMainWindow, &MainWindow::changedEditorTool, mEditorController, &EditorController::setTool);
-
-
 
 #ifdef TEST_HALFEDGES
     connect(renderWidget, &RenderWidget::addTestHalfEdgeSignal, mRenderController, &RenderController::onAddHalfEdgeTest);

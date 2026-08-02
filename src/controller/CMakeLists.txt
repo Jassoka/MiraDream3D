@@ -9,6 +9,8 @@ add_library(Controller STATIC
         ../../include/controller/ErrorController.h
         ErrorController.cpp
         EditorController.cpp
+        ../../include/controller/EditorController.h
+        ../../include/controller/NodeHierarchyController.h
 )
 target_include_directories(Controller PUBLIC
         ${CMAKE_SOURCE_DIR}/libs

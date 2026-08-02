@@ -1,15 +1,17 @@
 #include "view/MainWindow.h"
 
 #include <iostream>
+#include <qboxlayout.h>
 
 #include "view/RenderWidget.h"
 #include "RenderDocHelper.hpp"
 #include <QFileDialog>
-#include <QToolBar>
-#include <QPushButton>
 
 #include "view/EditorToolBar.h"
+#include "view/HeaderBar.h"
+#include "view/ViewportLayout.h"
 
+class QHBoxLayout;
 extern uint32_t frame;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -17,41 +19,36 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle(QString::fromUtf8("MiraDream3D"));
     int fps=60;//TODO enlever cette merde hardcodee
 
-    mImportButton = new QPushButton("&Import",this);
-    QToolBar* toolbar = addToolBar("Outils");
-    toolbar->addWidget(mImportButton);
-
-
 
     mRenderWidget = new RenderWidget(fps,this);
     setCentralWidget(mRenderWidget);
     this->resize(800, 600);
+    connect(mRenderWidget, &RenderWidget::setViewportMode, this, &MainWindow::changedViewportMode);
 
     mEditorToolBar = new EditorToolBar(this);
     this->addToolBar(Qt::LeftToolBarArea, mEditorToolBar);
-
     connect(mEditorToolBar, &EditorToolBar::clickedEditorTool, this, &MainWindow::changedEditorTool);
 
+    mHeaderBar = new HeaderBar(this);
+    this->setMenuBar(mHeaderBar);
+    connect(mHeaderBar, &HeaderBar::clickedImport, this, &MainWindow::importSceneRequested);
+    connect(mHeaderBar, &HeaderBar::clickedClearScene, this, &MainWindow::clearSceneRequested);
+    connect(mHeaderBar, &HeaderBar::clickedToggleGrid, this, &MainWindow::toggleGridRequested);
+    connect(this, &MainWindow::onToggledGrid, mHeaderBar, &HeaderBar::onToggledGrid);
 
+    mViewportLayout = new ViewportLayout(mRenderWidget);
+    auto *overlayLayout = new QVBoxLayout(mRenderWidget);
+    overlayLayout->setContentsMargins(4, 4, 4, 4); // 10px from the edges
+    overlayLayout->addWidget(mViewportLayout, 0, Qt::AlignTop | Qt::AlignRight);
+
+    connect(mViewportLayout, &ViewportLayout::clickedViewportMode, this, &MainWindow::changedViewportMode);
+    connect(mRenderWidget, &RenderWidget::setViewportMode, mViewportLayout, &ViewportLayout::onViewportChange);
 
     // When OpenGL funcs are ready, give scene to the RenderWidget
     mRenderWidget->show();
-    mImportButton->show();
 
-
-    connect(mImportButton, &QPushButton::clicked, this, [this]() {
-    QString path = QFileDialog::getOpenFileName(
-        this,
-        "Ouvrir un fichier",
-        "",
-        "Modèles 3D (*.obj *.fbx);;Tous les fichiers (*)"
-    );
-    if (!path.isEmpty()) {
-        emit importSceneRequested(path.toStdString());
-    }
-});
-    //connect(mRenderWidget->getTimer,SIGNAL(timeout()),this,timeoutControl());
 }
+
 
 MainWindow::~MainWindow() = default;
 

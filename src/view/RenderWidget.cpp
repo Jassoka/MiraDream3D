@@ -3,6 +3,7 @@
 
 #include <QTimer>
 #include <iostream>
+#include <qboxlayout.h>
 #include <QMouseEvent>
 
 RenderWidget::RenderWidget(int framesPerSecond, QWidget *parent) :

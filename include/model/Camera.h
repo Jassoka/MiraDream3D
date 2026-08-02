@@ -56,8 +56,10 @@ public:
     /** @setter{\ref mAspectRatio} */
     void setAspectRatio(const double aspect_ratio) { mAspectRatio = aspect_ratio; }
 
-    glm::vec3 getPosition();
-    glm::vec3 getLookAt();
+    glm::vec3 getPosition() const;
+    glm::vec3 getLookAt() const ;
+    glm::vec3 getAnchorPoint() const {return mAnchorPoint;}
+    float getAnchorPointDistance() const { return glm::length(mAnchorPoint - getPosition());}
 
     /** @getter{\ref mFarPlane} */
     double getFarPlane() const;
@@ -69,7 +71,7 @@ public:
      * @param dPhi Horizontal rotation
      * @param dTheta Vertical rotation
      */
-    void rotateAroundAnchor(const float dPhi, const float dTheta);
+    void rotateAroundAnchor(float dPhi, float dTheta);
     /**
      * @brief Zooms towards \ref mAnchorPoint
      */

@@ -92,7 +92,7 @@ int32_t Scene::loadQTImageAsTexture(const QString &path)
     if (image.isNull()) return -1;
     const int width = image.width();
     const int height = image.height();
-    assert(width == height); //TODO un peu violent
+    if (width != height) return -1;
 
     if (width != TEXTURE_SIZE)
     {

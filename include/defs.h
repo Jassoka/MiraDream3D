@@ -6,6 +6,7 @@
 #define MIRADREAM3D_DEFINES_H
 
 #define WORLD_ORIGIN glm::vec3(0.0)
+#define WORLD_UP glm::vec3(0.0f, 0.0f, 1.0f)
 #define DEFAULT_TEXTURE 0
 #define DEFAULT_MATERIAL 0
 #define MAX_FACESIZE 4

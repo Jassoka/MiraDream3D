@@ -52,5 +52,6 @@ void SceneController::importScene(const std::string &path)
 void SceneController::loadBlankScene()
 {
     mScene.clearScene();
+    mRenderController->changedGeometry();
 }
 

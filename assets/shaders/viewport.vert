@@ -25,14 +25,14 @@ out vec2 uvTexCoords;
 #endif
 #endif
 
-/*
 #if RENDER_MODE == 1
+//TODO: faire avec des indices (il faut faire la conversion vertexID global to local sur renderer
 uniform vec3 edgeOrigin;
 uniform vec3 edgeEnd;
+uniform bool selectedEdge;
 
 out vec3 color;
 #endif
-*/
 
 #if RENDER_MODE == 2 || RENDER_MODE == 3
 vec3 computeN() {
@@ -73,17 +73,21 @@ void main() {
     gl_PointSize = 10.0;
     #endif
 
-    /*
-    #if RENDER_MODE ==
-    if (halfEdgeEnd==position){
-        color=vec3(0.0,0.0,1.0);
+    #if RENDER_MODE == 1
+    if (!selectedEdge)
+        color = vec3(1.0, 1.0, 1.0);
+    else
+    {
+
+        if (edgeEnd == position) {
+            color = vec3(0.0, 0.0, 1.0);
+        }
+        else if (edgeOrigin == position) {
+            color = vec3(1.0, 0.0, 0.0);
+        }
+        else color = vec3(0.0, 0.0, 0.0);
     }
-    else if (halfEdgeOrigin==position){
-        color=vec3(1.0,0.0,0.0);
-    }
-    else color=vec3(0.0,0.0,0.0);
     #endif
-*/
 
     gl_Position = projMatrix * viewPos;
 }

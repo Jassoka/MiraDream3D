@@ -24,17 +24,16 @@ const std::string LINES = "viewport_lines";
 const std::string VERTICES = "viewport_vertices";
 const std::string PICKING = "picking";
 
-static constexpr glm::vec3 worldUp {0.0f, 0.0f, 1.0f};
 static constexpr glm::vec3 defaultEngineCameraPosition {4.0f, 4.0f, 4.0f};
 static constexpr float defaultEngineCameraFOV = glm::radians(45.0f);
 static constexpr float defaultEngineCameraNearPlane = 0.1f;
-static constexpr float defaultEngineCameraFarPlane = 1000.0f;
+static constexpr float defaultEngineCameraFarPlane = 10000.0f;
 
 
 Camera *Renderer::initEngineCamera()
 {
     const glm::vec3 lookAt = glm::normalize(WORLD_ORIGIN - defaultEngineCameraPosition);
-    const glm::vec3 right = glm::normalize(glm::cross(lookAt, worldUp));
+    const glm::vec3 right = glm::normalize(glm::cross(lookAt, WORLD_UP));
     const glm::vec3 up = glm::normalize(glm::cross(right, lookAt));
     return new Camera (
         up,
@@ -105,7 +104,8 @@ void Renderer::drawForMode(const GLuint programID)
         mRenderVAO.bind();
         mGlFuncs->glDrawElements(GL_TRIANGLES, mNbFaceIndices, GL_UNSIGNED_INT, nullptr);
         mRenderVAO.release();
-        drawLines();
+        if (mCurrentSelectionMode != SelectionMode::NONE)
+            drawLines();
     }
     else if constexpr (m == ViewportMode::WIREFRAME)
     {
@@ -203,6 +203,16 @@ void Renderer::drawLines()
 
     auto projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
     mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera->computePerspectiveMatrix()[0][0]);
+
+
+    //TODO faire une vraie logique de selection
+    const auto selectedEdge= mGlFuncs->glGetUniformLocation(programID, "selectedEdge");
+    mGlFuncs->glUniform1i(selectedEdge, false? 1 : 0);
+    const auto edgeOrigin= mGlFuncs->glGetUniformLocation(programID, "edgeOrigin");
+    mGlFuncs->glUniform3f(edgeOrigin, 0.0, 0.0, 0.0);
+    const auto edgeEnd= mGlFuncs->glGetUniformLocation(programID, "edgeEnd");
+    mGlFuncs->glUniform3f(edgeEnd, 0.0, 0.0, 0.0);
+
     mGlFuncs->glDrawElements(GL_LINES, mNbEdgeIndices, GL_UNSIGNED_INT, nullptr);
 
     mGeometricVAO.release();
@@ -220,10 +230,10 @@ void Renderer::drawTemplate()
     setShaderArguments<m>(programID);
     drawForMode<m>(programID);
 
-
-    drawPoints();
+    if (mCurrentSelectionMode != SelectionMode::NONE)
+        drawPoints();
     //on dessine d'abord la grid
-    drawGrid();
+    if (mGridToggled) drawGrid();
 
     updatePickingBuffer(); // Toujours faire en dernier
 }
@@ -568,38 +578,14 @@ void Renderer::drawGrid() {
     const int projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
     mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera->computePerspectiveMatrix()[0][0]);
 
-
-    const int cameraPosition = mGlFuncs->glGetUniformLocation(programID, "cameraPosition");
-    glm::vec3 vCamPosition = mEngineCamera->getPosition();
-    mGlFuncs->glUniform3f (cameraPosition, vCamPosition.x, vCamPosition.y, vCamPosition.z);
-
-    mGridVAO.bind();
-    mGlFuncs->glDrawArrays(GL_TRIANGLES, 0, 3);
-    mGridVAO.release();
-
-    glDisable(GL_BLEND);
-}
-
-/*
-void Renderer::drawVertices()
-{
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    GLuint programID = ShaderManager::getShaderProgram(VERTICES);
-    mGlFuncs->glUseProgram(programID);
-    // Arguments de la caméra
-    const int viewMatrix= mGlFuncs->glGetUniformLocation(programID, "viewMatrix");
-    mGlFuncs->glUniformMatrix4fv (viewMatrix, 1, GL_FALSE, &mEngineCamera->computeViewMatrix()[0][0]);
-
-    const int projMatrix= mGlFuncs->glGetUniformLocation(programID, "projMatrix");
-    mGlFuncs->glUniformMatrix4fv (projMatrix, 1, GL_FALSE, &mEngineCamera->computePerspectiveMatrix()[0][0]);
+    const int cameraPos = mGlFuncs->glGetUniformLocation(programID, "cameraPos");
+    const auto cam = mEngineCamera->getPosition();
+    mGlFuncs->glUniform3f(cameraPos, cam[0], cam[1], cam[2]);
 
 
-    const int cameraPosition = mGlFuncs->glGetUniformLocation(programID, "cameraPosition");
-    glm::vec3 vCamPosition = mEngineCamera->getPosition();
-    mGlFuncs->glUniform3f (cameraPosition, vCamPosition.x, vCamPosition.y, vCamPosition.z);
+    const int anchorPos = mGlFuncs->glGetUniformLocation(programID, "anchorPos");
+    const auto anchor = mEngineCamera->getAnchorPoint();
+    mGlFuncs->glUniform3f(anchorPos, anchor[0], anchor[1], anchor[2]);
 
     mGridVAO.bind();
     mGlFuncs->glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -607,4 +593,3 @@ void Renderer::drawVertices()
 
     glDisable(GL_BLEND);
 }
-*/

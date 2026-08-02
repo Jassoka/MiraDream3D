@@ -21,7 +21,7 @@ public:
             skipLine();
             return(LexerToken{.type=NEWLINE});
         }
-        if (c=='/') {
+        if (c=='/' || c=='\\') {
             mPos++; mCol++;
             return LexerToken{.type=SLASH, .identifier = "/"};
         }
@@ -32,7 +32,8 @@ public:
         if (isLetter(c)|| c=='_'){return readIdentifier();}
         if (isNumber(c) || c=='-' || c=='.'||c=='+' ){return readNumber();}
 
-        throwError("Unknown grammar");
+        mPos++; mCol++;
+        return LexerToken{.type = SYMBOL, .identifier = std::string(1, c)};
     }
 };
 #endif //MIRADREAM3D_OBJLEXER_H

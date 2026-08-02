@@ -20,12 +20,17 @@ Camera::Camera(const glm::vec3 up,
     mFOV(FOV), mNearPlane(nearPlane), mFarPlane(farPlane), mAspectRatio(aspectRatio),
     mAnchorPoint(WORLD_ORIGIN)
 {
+    //TODO ça marche mais bon ça va de pair avec la logique cassée de rotation
+    glm::vec3 nLookAt = glm::normalize(lookAt);
+    glm::vec3 nRight  = glm::normalize(glm::cross(up, nLookAt));
+    glm::vec3 nUp     = glm::normalize(glm::cross(nLookAt, nRight));
+
     const glm::mat4 translatedRotationMatrix(
-        glm::vec4(right, 0.0),
-        glm::vec4(up, 0.0),
-        glm::vec4(lookAt, 0.0),
+        glm::vec4(nRight, 0.0),
+        glm::vec4(nUp, 0.0),
+        glm::vec4(nLookAt, 0.0),
         glm::vec4(0.0, 0.0, 0.0, 1.0)
-        );
+    );
     mRotationMatrix = glm::transpose(translatedRotationMatrix);
     mTranslationMatrix = glm::translate(glm::mat4(1.0), -position);
 }
@@ -57,11 +62,11 @@ const glm::mat4& Camera::computePerspectiveMatrix()
     return mPerspectiveMatrix;
 }
 
-glm::vec3 Camera::getPosition() {
+glm::vec3 Camera::getPosition() const {
     return(-glm::vec3(mTranslationMatrix[3]));
 }
-glm::vec3 Camera::getLookAt() {
-    return glm::vec3(mRotationMatrix[0][2],mRotationMatrix[1][2],mRotationMatrix[2][2]);
+glm::vec3 Camera::getLookAt() const {
+    return {mRotationMatrix[0][2],mRotationMatrix[1][2],mRotationMatrix[2][2]};
 }
 
 double Camera::getFarPlane() const {
@@ -71,11 +76,20 @@ double Camera::getNearPlane() const
 {
     return mNearPlane;
 }
-void Camera::rotateAroundAnchor(const float dPhi, const float dTheta)
+void Camera::rotateAroundAnchor(const float dPhi, float dTheta)
 {
-    float rho = glm::length(glm::vec3(mTranslationMatrix[3]) - mAnchorPoint);
-    const float cP = std::cos(dPhi);
-    const float sP = std::sin(dPhi);
+    const glm::vec3 translationVector = -xyz(mTranslationMatrix[3]);
+
+    const float poleFactor = std::abs(glm::dot(WORLD_UP, glm::vec3(mRotationMatrix[0][1], mRotationMatrix[1][1], mRotationMatrix[2][1])));
+
+    if (dTheta * getPosition().z < 0)
+    {
+        // When poleFactor is between 0.0f and 0.1f, scale dTheta smoothly from 0 to 1
+        float slowDownFactor = glm::smoothstep(0.0f, 0.1f, poleFactor);
+        dTheta *= slowDownFactor;
+    }
+    const float cP = std::cos(dPhi * poleFactor);
+    const float sP = std::sin(dPhi * poleFactor);
     const float cT = std::cos(dTheta);
     const float sT = std::sin(dTheta);
 
@@ -89,14 +103,12 @@ void Camera::rotateAroundAnchor(const float dPhi, const float dTheta)
 
     R = rotYaw * R;
 
-    glm::vec3 newTranslation = rho * glm::normalize( glm::vec3(R[0][2], R[1][2], R[2][2])) + mAnchorPoint;
-
-    mTranslationMatrix[3] = glm::vec4(newTranslation, 1.0f);
+    glm::vec3 offset = translationVector - mAnchorPoint;
     mRotationMatrix       = glm::mat4(R);
 
 //Pitch
 
-    rho = glm::length(glm::vec3(mTranslationMatrix[3]) - mAnchorPoint);
+    float rho = glm::length(offset);
 
     const glm::mat3 rotPitch(
         glm::vec3(cP,   0.0f, -sP),
@@ -104,25 +116,16 @@ void Camera::rotateAroundAnchor(const float dPhi, const float dTheta)
         glm::vec3(sP,   0.0f, cP)
         );
 
-    const auto RlookAtSaved = glm::normalize(glm::vec3(
-    mRotationMatrix[0][2],
-    mRotationMatrix[1][2],
-    mRotationMatrix[2][2]
-));
-
-    const glm::vec3 worldUp(0.0f, 0.0f, 1.0f);
-
     R = rotPitch * glm::mat3(mRotationMatrix);
 
-    auto RlookAt = glm::normalize(glm::vec3(
+    const auto RlookAt = glm::normalize(glm::vec3(
         R[0][2],
         R[1][2],
         R[2][2]
     ));
 
     // right parallèle au sol
-    const auto Rright = glm::normalize(glm::cross(worldUp, RlookAt));
-
+    const auto Rright = glm::normalize( glm::cross(WORLD_UP, RlookAt));
     // up reconstruit
     const auto Rup = glm::normalize(glm::cross(RlookAt, Rright));
 
@@ -141,15 +144,14 @@ void Camera::rotateAroundAnchor(const float dPhi, const float dTheta)
     R[2][2] = RlookAt.z;
 
 
-    newTranslation = rho * glm::normalize( glm::vec3(R[0][2], R[1][2], R[2][2])) + mAnchorPoint;
+    offset = rho * -RlookAt + mAnchorPoint;
 
-    mTranslationMatrix[3] = glm::vec4(newTranslation, 1.0f);
+    mTranslationMatrix[3] = glm::vec4(-offset, 1.0f);
     mRotationMatrix       = glm::mat4(R);
-
 }
 void Camera::zoom(float zoomFactor) {
-    glm::vec3 translation = (glm::vec3(mTranslationMatrix[3]) - mAnchorPoint)* zoomFactor + mAnchorPoint;
-    mTranslationMatrix[3] = glm::vec4(translation,1.0f);
+    glm::vec3 translation = ( -glm::vec3(mTranslationMatrix[3]) - mAnchorPoint)* zoomFactor + mAnchorPoint;
+    mTranslationMatrix[3] = glm::vec4(-translation,1.0f);
 
 }
 
@@ -159,6 +161,5 @@ void Camera::strafeCamera(float dx,float dy) {
 
     glm::vec3 translation=dx*right+dy*up;
     mAnchorPoint += translation;
-    mTranslationMatrix[3]+=glm::vec4(translation,0.0);
-
+    mTranslationMatrix[3]-=glm::vec4(translation,0.0);
 }

@@ -6,6 +6,7 @@
 #define MIRADREAM3D_TOOLBAR_H
 #include <QToolBar>
 
+class QPushButton;
 enum class EditorTool;
 
 class EditorToolBar : public QToolBar
@@ -13,6 +14,7 @@ class EditorToolBar : public QToolBar
 Q_OBJECT
 public:
     explicit EditorToolBar(QWidget* parent = nullptr);
+    ~EditorToolBar() override;
     signals:
     void clickedEditorTool(EditorTool tool);
 private:

@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 
+class ViewportLayout;
+class HeaderBar;
+enum class ViewportMode;
 enum class EditorTool;
 class EditorToolBar;
 class RenderWidget;
@@ -20,10 +23,17 @@ public slots:
     //void timeoutControl();
     signals:
     void importSceneRequested(const std::string &path);
+    void clearSceneRequested();
+    void toggleGridRequested();
+    void onToggledGrid(bool toggled);
     void changedEditorTool(EditorTool tool);
+    void changedViewportMode(ViewportMode mode);
+
 private:
     RenderWidget* mRenderWidget;
-    QPushButton* mImportButton;
+    //QPushButton* mImportButton;
     EditorToolBar *mEditorToolBar;
+    HeaderBar *mHeaderBar;
+    ViewportLayout *mViewportLayout;
 };
 #endif // MAINWINDOW_H

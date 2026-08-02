@@ -35,7 +35,7 @@ protected:
 private:
     Node* mCurrentNode=nullptr;
     int32_t mCurrentMeshID = -1;
-    uint32_t mCurrentSubMeshID = 0;
+    int32_t mCurrentSubMeshID = -1;
     uint32_t mCurrentMeshOriginVId=0;
     bool mCurrentMeshHasUVCoords=true;
     uint8_t mCurrentSmoothGroup=0;

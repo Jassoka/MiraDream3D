@@ -96,6 +96,8 @@ public slots:
 
     /** @brief Signal called upon changing the current viewport Mode (always redraws) */
     void onSetViewportMode(ViewportMode mode);
+
+    void onToggleGrid();
 #ifdef TEST_HALFEDGES
     void onAddHalfEdgeTest(int i);
     void nextMeshTest();
@@ -104,6 +106,7 @@ public slots:
 #endif
   signals:
     void callWidgetRedraw();
+    void toggledGrid(bool toggled);
 
 private:
     /** @brief Flag which returns true if geometry needs to be redrawn (implies \ref mHasTopologyChanged, \ref mHasCameraChanged, and \ref mHasToRedraw) */

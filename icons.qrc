@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/icons">
+        <file alias="material.png">assets/icons/material.png</file>
+        <file alias="solid.png">assets/icons/solid.png</file>
+        <file alias="wireframe.png">assets/icons/wireframe.png</file>
+        <file alias="navigate_tool.png">assets/icons/navigate_tool.png</file>
+        <file alias="selection_tool.png">assets/icons/selection_tool.png</file>
+    </qresource>
+</RCC>

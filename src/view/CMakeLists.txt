@@ -7,6 +7,11 @@ add_library(View STATIC
         ErrorViewer.cpp
         EditorToolBar.cpp
         ../../include/view/EditorToolBar.h
+        HeaderBar.cpp
+        ../../include/view/NodeHierarchyWidget.h
+        ../../include/view/HeaderBar.h
+        ../../include/view/ViewportLayout.h
+        ViewportLayout.cpp
 )
 
 target_include_directories(View PRIVATE

@@ -100,6 +100,8 @@ void ObjParser::parseVN() {
 void ObjParser::parseVT() {
     next();
     mVT.push_back(parseVec2());
+    // Ignoring 3rd potential w coordinate
+    if (mCurrent.type == FLOAT || mCurrent.type == INT ) parseNumber();
 }
 
 
@@ -126,16 +128,6 @@ void ObjParser::parseO() {
 void ObjParser::parseG() {
     next();
     const std::string name= parseString();
-    /*
-    while (mCurrent.type==IDENTIFIER)
-    {
-
-        if (name!="") {
-            name+=" ";
-        } //TODO jsp ce que ça fait
-        name+=mCurrent.identifier;
-        next();
-    }*/
     if (mCurrentMeshID) finishMesh();
     createMesh(name);
     dynamic_cast<HierarchyNode *>(mCurrentNode)->pushChild(new MeshNode(name,mCurrentMeshID));
@@ -148,30 +140,43 @@ void ObjParser::parseF() {
     Face renderFace{};
     Face geomFace{};
 
-    while (mCurrent.type != NEWLINE && mCurrent.type != END ) {
-        int vn=-1;
-        int vt=-1;
-        const int v = parseInt()-1;
-        expectToken(SLASH);
-        if (mCurrent.type!=SLASH) {
-            vt = parseInt()-1;
-        }
-        expectToken(SLASH);
-        if (mCurrent.type!=SLASH) {
-            vn = parseInt()-1;
-        }
+    if (mCurrentSubMeshID == -1) // Pas de mtl défini, fallback sur un sub mesh avec le materiau par défaut
+        mCurrentSubMeshID = mMeshBuildData->newSubMesh(DEFAULT_MATERIAL);
 
+    while (mCurrent.type != NEWLINE && mCurrent.type != END ) {
+        int vn; int vt;
+        bool hasNormal = false; bool hasTexture = false;
+        int v = parseInt()-1;
+        if (v < 0) v += mV.size() + 1;
+        if (mCurrent.type == SLASH)
+        {
+            next();
+            if (mCurrent.type!=SLASH) {
+                hasTexture = true;
+                vt = parseInt()-1;
+                if (vt < 0) vt += mVT.size() + 1;
+            }
+            if (mCurrent.type == SLASH)
+            {
+                next();
+                if (mCurrent.type!=SLASH) {
+                    hasNormal = true;
+                    vn = parseInt()-1;
+                    if (vn < 0) vn += mVN.size() + 1;
+                }
+            }
+        }
         //quand on a fini de parser le point
 
-        if (mMeshBuildFlags->hasUserNormals && vn==-1){mMeshBuildFlags->hasUserNormals=false;}
-        if (mCurrentMeshHasUVCoords && vt==-1){mCurrentMeshHasUVCoords=false;}
+        if (mMeshBuildFlags->hasUserNormals && !hasNormal){mMeshBuildFlags->hasUserNormals=false;}
+        if (mCurrentMeshHasUVCoords && !hasTexture){mCurrentMeshHasUVCoords=false;}
         mMeshBuildData->renderVertices.push_back(RenderVertex(
                 mV[v],
                 glm::vec3(0.0),
-                (vt==-1) ? glm::vec2(0.0) : mVT[vt]
+                !hasTexture ? glm::vec2(0.0) : mVT[vt]
             ));
 
-        mMeshBuildData->userNormals.push_back((vn==-1) ? glm::vec3(0.0) : mVN[vn]);
+        mMeshBuildData->userNormals.push_back(!hasNormal ? glm::vec3(0.0) : mVN[vn]);
         mMeshBuildData->smoothingGroups.push_back(mCurrentMeshSmoothGroupsMap[mCurrentSmoothGroup]);
 
         //creation du geomvertx s'il n'existe pas
@@ -263,6 +268,7 @@ void ObjParser::parseS() {
 
 void ObjParser::finishMesh() {
     if (mCurrentMeshID < 0) /* Aucun mesh n'a été créé */ { createMesh("Default"); }
+    mCurrentSubMeshID = -1;
     mSceneImport.buildMesh(mCurrentMeshID, *mMeshBuildData, *mMeshBuildFlags);
     delete mMeshBuildData;
     delete mMeshBuildFlags;

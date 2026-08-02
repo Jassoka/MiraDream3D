@@ -4,6 +4,8 @@
 #include <QPushButton>
 #include <QObject>
 #include <filesystem>
+#include <qdir.h>
+#include <qresource.h>
 #include <QSurfaceFormat>
 
 #ifdef ENABLE_RENDERDOC
@@ -28,18 +30,22 @@ int main(int argc, char *argv[])
         qputenv("QT_QPA_PLATFORM", "xcb");
     }
 #endif
-
     QSurfaceFormat format;
     format.setVersion(3, 3);
     format.setProfile(QSurfaceFormat::CoreProfile); // obligatoire sur macOS
     QSurfaceFormat::setDefaultFormat(format);
 
+
     QApplication a(argc, argv);
+
+    // rcc loading
+    const QString rccPath = QDir(QCoreApplication::applicationDirPath()).filePath("icons.rcc");
+
+    if (!QResource::registerResource(rccPath)) {
+        qWarning() << "Failed to load icons.rcc from:" << rccPath;
+    }
+
     Engine mainEngine;
     mainEngine.start();
-
-
-
-
     return a.exec();
 }

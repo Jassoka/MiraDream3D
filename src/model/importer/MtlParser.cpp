@@ -90,7 +90,7 @@ void MtlParser::parseD() {
 
 void MtlParser::parseTr() {
     next();
-    mSceneImport.getLocalMaterial(mCurrentMaterialID).alpha=parseNumber();
+    mSceneImport.getLocalMaterial(mCurrentMaterialID).alpha= 1.0 - parseNumber();
 }
 void MtlParser::parseNs() {
     next();
@@ -103,5 +103,4 @@ void MtlParser::parseMap_Kd() {
     const std::string path = mDir + filename;
     const uint32_t colorTextureID = mSceneImport.getLocalTextureID(path);
     mSceneImport.getLocalMaterial(mCurrentMaterialID).ColorTextureID = colorTextureID;
-    next();
 }

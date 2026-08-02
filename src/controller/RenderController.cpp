@@ -14,7 +14,6 @@ RenderController::RenderController(QObject* parent, RenderWidget *render_widget)
     connect(mRenderWidget, &RenderWidget::initialize, this, &RenderController::onInitialize, Qt::DirectConnection);
     connect(mRenderWidget, &RenderWidget::paint, this, &RenderController::paint);
     connect(mRenderWidget, &RenderWidget::resize, this, &RenderController::onResize);
-    connect(mRenderWidget, &RenderWidget::setViewportMode, this, &RenderController::onSetViewportMode);
     connect(this, &RenderController::callWidgetRedraw, mRenderWidget, &RenderWidget::requestRedraw);
     mRenderer = new Renderer();
 }
@@ -83,13 +82,22 @@ void RenderController::rotateAroundAnchor(const float dPhi, const float dTheta)
 
 void RenderController::cameraStrafe(const float dx, const float dy)
 {
-    mRenderer->getEngineCamera()->strafeCamera(dx, dy);
+    //TODO un peu wanky, bouge très peu si on se rapproche trop du anchor point auquel cas il faudra dezoom
+    const float d = std::sqrt(mRenderer->getEngineCamera()->getAnchorPointDistance());
+    mRenderer->getEngineCamera()->strafeCamera(-d*dx, -d*dy);
     changedCamera();
 }
 
 void RenderController::cameraZoom(const float factor)
 {
-    mRenderer->getEngineCamera()->zoom(factor);
+    Camera *engineCamera = mRenderer->getEngineCamera();
+    engineCamera->zoom(factor);
+
+    // adjusting plane based on distance
+    const float d = engineCamera->getAnchorPointDistance();
+    engineCamera->setFarPlane( std::max(100.0f * d, 100.f)) ;
+    engineCamera->setNearPlane( std::max(0.1f * d, 0.001f));
+
     changedCamera();
 }
 
@@ -99,7 +107,13 @@ void RenderController::onSetViewportMode(const ViewportMode mode)
     changedGeometry();
 }
 
-int32_t RenderController::pickFromScreen(int x, int y)
+void RenderController::onToggleGrid()
+{
+    emit toggledGrid(mRenderer->toggleGrid());
+    changedCamera();
+}
+
+int32_t RenderController::pickFromScreen(const int x, const int y)
 {
     const auto res = mRenderer->readPickingBuffer(x, y);
     if (res >= 0)

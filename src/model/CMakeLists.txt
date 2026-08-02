@@ -31,6 +31,15 @@ add_library(Model STATIC
         importer/ImportParser.cpp
         ShaderParser.cpp
         Editor.cpp
+        ../../include/model/MeshTopologyBuilder.h
+        ../../include/model/MeshBuilder.h
+        ../../include/model/TextureManager.h
+        ../../include/model/SceneImport.h
+        ../../include/model/importer/ImportParser.h
+        ../../include/model/shader_parser/ShaderParser.h
+        ../../include/model/shader_parser/GLSLLexer.h
+        ../../include/model/importer/ObjLexer.h
+        ../../include/model/Editor.h
 )
 
 target_include_directories(Model PUBLIC
