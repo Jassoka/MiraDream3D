@@ -15,6 +15,8 @@ It combines native C++ and OpenGL rendering with a Qt-powered interface.
     <img src="assets/readme_images/realtime.gif" width="100%">
 </p>
 
+[Model source](https://casual-effects.com/g3d/data10/common/model/crytek_sponza/sponza.zip)
+
 Miradream is capable of real-time rendering, with user-controller camera movement.
 Scenes can be viewed in [wireframe](https://en.wikipedia.org/wiki/Wire-frame_model), solid or material mode.
 
