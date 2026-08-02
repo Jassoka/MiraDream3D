@@ -67,7 +67,7 @@ The data structures are generated once on import for faster real-time computatio
 </td>
     <td align="center" width="50%" style="vertical-align: middle;">
       <img src="assets/readme_images/halfedges_example.gif" width="100%">
-        <br><span> <i>Half-edge data structure traversal</i></span>  
+        <br><span> <i>Half-edge data structure traversal in MiraDream</i></span>  
     </td>
   </tr>
 </table>
@@ -75,7 +75,7 @@ The data structures are generated once on import for faster real-time computatio
 
 ## Interface
 <p align="center">
-<img src="assets/readme_images/menu.png" width="50%">
+<img src="assets/readme_images/menu.png" width="100%">
 </p>
 
 This is what you see upon opening the software. As you can well imagine, the iconic green cube is present.
