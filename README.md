@@ -88,7 +88,7 @@ This is what you see upon opening the software. As you can well imagine, the ico
 
 
 ## Selection & Moving
-This feature is currently work-in-progress.
+This feature is work-in-progress.
 
 The software currently generates a picking buffer for vertices, which can be clicked and highlighted.
 <p align="center">
