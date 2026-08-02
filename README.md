@@ -15,10 +15,10 @@ It combines native C++ and OpenGL rendering with a Qt-powered interface.
     <img src="assets/readme_images/realtime.gif" width="100%">
 </p>
 
-[Source for showcased models](https://casual-effects.com/data)
-
 Miradream is capable of real-time rendering, with user-controller camera movement.
 Scenes can be viewed in [wireframe](https://en.wikipedia.org/wiki/Wire-frame_model), solid or material mode.
+
+*[Source for showcased models](https://casual-effects.com/data)*
 
 ## A few other examples rendered with MiraDream
 <table align="center" width="100%">
