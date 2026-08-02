@@ -94,7 +94,7 @@ This feature is work-in-progress.
 
 The software currently generates a picking buffer for vertices, which can be clicked and highlighted.
 <p align="center">
-    <img src="assets/readme_images/select_showcase.gif" width="50%">
+    <img src="assets/readme_images/select_showcase.gif" width="100%">
 </p>
 
 
