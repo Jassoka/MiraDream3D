@@ -29,11 +29,22 @@ public:
             skipLine();
             return LexerToken{.type = NEWLINE};
         }
+        if (c=='(' || c == ')' || c == ':')
+        {
+            mPos++; mCol++;
+            return LexerToken{.type = SYMBOL, .identifier = std::string(1, c)};
+        }
         if (isLetter(c)|| c=='_'){return readIdentifier();}
-        if (isNumber(c) || c=='-' || c=='.'||c=='+' ){return readNumber();}
 
-        mPos++; mCol++;
-        return LexerToken{.type = SYMBOL, .identifier = std::string(1, c)};
+        if (c == '.')
+        {
+            if (isNumber(mSrc[mPos+1])) return readNumber();
+            mPos++; mCol++;
+            return LexerToken{.type = SYMBOL, .identifier = std::string(1, c)};
+        }
+        if (isNumber(c) || c=='-' || c=='+' ){return readNumber();}
+
+        throwError("unknown grammar");
     }
 };
 #endif //MIRADREAM3D_OBJLEXER_H
