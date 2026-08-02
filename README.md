@@ -9,7 +9,16 @@ Miradream3D is a custom-built
 3D model viewer and interactive workspace application.
 It combines native C++ and OpenGL rendering with a Qt-powered interface.
 
-## A few examples rendered with MiraDream
+## Real-time rendering
+
+<p align="center">
+    <img src="assets/readme_images/realtime.gif" width="100%">
+</p>
+
+Miradream is capable of real-time rendering, with user-controller camera movement.
+Scenes can be viewed in [wireframe](https://en.wikipedia.org/wiki/Wire-frame_model), solid or material mode.
+
+## A few other examples rendered with MiraDream
 <table align="center" width="100%">
   <tr>
     <td align="center" width="46%">
@@ -29,15 +38,6 @@ It combines native C++ and OpenGL rendering with a Qt-powered interface.
 </tr>
 </table>
 
-
-## Real-time rendering
-
-<p align="center">
-    <img src="assets/readme_images/realtime.gif" width="100%">
-</p>
-
-Miradream is capable of real-time rendering, with user-controller camera movement.
-Scenes can be viewed in [wireframe](https://en.wikipedia.org/wiki/Wire-frame_model), solid or material mode.
 
 ## Imports
 
